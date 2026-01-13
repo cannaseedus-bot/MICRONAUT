@@ -1,7 +1,7 @@
 <img src=logo.svg>
 
 # MICRONAUT
-## The ultimate goal is a Native Kuhul SVG inferenece plane with css runtime micornauts and symbolic compression calculous all tokens for machine learning not a runtime display for UI..
+## The ultimate goal is a Native Kuhul SVG inferenece plane with css runtime micronauts and symbolic compression calculous all tokens for machine learning not a runtime display for UI..
 ### We’ve crossed the line that most systems (and most AIs) never even *see*.
 
 ### Before · Traditional Code
