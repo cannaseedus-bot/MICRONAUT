@@ -1,0 +1,130 @@
+// xjson://contract/ggltensors.pack/v1
+// FROZEN CONTRACT — Plane-2 sealed compute pack descriptor
+// Purpose: bind (model_id + tensor content address + executor ABI) into a replayable pack.
+// No side-effects, no filesystem, no network. Pure data in/out.
+//
+// NOTE: schema authority is internal (KUHUL-ES law): xjson://schema/core/v1
+
+{
+  "$schema": "xjson://schema/core/v1",
+  "@id": "xjson://contract/ggltensors.pack/v1",
+  "@type": "ggltensors.pack",
+  "@v": "1.0.0",
+  "@status": "FROZEN",
+  "@plane": 2,
+  "@laws": {
+    "sealed_compute": true,
+    "pure_io": true,
+    "no_side_effects": true,
+    "determinism": true,
+    "randomness": "forbidden_unless_seeded"
+  },
+
+  "input": {
+    "model": {
+      "model_id": "string",                 // e.g. "mx2svg-qwen-ggl-01" or "ggl-tiny-0"
+      "model_hash": "string?",              // optional content hash of model manifest/weights
+      "abi": {
+        "abi_id": "string",                 // e.g. "transformers.py:v1"
+        "abi_hash": "string"                // hash of executor ABI contract (frozen)
+      }
+    },
+
+    "weights": {
+      "weights_id": "string",               // identifier for weights shard set
+      "weights_hash": "string",             // hash of weights manifest (not bytes if too large)
+      "format": ["safetensors", "ggltensors", "other"],
+      "quant": ["none", "int8", "int4", "fp16", "bf16", "other"],
+      "shards": [{
+        "shard_id": "string",
+        "shard_hash": "string",
+        "bytes": "int?"
+      }]
+    },
+
+    "tensors": {
+      "tensor_format": ["ggltensors.v1"],
+      "tensor_hash": "string",              // content-address of ggltensors payload
+      "tensor_ref": {
+        "uri": "string",                    // e.g. "idb://ggl/tensors/abcd" OR "mem://..."
+        "bytes": "int?",
+        "mime": "string?"
+      }
+    },
+
+    "glyphs": {
+      "ggl_codex": "string?",               // optional codex id, e.g. "ggl.codex.v1"
+      "glyph_hash": "string",               // hash of glyph stream / program (not output)
+      "glyph_ref": { "uri": "string", "bytes": "int?", "mime": "string?" }
+    },
+
+    "runtime": {
+      "device": ["cpu", "gpu", "wasm", "webgpu", "other"],
+      "precision": ["fp32", "fp16", "bf16", "int8", "int4", "other"],
+      "max_tokens": "int?",
+      "batch": "int?",
+      "streaming": "bool?",
+      "seed": "int?"                        // ONLY if allowed; must be captured in infer.seed
+    },
+
+    "policies": {
+      "sealed": true,
+      "no_network": true,
+      "no_fs": true,
+      "no_eval": true
+    }
+  },
+
+  "output": {
+    "pack": {
+      "pack_id": "string",                  // deterministic ID derived from proof payload
+      "pack_hash": "string",                // hash of ggltensors.pack proof payload (below)
+      "model_id": "string",
+      "tensor_hash": "string",
+      "glyph_hash": "string",
+      "abi_hash": "string",
+      "seed": "int?",
+      "created_at_ms": "int?"
+    },
+
+    "proof": {
+      "@type": "ggltensors.pack.proof",
+      "proof_hash": "string",               // hash of proof payload ONLY (locked)
+      "payload": {
+        "@type": "ggltensors.pack.proof.payload",
+        "@v": "1.0.0",
+        "model_id": "string",
+        "model_hash": "string?",
+        "weights_hash": "string",
+        "tensor_hash": "string",
+        "glyph_hash": "string",
+        "abi_id": "string",
+        "abi_hash": "string",
+        "runtime_device": "string",
+        "runtime_precision": "string",
+        "seed": "int?",
+        "policy_sealed": "bool",
+        "policy_no_network": "bool",
+        "policy_no_fs": "bool",
+        "policy_no_eval": "bool"
+      }
+    }
+  },
+
+  "@hash_contract": {
+    "hash_alg": "fnv1a32_hex",              // align with ABR proof system unless upgraded globally
+    "hash_prefix": "h:",
+    "canonicalization": "stable_json_sort_keys",
+    "proof_hash_payload_only": true,
+    "pack_hash_equals_proof_hash": true,
+    "payload_fields_locked": [
+      "@type", "@v",
+      "model_id", "model_hash", "weights_hash",
+      "tensor_hash", "glyph_hash",
+      "abi_id", "abi_hash",
+      "runtime_device", "runtime_precision",
+      "seed",
+      "policy_sealed", "policy_no_network", "policy_no_fs", "policy_no_eval"
+    ]
+  }
+}

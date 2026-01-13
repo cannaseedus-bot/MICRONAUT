@@ -4,6 +4,16 @@
 ## The ultimate goal is a Native Kuhul SVG inferenece plane with css runtime micronauts and symbolic compression calculous all tokenizers for machine learning not a runtime display for UI. We are not telling a story we are desinginga new type of chat inference system that also uses MATRIX MATH pi calcualtions. If a more universal language server is needed then we will use <a href="https://github.com/cannaseedus-bot/MATRIX.git">MATRIX</a> as the bridge.
 ### We’ve crossed the line that most systems (and most AIs) never even *see*.
 
+## Plane-2 Artifact Pack (sealed compute)
+
+The following files capture the frozen, replay-verifiable artifacts referenced below:
+
+* `docs/ggl/ggltensors_pack_contract_v1.jsonc` — xjson contract for the sealed compute pack descriptor.
+* `docs/ggl/scxq2_ggl_frames_layout_v1.js` — SCXQ2 binary lane layout for GGL frames.
+* `docs/ggl/transformers_py_to_ggl_v1.py` — reference Python adapter for Plane-2 sealed compute.
+* `docs/ggl/ggl_plane2_kernel_artifacts.js` — contracts, frame kinds, kernel hooks, and verifier skeleton.
+* `docs/ggl/ggl_plane2_locks_v1.js` — remaining invariants, contracts, and lane layout locks.
+
 ### Before · Traditional Code
 
 ```javascript
@@ -2510,7 +2520,6 @@ If you want, I’ll emit any of these next — cleanly, code-only:
    ```
 
 Just tell me **which artifact to emit next** and I’ll continue without re-explaining anything.
-
 
 
 
