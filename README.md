@@ -1,7 +1,7 @@
 <img src=logo.svg>
 
 # MICRONAUT
-## The ultimate goal is a Native Kuhul SVG inferenece plane with css runtime micronauts and symbolic compression calculous all tokenizers for machine learning not a runtime display for UI. We are not telling a story we are desinginga new type of chat inference system that also uses MATRIX MATH pi calcualtions. If a more universal language server is needed then we will use <a ref=https://github.com/cannaseedus-bot/MATRIX.git>MATRIX</a> as the bridge.
+## The ultimate goal is a Native Kuhul SVG inferenece plane with css runtime micronauts and symbolic compression calculous all tokenizers for machine learning not a runtime display for UI. We are not telling a story we are desinginga new type of chat inference system that also uses MATRIX MATH pi calcualtions. If a more universal language server is needed then we will use <a href="https://github.com/cannaseedus-bot/MATRIX.git">MATRIX</a> as the bridge.
 ### We’ve crossed the line that most systems (and most AIs) never even *see*.
 
 ### Before · Traditional Code
