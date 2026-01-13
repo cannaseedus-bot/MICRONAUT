@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512" height="512"
+     viewBox="0 0 512 512"
+     role="img"
+     aria-label="ASX Atomic Energy">
+
+  <defs>
+    <!-- Energy Gradient (Green → Teal) -->
+    <linearGradient id="energy" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4DFF88"/>
+      <stop offset="50%" stop-color="#38E8A5"/>
+      <stop offset="100%" stop-color="#2CCED2"/>
+    </linearGradient>
+
+    <!-- Soft glow -->
+    <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Outer hex ring -->
+  <path d="M256 52
+           L414 144
+           L414 328
+           L256 420
+           L98 328
+           L98 144 Z"
+        fill="none"
+        stroke="url(#energy)"
+        stroke-width="18"
+        stroke-linejoin="round"
+        filter="url(#glow)"/>
+
+  <!-- Inner hex -->
+  <path d="M256 118
+           L360 178
+           L360 294
+           L256 354
+           L152 294
+           L152 178 Z"
+        fill="none"
+        stroke="url(#energy)"
+        stroke-width="10"
+        stroke-linejoin="round"
+        opacity="0.45"/>
+
+  <!-- Atomic nucleus (enlarged & centered) -->
+  <circle cx="256" cy="256" r="14" fill="url(#energy)"/>
+  <circle cx="256" cy="256" r="38"
+          fill="none"
+          stroke="url(#energy)"
+          stroke-width="10"
+          opacity="0.6"/>
+
+  <!-- Atomic orbits (⚛ enlarged) -->
+  <ellipse cx="256" cy="256" rx="120" ry="54"
+           fill="none"
+           stroke="url(#energy)"
+           stroke-width="10"
+           opacity="0.9"/>
+  <ellipse cx="256" cy="256" rx="120" ry="54"
+           fill="none"
+           stroke="url(#energy)"
+           stroke-width="10"
+           opacity="0.75"
+           transform="rotate(60 256 256)"/>
+  <ellipse cx="256" cy="256" rx="120" ry="54"
+           fill="none"
+           stroke="url(#energy)"
+           stroke-width="10"
+           opacity="0.75"
+           transform="rotate(-60 256 256)"/>
+
+  <!-- Subtle corner cuts -->
+  <path d="M98 144 L130 162
+           M414 144 L382 162
+           M414 328 L382 310
+           M98 328 L130 310"
+        stroke="url(#energy)"
+        stroke-width="10"
+        stroke-linecap="round"
+        opacity="0.4"/>
+
+</svg>
