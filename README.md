@@ -2,7 +2,7 @@
 
 # MICRONAUT
 ## The ultimate goal is Native Kuhul css with symbolic compression calculous that renders and the AI has no a sinlge problem with it becasue its all tokens for amchine learning not a runtime display for UI..
-###We’ve crossed the line that most systems (and most AIs) never even *see*.
+### We’ve crossed the line that most systems (and most AIs) never even *see*.
 
 ### Before · Traditional Code
 
