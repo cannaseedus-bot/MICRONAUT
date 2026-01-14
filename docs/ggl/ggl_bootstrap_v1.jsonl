@@ -1,0 +1,10 @@
+{"id":"ggl_0001","prompt":"Make a cube.","target":"GGL.begin\nnode Cube { size: 1; }\nemit Cube;\nGGL.end\n"}
+{"id":"ggl_0002","prompt":"Make a cube of size 2.","target":"GGL.begin\nnode Cube { size: 2; }\nemit Cube;\nGGL.end\n"}
+{"id":"ggl_0003","prompt":"Make a red cube.","target":"GGL.begin\nnode Cube { size: 1; material: \"red\"; }\nemit Cube;\nGGL.end\n"}
+{"id":"ggl_0004","prompt":"Make 3 cubes in a row.","target":"GGL.begin\nfor i in [0,1,2] {\n  node Cube { size: 1; translate: [i*2,0,0]; }\n  emit Cube;\n}\nGGL.end\n"}
+{"id":"ggl_0005","prompt":"Make a square.","target":"GGL.begin\nnode Square { size: 1; }\nemit Square;\nGGL.end\n"}
+{"id":"ggl_0006","prompt":"Make a triangle.","target":"GGL.begin\nnode Triangle { size: 1; }\nemit Triangle;\nGGL.end\n"}
+{"id":"ggl_0007","prompt":"Rotate a cube 45 degrees around Y.","target":"GGL.begin\nnode Cube { size: 1; rotate: [0,45,0]; }\nemit Cube;\nGGL.end\n"}
+{"id":"ggl_0008","prompt":"Scale a cube by 0.5.","target":"GGL.begin\nnode Cube { size: 1; scale: [0.5,0.5,0.5]; }\nemit Cube;\nGGL.end\n"}
+{"id":"ggl_0009","prompt":"Two cubes connected by an edge.","target":"GGL.begin\ngraph G {\n  node A { type: \"Cube\"; translate: [-2,0,0]; }\n  node B { type: \"Cube\"; translate: [2,0,0]; }\n  edge A -> B { kind: \"link\"; }\n  emit G;\n}\nGGL.end\n"}
+{"id":"ggl_0010","prompt":"If entropy is high, emit a warning node.","target":"GGL.begin\nlet entropy = @entropy;\nif entropy > 0.7 {\n  node Warning { level: \"high\"; }\n  emit Warning;\n} else {\n  node Ok { level: \"normal\"; }\n  emit Ok;\n}\nGGL.end\n"}
