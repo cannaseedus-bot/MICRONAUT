@@ -13,6 +13,11 @@ The following files capture the frozen, replay-verifiable artifacts referenced b
 * `docs/ggl/transformers_py_to_ggl_v1.py` — reference Python adapter for Plane-2 sealed compute.
 * `docs/ggl/ggl_plane2_kernel_artifacts.js` — contracts, frame kinds, kernel hooks, and verifier skeleton.
 * `docs/ggl/ggl_plane2_locks_v1.js` — remaining invariants, contracts, and lane layout locks.
+* `docs/ggl/ggl_tokenizer_v1.json` — minimal deterministic tokenizer for GGL code.
+* `docs/ggl/ggl_bootstrap_v1.jsonl` — tiny code-only bootstrap set for GGL.
+* `docs/ggl/ggl_oracle_v1.py` — deterministic grammar legality oracle for GGL.
+* `docs/ggl/ggl_legality_loss_v1.py` — legality loss hooks for training loops.
+* `docs/ggl/ggl_code_only_v1.py` — code-only extraction and sanitization helpers.
 
 ### Before · Traditional Code
 
@@ -1246,7 +1251,6 @@ If you want, I can emit a single **`abr_v1_constraints_guard.js`** module that:
 * runs static checks on your ABR kernel table,
 * runs runtime guards in dev,
 * and provides verifier assertions for the 5 constraints.
-
 
 
 
