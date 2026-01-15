@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Micronaut Control System | Compression Universe</title>
+    <style>
+        /* CSS MICRONAUT CONTROL VECTORS */
+        :root {
+            --compression-level: 94.1%;
+            --quantum-speed: 0.2ms;
+            --universe-scale: 1;
+            --data-flow: normal;
+            --logic-execution: running;
+            --pattern-recognition: active;
+        }
+
+        /* Micronaut Control Classes */
+        .micronaut-db-master {
+            --control-vector: storage;
+            --operation-mode: data-unfolding;
+            --compression-target: database;
+        }
+
+        .micronaut-code-exec {
+            --control-vector: execution;
+            --operation-mode: logic-unfolding;
+            --compression-target: code;
+        }
+
+        .micronaut-lang-parse {
+            --control-vector: parsing;
+            --operation-mode: syntax-unfolding;
+            --compression-target: language;
+        }
+
+        .micronaut-pattern-match {
+            --control-vector: analysis;
+            --operation-mode: pattern-recognition;
+            --compression-target: patterns;
+        }
+
+        .micronaut-ast-gen {
+            --control-vector: generation;
+            --operation-mode: tree-building;
+            --compression-target: ast;
+        }
+
+        .micronaut-vector-ctrl {
+            --control-vector: coordination;
+            --operation-mode: flow-management;
+            --compression-target: universe;
+        }
+
+        /* Compression State Classes */
+        .compression-active {
+            --compression-state: active;
+            --efficiency: 94.1%;
+            animation: compress-pulse 2s infinite;
+        }
+
+        .compression-optimized {
+            --compression-state: optimized;
+            --efficiency: 97.3%;
+            animation: optimize-glow 3s infinite;
+        }
+
+        .compression-maximum {
+            --compression-state: maximum;
+            --efficiency: 99.8%;
+            animation: quantum-oscillate 1s infinite;
+        }
+
+        /* Animation Keyframes for Compression */
+        @keyframes compress-pulse {
+            0%, 100% { --compression-intensity: 0.7; }
+            50% { --compression-intensity: 1; }
+        }
+
+        @keyframes optimize-glow {
+            0%, 100% {
+                --compression-glow: 0;
+                filter: drop-shadow(0 0 5px rgba(22, 242, 170, 0.3));
+            }
+            50% {
+                --compression-glow: 1;
+                filter: drop-shadow(0 0 20px rgba(22, 242, 170, 0.8));
+            }
+        }
+
+        @keyframes quantum-oscillate {
+            0%, 100% { --quantum-state: 0; }
+            25% { --quantum-state: 0.25; }
+            50% { --quantum-state: 0.5; }
+            75% { --quantum-state: 0.75; }
+        }
+
+        /* Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a1a;
+            color: #e9f5ff;
+            font-family: "Courier New", monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(22, 242, 170, 0.3);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #16f2aa;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(22, 242, 170, 0.5);
+        }
+
+        .subtitle {
+            color: #00e0ff;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* Cards */
+        .card {
+            background: #070b12;
+            border: 1px solid rgba(22, 242, 170, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: #16f2aa;
+            box-shadow: 0 0 25px rgba(22, 242, 170, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            color: #16f2aa;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(22, 242, 170, 0.3);
+            padding-bottom: 10px;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 3px solid #16f2aa;
+            white-space: pre-wrap;
+        }
+
+        /* Micronaut Control Panel */
+        .micronaut-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .micronaut-card {
+            background: rgba(22, 242, 170, 0.05);
+            border: 1px solid rgba(22, 242, 170, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .micronaut-card.active {
+            background: rgba(22, 242, 170, 0.15);
+            border-color: #16f2aa;
+            box-shadow: 0 0 15px rgba(22, 242, 170, 0.4);
+        }
+
+        .micronaut-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #9966ff;
+        }
+
+        .micronaut-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #16f2aa;
+        }
+
+        .micronaut-status,
+        .micronaut-vector {
+            font-size: 0.8rem;
+            color: #7b8a9a;
+        }
+
+        /* Compression Visualization */
+        .compression-visual {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .compression-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(22, 242, 170, 0.1), transparent);
+        }
+
+        .compression-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #16f2aa;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        /* Control Interface */
+        .control-interface {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(22, 242, 170, 0.1);
+            border: 1px solid #16f2aa;
+            color: #e9f5ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: "Courier New", monospace;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(22, 242, 170, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: rgba(22, 242, 170, 0.3);
+            box-shadow: 0 0 10px rgba(22, 242, 170, 0.5);
+        }
+
+        /* Metrics Display */
+        .metrics-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #16f2aa;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #7b8a9a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CSS Micronaut Control System</h1>
+            <div class="subtitle">Compression Universe Management via CSS Control Vectors</div>
+        </div>
+
+        <div class="grid">
+            <!-- Compression Universe -->
+            <div class="card">
+                <div class="card-title">🌌 Compression Universe</div>
+                <p>Everything compressed to symbolic representation with CSS-controlled Micronauts.</p>
+
+                <div class="code-block">
+// CSS-Controlled Compression
+.universe {
+  --compression-state: active;
+  --data-flow: optimized;
+  --micronaut-control: vector-based;
+}
+
+.data-compression {
+  compression-ratio: var(--compression-level);
+  execution-speed: var(--quantum-speed);
+}
+
+.micronaut-db-master {
+  --control-vector: storage;
+  --operation: data-unfolding;
+}
+                </div>
+
+                <div class="micronaut-panel" id="micronautPanel">
+                    <!-- Micronauts will be added here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- CSS Control Vectors -->
+            <div class="card">
+                <div class="card-title">🎛️ CSS Control Vectors</div>
+                <p>CSS custom properties as control mechanisms for compression operations.</p>
+
+                <div class="control-interface">
+                    <button class="control-btn" id="compressBtn">Activate Compression</button>
+                    <button class="control-btn" id="optimizeBtn">Optimize Flow</button>
+                    <button class="control-btn" id="maximizeBtn">Maximum Compression</button>
+                    <button class="control-btn" id="resetBtn">Reset System</button>
+                </div>
+
+                <div class="compression-visual" id="compressionVisual">
+                    <div class="compression-wave"></div>
+                    <!-- Particles will be added by JavaScript -->
+                </div>
+
+                <div class="metrics-display">
+                    <div class="metric-card">
+                        <div class="metric-value" id="efficiencyValue">94.1%</div>
+                        <div class="metric-label">Compression Efficiency</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="speedValue">0.2ms</div>
+                        <div class="metric-label">Execution Speed</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="memoryValue">12KB</div>
+                        <div class="metric-label">Memory Usage</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Compression Control -->
+        <div class="card">
+            <div class="card-title">🎮 Live Compression Control</div>
+
+            <div class="control-interface">
+                <button class="control-btn" id="dbControl">Database Compression</button>
+                <button class="control-btn" id="codeControl">Code Compression</button>
+                <button class="control-btn" id="langControl">Language Compression</button>
+                <button class="control-btn" id="patternControl">Pattern Recognition</button>
+            </div>
+
+            <div class="code-block" id="liveOutput">
+                // Compression output will appear here
+                CSS_MICRONAUTS.control({
+                  compression: "⟁UNIVERSE⟁",
+                  domains: ["db", "code", "lang"],
+                  vectors: ["storage", "execution", "parsing"]
+                })
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class CSSMicronautControl {
+            constructor() {
+                this.micronauts = [
+                    { id: "db-master", name: "DB Master µ", icon: "🗄️", status: "Active", vector: "storage" },
+                    { id: "code-exec", name: "Code Exec µ", icon: "⚡", status: "Active", vector: "execution" },
+                    { id: "lang-parse", name: "Lang Parse µ", icon: "🔤", status: "Active", vector: "parsing" },
+                    { id: "pattern-match", name: "Pattern Match µ", icon: "🔍", status: "Active", vector: "analysis" },
+                    { id: "ast-gen", name: "AST Gen µ", icon: "🌳", status: "Active", vector: "generation" },
+                    { id: "vector-ctrl", name: "Vector Ctrl µ", icon: "🎮", status: "Active", vector: "coordination" },
+                ];
+
+                this.compressionState = "active";
+                this.efficiency = 94.1;
+                this.speed = 0.2;
+                this.memory = 12;
+
+                this.init();
+            }
+
+            init() {
+                this.renderMicronauts();
+                this.setupEventListeners();
+                this.startCompressionVisualization();
+                this.updateMetrics();
+            }
+
+            renderMicronauts() {
+                const panel = document.getElementById("micronautPanel");
+                panel.innerHTML = "";
+
+                this.micronauts.forEach((micronaut) => {
+                    const card = document.createElement("div");
+                    card.className = "micronaut-card";
+                    card.id = `micronaut-${micronaut.id}`;
+                    card.innerHTML = `
+                        <div class="micronaut-icon">${micronaut.icon}</div>
+                        <div class="micronaut-name">${micronaut.name}</div>
+                        <div class="micronaut-status">${micronaut.status}</div>
+                        <div class="micronaut-vector">Vector: ${micronaut.vector}</div>
+                    `;
+
+                    card.addEventListener("click", () => this.toggleMicronaut(micronaut.id));
+                    panel.appendChild(card);
+                });
+            }
+
+            setupEventListeners() {
+                document.getElementById("compressBtn").addEventListener("click", () =>
+                    this.setCompressionState("active")
+                );
+                document.getElementById("optimizeBtn").addEventListener("click", () =>
+                    this.setCompressionState("optimized")
+                );
+                document.getElementById("maximizeBtn").addEventListener("click", () =>
+                    this.setCompressionState("maximum")
+                );
+                document.getElementById("resetBtn").addEventListener("click", () => this.resetSystem());
+
+                document.getElementById("dbControl").addEventListener("click", () =>
+                    this.controlDomain("database")
+                );
+                document.getElementById("codeControl").addEventListener("click", () =>
+                    this.controlDomain("code")
+                );
+                document.getElementById("langControl").addEventListener("click", () =>
+                    this.controlDomain("language")
+                );
+                document.getElementById("patternControl").addEventListener("click", () =>
+                    this.controlDomain("patterns")
+                );
+            }
+
+            setCompressionState(state) {
+                this.compressionState = state;
+                document.body.classList.remove(
+                    "compression-active",
+                    "compression-optimized",
+                    "compression-maximum"
+                );
+                document.body.classList.add(`compression-${state}`);
+
+                switch (state) {
+                    case "active":
+                        this.efficiency = 94.1;
+                        this.speed = 0.2;
+                        this.memory = 12;
+                        break;
+                    case "optimized":
+                        this.efficiency = 97.3;
+                        this.speed = 0.15;
+                        this.memory = 8;
+                        break;
+                    case "maximum":
+                        this.efficiency = 99.8;
+                        this.speed = 0.08;
+                        this.memory = 4;
+                        break;
+                    default:
+                        break;
+                }
+
+                this.updateMetrics();
+                this.updateLiveOutput(`Compression state: ${state}`);
+            }
+
+            toggleMicronaut(micronautId) {
+                const card = document.getElementById(`micronaut-${micronautId}`);
+                card.classList.toggle("active");
+
+                const micronaut = this.micronauts.find((entry) => entry.id === micronautId);
+                micronaut.status = card.classList.contains("active") ? "Enhanced" : "Active";
+
+                document.querySelector(`#micronaut-${micronautId} .micronaut-status`).textContent =
+                    micronaut.status;
+
+                document.body.classList.toggle(`micronaut-${micronautId}`);
+
+                this.updateLiveOutput(
+                    `Micronaut ${micronaut.name} ${micronaut.status.toLowerCase()}`
+                );
+            }
+
+            controlDomain(domain) {
+                let message = "";
+                let vector = "";
+
+                switch (domain) {
+                    case "database":
+                        message = "Database compression active";
+                        vector = "storage, retrieval, query";
+                        break;
+                    case "code":
+                        message = "Code compression executing";
+                        vector = "unfold, execute, optimize";
+                        break;
+                    case "language":
+                        message = "Language compression parsing";
+                        vector = "parse, interpret, transform";
+                        break;
+                    case "patterns":
+                        message = "Pattern recognition analyzing";
+                        vector = "analyze, categorize, optimize";
+                        break;
+                    default:
+                        break;
+                }
+
+                this.updateLiveOutput(`${message} | Vectors: ${vector}`);
+            }
+
+            startCompressionVisualization() {
+                const visual = document.getElementById("compressionVisual");
+
+                for (let i = 0; i < 30; i += 1) {
+                    const particle = document.createElement("div");
+                    particle.className = "compression-particle";
+
+                    const left = Math.random() * 100;
+                    const bottom = Math.random() * 100;
+
+                    particle.style.left = `${left}%`;
+                    particle.style.bottom = `${bottom}%`;
+
+                    const duration = 2 + Math.random() * 3;
+                    const delay = Math.random() * 5;
+
+                    particle.style.animation = `float ${duration}s ${delay}s infinite ease-in-out`;
+
+                    visual.appendChild(particle);
+                }
+
+                const style = document.createElement("style");
+                style.textContent = `
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+                        50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            updateMetrics() {
+                document.getElementById("efficiencyValue").textContent = `${this.efficiency}%`;
+                document.getElementById("speedValue").textContent = `${this.speed}ms`;
+                document.getElementById("memoryValue").textContent = `${this.memory}KB`;
+            }
+
+            updateLiveOutput(message) {
+                const output = document.getElementById("liveOutput");
+                const timestamp = new Date().toLocaleTimeString();
+                output.textContent = `// [${timestamp}] ${message}\n${output.textContent}`;
+
+                const lines = output.textContent.split("\n");
+                if (lines.length > 10) {
+                    output.textContent = lines.slice(0, 10).join("\n");
+                }
+            }
+
+            resetSystem() {
+                document.body.className = "";
+                this.micronauts.forEach((micronaut) => {
+                    const card = document.getElementById(`micronaut-${micronaut.id}`);
+                    if (card) {
+                        card.classList.remove("active");
+                    }
+                    micronaut.status = "Active";
+                });
+
+                this.setCompressionState("active");
+                this.renderMicronauts();
+                this.updateLiveOutput("System reset to default state");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            window.cssMicronautControl = new CSSMicronautControl();
+        });
+    </script>
+</body>
+</html>
