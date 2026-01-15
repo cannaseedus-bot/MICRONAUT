@@ -4,6 +4,10 @@
 ## The ultimate goal is a Native Kuhul SVG inferenece plane with css runtime micronauts and symbolic compression calculous all tokenizers for machine learning not a runtime display for UI. We are not telling a story we are desinginga new type of chat inference system that also uses MATRIX MATH pi calcualtions. If a more universal language server is needed then we will use <a href="https://github.com/cannaseedus-bot/MATRIX.git">MATRIX</a> as the bridge.
 ### We’ve crossed the line that most systems (and most AIs) never even *see*.
 
+## Fold law (locked spec)
+
+See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md).
+
 ## The Compression Fold Universe
 
 Now every domain has its own compression fold:
@@ -1277,5 +1281,4 @@ If you want, I can emit a single **`abr_v1_constraints_guard.js`** module that:
 * runs static checks on your ABR kernel table,
 * runs runtime guards in dev,
 * and provides verifier assertions for the 5 constraints.
-
 
