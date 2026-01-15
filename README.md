@@ -43,6 +43,7 @@ The following files capture the frozen, replay-verifiable artifacts referenced b
 * `docs/ggl/ggl_oracle_v1.py` — deterministic grammar legality oracle for GGL.
 * `docs/ggl/ggl_legality_loss_v1.py` — legality loss hooks for training loops.
 * `docs/ggl/ggl_code_only_v1.py` — code-only extraction and sanitization helpers.
+* `docs/ggl/abr_v1_constraints_guard.js` — ABR v1 determinism/legality guardrails (banlists, runtime guards, verifier checks).
 
 ### Before · Traditional Code
 
@@ -1276,6 +1277,5 @@ If you want, I can emit a single **`abr_v1_constraints_guard.js`** module that:
 * runs static checks on your ABR kernel table,
 * runs runtime guards in dev,
 * and provides verifier assertions for the 5 constraints.
-
 
 
