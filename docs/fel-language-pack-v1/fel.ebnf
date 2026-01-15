@@ -1,0 +1,56 @@
+(* ============================================================
+   FEL — Fold Event Language v1 (JSONL)
+   Canonical ID: asx://language/fel/v1
+   ============================================================ *)
+
+digit      = "0"…"9" ;
+int        = digit, {digit} ;
+
+string     = DQUOTE, { char }, DQUOTE ;             (* JSON string *)
+json       = <RFC8259 JSON value> ;                 (* but canonicalized *)
+hash       = ("blake3:" | "sha256:"), 1*HEXDIG ;
+fold       = "⟁", { any_non_newline }, "⟁" ;         (* fold token *)
+
+type       = "emit" | "set" | "delta" | "seal" | "attest" ;
+
+fel_line   = object ;                                (* one JSON object per line *)
+
+object     = "{", members, "}" ;
+members    = pair, { ",", pair } ;
+pair       = string, ":", json ;
+
+(* -------------------------
+   Required top-level keys
+   ------------------------- *)
+
+required_keys =
+  "v"      : "fel.v1",
+  "tick"   : int,
+  "type"   : type,
+  "fold"   : fold;
+
+(* -------------------------
+   Payload shapes by type
+   ------------------------- *)
+
+emit_payload   = "payload" : json ;
+
+set_payload    = "key"     : string,
+                "value"   : json ;
+
+delta_payload  = "patch"   : json ;                 (* canonicalized patch object/array *)
+
+seal_payload   = "lane"    : string,
+                "root"    : hash ;
+
+attest_payload = "policy_hash" : hash,
+                "meta_hash"   : hash,
+                "abi_hash"    : hash ;
+
+(* -------------------------
+   Canonical ordering (law)
+   -------------------------
+   Top-level key order MUST be:
+   v, tick, type, fold, id, ref, payload, key, value, patch, lane, root,
+   policy_hash, meta_hash, abi_hash, (then any extra keys sorted)
+*)
