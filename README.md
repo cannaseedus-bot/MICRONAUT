@@ -16,6 +16,7 @@ See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md
 * SVG replay generator: [`docs/svg_replay_generator.md`](docs/svg_replay_generator.md)
 * Golden vector pack: [`docs/golden_pack/`](docs/golden_pack/)
 * FEL language pack v1: [`docs/fel-language-pack-v1/`](docs/fel-language-pack-v1/)
+* FEL language pack v1.1: [`docs/fel-language-pack-v1.1/`](docs/fel-language-pack-v1.1/)
 
 ## The Compression Fold Universe
 
