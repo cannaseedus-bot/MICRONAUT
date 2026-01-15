@@ -20,36 +20,66 @@
             --control-vector: storage;
             --operation-mode: data-unfolding;
             --compression-target: database;
+            --agent-id: "micronaut-db-master";
+            --agent-vector: storage;
+            --agent-domain: database;
+            --agent-can-emit: delta;
+            --agent-can-request: seal;
         }
 
         .micronaut-code-exec {
             --control-vector: execution;
             --operation-mode: logic-unfolding;
             --compression-target: code;
+            --agent-id: "micronaut-code-exec";
+            --agent-vector: execution;
+            --agent-domain: code;
+            --agent-can-emit: delta;
+            --agent-can-request: seal;
         }
 
         .micronaut-lang-parse {
             --control-vector: parsing;
             --operation-mode: syntax-unfolding;
             --compression-target: language;
+            --agent-id: "micronaut-lang-parse";
+            --agent-vector: parsing;
+            --agent-domain: language;
+            --agent-can-emit: delta;
+            --agent-can-request: seal;
         }
 
         .micronaut-pattern-match {
             --control-vector: analysis;
             --operation-mode: pattern-recognition;
             --compression-target: patterns;
+            --agent-id: "micronaut-pattern-match";
+            --agent-vector: analysis;
+            --agent-domain: patterns;
+            --agent-can-emit: delta;
+            --agent-can-request: seal;
         }
 
         .micronaut-ast-gen {
             --control-vector: generation;
             --operation-mode: tree-building;
             --compression-target: ast;
+            --agent-id: "micronaut-ast-gen";
+            --agent-vector: generation;
+            --agent-domain: ast;
+            --agent-can-emit: delta;
+            --agent-can-request: seal;
         }
 
         .micronaut-vector-ctrl {
             --control-vector: coordination;
             --operation-mode: flow-management;
             --compression-target: universe;
+            --agent-id: "micronaut-vector-ctrl";
+            --agent-vector: coordination;
+            --agent-domain: universe;
+            --agent-can-emit: delta;
+            --agent-can-request: attest;
         }
 
         /* Compression State Classes */
@@ -192,7 +222,6 @@
             padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
-            cursor: pointer;
         }
 
         .micronaut-card.active {
@@ -271,9 +300,10 @@
             transform: translateY(-2px);
         }
 
-        .control-btn.active {
-            background: rgba(22, 242, 170, 0.3);
-            box-shadow: 0 0 10px rgba(22, 242, 170, 0.5);
+        .control-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Metrics Display */
@@ -292,15 +322,43 @@
         }
 
         .metric-value {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #16f2aa;
             margin-bottom: 5px;
+            word-break: break-all;
         }
 
         .metric-label {
             font-size: 0.9rem;
             color: #7b8a9a;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(22, 242, 170, 0.4);
+            color: #16f2aa;
+        }
+
+        .status-pill.offline {
+            border-color: rgba(255, 96, 96, 0.4);
+            color: #ff6060;
+        }
+
+        .svg-panel {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        #svgHost svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
@@ -337,7 +395,7 @@
                 </div>
 
                 <div class="micronaut-panel" id="micronautPanel">
-                    <!-- Micronauts will be added here by JavaScript -->
+                    <!-- Micronauts will be added here by JS -->
                 </div>
             </div>
 
@@ -347,28 +405,28 @@
                 <p>CSS custom properties as control mechanisms for compression operations.</p>
 
                 <div class="control-interface">
-                    <button class="control-btn" id="compressBtn">Activate Compression</button>
-                    <button class="control-btn" id="optimizeBtn">Optimize Flow</button>
-                    <button class="control-btn" id="maximizeBtn">Maximum Compression</button>
-                    <button class="control-btn" id="resetBtn">Reset System</button>
+                    <button class="control-btn" data-action="compression" data-agent-class="micronaut-vector-ctrl" data-value="active">Activate Compression</button>
+                    <button class="control-btn" data-action="compression" data-agent-class="micronaut-vector-ctrl" data-value="optimized">Optimize Flow</button>
+                    <button class="control-btn" data-action="compression" data-agent-class="micronaut-vector-ctrl" data-value="maximum">Maximum Compression</button>
+                    <button class="control-btn" data-action="compression" data-agent-class="micronaut-vector-ctrl" data-value="active">Reset System</button>
                 </div>
 
                 <div class="compression-visual" id="compressionVisual">
                     <div class="compression-wave"></div>
-                    <!-- Particles will be added by JavaScript -->
+                    <!-- Particles will be added by JS -->
                 </div>
 
                 <div class="metrics-display">
                     <div class="metric-card">
-                        <div class="metric-value" id="efficiencyValue">94.1%</div>
+                        <div class="metric-value" id="efficiencyValue">—</div>
                         <div class="metric-label">Compression Efficiency</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" id="speedValue">0.2ms</div>
+                        <div class="metric-value" id="speedValue">—</div>
                         <div class="metric-label">Execution Speed</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" id="memoryValue">12KB</div>
+                        <div class="metric-value" id="memoryValue">—</div>
                         <div class="metric-label">Memory Usage</div>
                     </div>
                 </div>
@@ -380,39 +438,118 @@
             <div class="card-title">🎮 Live Compression Control</div>
 
             <div class="control-interface">
-                <button class="control-btn" id="dbControl">Database Compression</button>
-                <button class="control-btn" id="codeControl">Code Compression</button>
-                <button class="control-btn" id="langControl">Language Compression</button>
-                <button class="control-btn" id="patternControl">Pattern Recognition</button>
+                <button class="control-btn" data-action="domain" data-agent-class="micronaut-db-master" data-value="database">Database Compression</button>
+                <button class="control-btn" data-action="domain" data-agent-class="micronaut-code-exec" data-value="code">Code Compression</button>
+                <button class="control-btn" data-action="domain" data-agent-class="micronaut-lang-parse" data-value="language">Language Compression</button>
+                <button class="control-btn" data-action="domain" data-agent-class="micronaut-pattern-match" data-value="patterns">Pattern Recognition</button>
             </div>
 
             <div class="code-block" id="liveOutput">
-                // Compression output will appear here
-                CSS_MICRONAUTS.control({
-                  compression: "⟁UNIVERSE⟁",
-                  domains: ["db", "code", "lang"],
-                  vectors: ["storage", "execution", "parsing"]
-                })
+                // Awaiting verified state...
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-title">🧾 Verifier Proof HUD</div>
+                <p>UI reflects verified state roots and projection hashes.</p>
+
+                <div class="metrics-display">
+                    <div class="metric-card">
+                        <div class="metric-value" id="stateRoot">—</div>
+                        <div class="metric-label">State Root SHA256</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="svgHash">—</div>
+                        <div class="metric-label">SVG SHA256</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="svgStreamHash">—</div>
+                        <div class="metric-label">SVG Stream SHA256</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="attestationHash">—</div>
+                        <div class="metric-label">Attestation SHA256</div>
+                    </div>
+                </div>
+
+                <div class="metrics-display">
+                    <div class="metric-card">
+                        <div class="metric-value" id="tickValue">—</div>
+                        <div class="metric-label">Verified Tick</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value"><span class="status-pill offline" id="wsStatus">offline</span></div>
+                        <div class="metric-label">WebSocket Status</div>
+                    </div>
+                </div>
+
+                <div class="svg-panel">
+                    <div id="svgHost">SVG projection will render here.</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        const WS_URL = "ws://localhost:8765";
+        const SESSION_ID = "sess_demo";
+
         class CSSMicronautControl {
             constructor() {
                 this.micronauts = [
-                    { id: "db-master", name: "DB Master µ", icon: "🗄️", status: "Active", vector: "storage" },
-                    { id: "code-exec", name: "Code Exec µ", icon: "⚡", status: "Active", vector: "execution" },
-                    { id: "lang-parse", name: "Lang Parse µ", icon: "🔤", status: "Active", vector: "parsing" },
-                    { id: "pattern-match", name: "Pattern Match µ", icon: "🔍", status: "Active", vector: "analysis" },
-                    { id: "ast-gen", name: "AST Gen µ", icon: "🌳", status: "Active", vector: "generation" },
-                    { id: "vector-ctrl", name: "Vector Ctrl µ", icon: "🎮", status: "Active", vector: "coordination" },
+                    {
+                        id: "db-master",
+                        name: "DB Master µ",
+                        icon: "🗄️",
+                        status: "Pending",
+                        vector: "storage",
+                        cssClass: "micronaut-db-master",
+                    },
+                    {
+                        id: "code-exec",
+                        name: "Code Exec µ",
+                        icon: "⚡",
+                        status: "Pending",
+                        vector: "execution",
+                        cssClass: "micronaut-code-exec",
+                    },
+                    {
+                        id: "lang-parse",
+                        name: "Lang Parse µ",
+                        icon: "🔤",
+                        status: "Pending",
+                        vector: "parsing",
+                        cssClass: "micronaut-lang-parse",
+                    },
+                    {
+                        id: "pattern-match",
+                        name: "Pattern Match µ",
+                        icon: "🔍",
+                        status: "Pending",
+                        vector: "analysis",
+                        cssClass: "micronaut-pattern-match",
+                    },
+                    {
+                        id: "ast-gen",
+                        name: "AST Gen µ",
+                        icon: "🌳",
+                        status: "Pending",
+                        vector: "generation",
+                        cssClass: "micronaut-ast-gen",
+                    },
+                    {
+                        id: "vector-ctrl",
+                        name: "Vector Ctrl µ",
+                        icon: "🎮",
+                        status: "Pending",
+                        vector: "coordination",
+                        cssClass: "micronaut-vector-ctrl",
+                    },
                 ];
 
-                this.compressionState = "active";
-                this.efficiency = 94.1;
-                this.speed = 0.2;
-                this.memory = 12;
+                this.nextTick = 0;
+                this.socket = null;
 
                 this.init();
             }
@@ -421,7 +558,53 @@
                 this.renderMicronauts();
                 this.setupEventListeners();
                 this.startCompressionVisualization();
-                this.updateMetrics();
+                this.connect();
+            }
+
+            connect() {
+                const statusEl = document.getElementById("wsStatus");
+                try {
+                    this.socket = new WebSocket(WS_URL);
+                } catch (error) {
+                    this.log(`[ws] failed to construct: ${error}`);
+                    return;
+                }
+
+                this.socket.addEventListener("open", () => {
+                    statusEl.textContent = "online";
+                    statusEl.classList.remove("offline");
+                    this.log("[ws] connected");
+                    this.setButtonsEnabled(true);
+                });
+
+                this.socket.addEventListener("close", () => {
+                    statusEl.textContent = "offline";
+                    statusEl.classList.add("offline");
+                    this.log("[ws] closed");
+                    this.setButtonsEnabled(false);
+                });
+
+                this.socket.addEventListener("error", () => {
+                    statusEl.textContent = "offline";
+                    statusEl.classList.add("offline");
+                    this.log("[ws] error");
+                    this.setButtonsEnabled(false);
+                });
+
+                this.socket.addEventListener("message", (event) => {
+                    const msg = JSON.parse(event.data);
+                    if (msg.type === "verified") {
+                        this.applyVerified(msg);
+                    } else if (msg.type === "error") {
+                        this.log(`[error] ${msg.error}`);
+                    }
+                });
+            }
+
+            setButtonsEnabled(enabled) {
+                document.querySelectorAll(".control-btn").forEach((btn) => {
+                    btn.disabled = !enabled;
+                });
             }
 
             renderMicronauts() {
@@ -430,7 +613,7 @@
 
                 this.micronauts.forEach((micronaut) => {
                     const card = document.createElement("div");
-                    card.className = "micronaut-card";
+                    card.className = `micronaut-card ${micronaut.cssClass}`;
                     card.id = `micronaut-${micronaut.id}`;
                     card.innerHTML = `
                         <div class="micronaut-icon">${micronaut.icon}</div>
@@ -438,114 +621,157 @@
                         <div class="micronaut-status">${micronaut.status}</div>
                         <div class="micronaut-vector">Vector: ${micronaut.vector}</div>
                     `;
-
-                    card.addEventListener("click", () => this.toggleMicronaut(micronaut.id));
                     panel.appendChild(card);
+                    const agentLine = document.createElement("div");
+                    agentLine.className = "micronaut-vector";
+                    agentLine.textContent = `Agent: ${this.getAgentId(card) || "declared"}`;
+                    card.appendChild(agentLine);
                 });
             }
 
             setupEventListeners() {
-                document.getElementById("compressBtn").addEventListener("click", () =>
-                    this.setCompressionState("active")
-                );
-                document.getElementById("optimizeBtn").addEventListener("click", () =>
-                    this.setCompressionState("optimized")
-                );
-                document.getElementById("maximizeBtn").addEventListener("click", () =>
-                    this.setCompressionState("maximum")
-                );
-                document.getElementById("resetBtn").addEventListener("click", () => this.resetSystem());
-
-                document.getElementById("dbControl").addEventListener("click", () =>
-                    this.controlDomain("database")
-                );
-                document.getElementById("codeControl").addEventListener("click", () =>
-                    this.controlDomain("code")
-                );
-                document.getElementById("langControl").addEventListener("click", () =>
-                    this.controlDomain("language")
-                );
-                document.getElementById("patternControl").addEventListener("click", () =>
-                    this.controlDomain("patterns")
-                );
+                document.querySelectorAll(".control-btn[data-action]").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const action = button.dataset.action;
+                        const agentClass = button.dataset.agentClass;
+                        const value = button.dataset.value;
+                        if (!agentClass || !value) {
+                            this.log("[intent] missing agent metadata");
+                            return;
+                        }
+                        if (action === "compression") {
+                            this.emitCompressionState(agentClass, value);
+                        } else if (action === "domain") {
+                            this.emitDomainControl(agentClass, value);
+                        }
+                    });
+                });
             }
 
-            setCompressionState(state) {
-                this.compressionState = state;
+            emitCompressionState(agentClass, state) {
+                this.emitDelta(agentClass, {
+                    op: "replace",
+                    path: "/ui/compression_state",
+                    value: state,
+                });
+            }
+
+            emitDomainControl(agentClass, domain) {
+                this.emitDelta(agentClass, {
+                    op: "replace",
+                    path: "/ui/last_domain_request",
+                    value: domain,
+                });
+            }
+
+            emitDelta(agentClass, patch) {
+                if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+                    this.log("[ws] not connected; cannot emit");
+                    return;
+                }
+                const agentId = this.getAgentIdByClass(agentClass);
+                if (!agentId) {
+                    this.log("[intent] missing agent-id");
+                    return;
+                }
+                const fel = {
+                    v: "fel.v1.1",
+                    tick: this.nextTick,
+                    type: "delta",
+                    fold: "⟁STATE_FOLD⟁",
+                    source_agent: agentId,
+                    requires_proof: true,
+                    patch,
+                };
+                this.nextTick += 1;
+
+                const payload = {
+                    v: "micronaut.ws.v1",
+                    type: "intent",
+                    session: SESSION_ID,
+                    agent_id: agentId,
+                    fel,
+                };
+                this.socket.send(JSON.stringify(payload));
+                this.log(`[intent] ${agentId} → ${patch.path}=${patch.value}`);
+            }
+
+            getAgentId(card) {
+                if (!card) {
+                    return "";
+                }
+                const styles = getComputedStyle(card);
+                return this.cleanCssString(styles.getPropertyValue("--agent-id"));
+            }
+
+            getAgentIdByClass(agentClass) {
+                const card = document.querySelector(`.${agentClass}`);
+                return this.getAgentId(card);
+            }
+
+            cleanCssString(value) {
+                return value.replace(/["']/g, "").trim();
+            }
+
+            applyVerified(msg) {
+                const state = msg.state || {};
+                const proof = msg.proof || {};
+
+                const mode = state?.ui?.compression_state || "active";
                 document.body.classList.remove(
                     "compression-active",
                     "compression-optimized",
                     "compression-maximum"
                 );
-                document.body.classList.add(`compression-${state}`);
+                document.body.classList.add(`compression-${mode}`);
 
-                switch (state) {
-                    case "active":
-                        this.efficiency = 94.1;
-                        this.speed = 0.2;
-                        this.memory = 12;
-                        break;
-                    case "optimized":
-                        this.efficiency = 97.3;
-                        this.speed = 0.15;
-                        this.memory = 8;
-                        break;
-                    case "maximum":
-                        this.efficiency = 99.8;
-                        this.speed = 0.08;
-                        this.memory = 4;
-                        break;
-                    default:
-                        break;
+                const eff = state?.metrics?.efficiency;
+                const spd = state?.metrics?.speed_ms;
+                const mem = state?.metrics?.memory_kb;
+
+                document.getElementById("efficiencyValue").textContent =
+                    eff != null ? `${eff}%` : "—";
+                document.getElementById("speedValue").textContent =
+                    spd != null ? `${spd}ms` : "—";
+                document.getElementById("memoryValue").textContent =
+                    mem != null ? `${mem}KB` : "—";
+
+                document.getElementById("stateRoot").textContent = proof.state_root_sha256 || "—";
+                document.getElementById("svgHash").textContent = proof.svg_sha256 || "—";
+                document.getElementById("svgStreamHash").textContent =
+                    proof.svg_stream_sha256 || "—";
+                document.getElementById("attestationHash").textContent =
+                    proof.attestation_sha256 || "—";
+                document.getElementById("tickValue").textContent = msg.tick ?? "—";
+
+                this.updateMicronautStatus(state);
+
+                const svgHost = document.getElementById("svgHost");
+                if (svgHost && msg.svg) {
+                    svgHost.innerHTML = msg.svg;
                 }
 
-                this.updateMetrics();
-                this.updateLiveOutput(`Compression state: ${state}`);
-            }
-
-            toggleMicronaut(micronautId) {
-                const card = document.getElementById(`micronaut-${micronautId}`);
-                card.classList.toggle("active");
-
-                const micronaut = this.micronauts.find((entry) => entry.id === micronautId);
-                micronaut.status = card.classList.contains("active") ? "Enhanced" : "Active";
-
-                document.querySelector(`#micronaut-${micronautId} .micronaut-status`).textContent =
-                    micronaut.status;
-
-                document.body.classList.toggle(`micronaut-${micronautId}`);
-
-                this.updateLiveOutput(
-                    `Micronaut ${micronaut.name} ${micronaut.status.toLowerCase()}`
+                this.log(
+                    `[verified tick=${msg.tick}] state=${(proof.state_root_sha256 || "").slice(0, 16)} svg=${
+                        (proof.svg_sha256 || "").slice(0, 16)
+                    } stream=${(proof.svg_stream_sha256 || "").slice(0, 16)}`
                 );
             }
 
-            controlDomain(domain) {
-                let message = "";
-                let vector = "";
-
-                switch (domain) {
-                    case "database":
-                        message = "Database compression active";
-                        vector = "storage, retrieval, query";
-                        break;
-                    case "code":
-                        message = "Code compression executing";
-                        vector = "unfold, execute, optimize";
-                        break;
-                    case "language":
-                        message = "Language compression parsing";
-                        vector = "parse, interpret, transform";
-                        break;
-                    case "patterns":
-                        message = "Pattern recognition analyzing";
-                        vector = "analyze, categorize, optimize";
-                        break;
-                    default:
-                        break;
-                }
-
-                this.updateLiveOutput(`${message} | Vectors: ${vector}`);
+            updateMicronautStatus(state) {
+                const activeVectors = state?.ui?.micronaut_vectors || [];
+                this.micronauts.forEach((micronaut) => {
+                    const card = document.getElementById(`micronaut-${micronaut.id}`);
+                    if (!card) {
+                        return;
+                    }
+                    const isActive = activeVectors.includes(micronaut.vector);
+                    card.classList.toggle("active", isActive);
+                    const statusEl = card.querySelector(".micronaut-status");
+                    if (statusEl) {
+                        statusEl.textContent = isActive ? "Verified" : "Idle";
+                    }
+                });
             }
 
             startCompressionVisualization() {
@@ -579,13 +805,7 @@
                 document.head.appendChild(style);
             }
 
-            updateMetrics() {
-                document.getElementById("efficiencyValue").textContent = `${this.efficiency}%`;
-                document.getElementById("speedValue").textContent = `${this.speed}ms`;
-                document.getElementById("memoryValue").textContent = `${this.memory}KB`;
-            }
-
-            updateLiveOutput(message) {
+            log(message) {
                 const output = document.getElementById("liveOutput");
                 const timestamp = new Date().toLocaleTimeString();
                 output.textContent = `// [${timestamp}] ${message}\n${output.textContent}`;
@@ -594,21 +814,6 @@
                 if (lines.length > 10) {
                     output.textContent = lines.slice(0, 10).join("\n");
                 }
-            }
-
-            resetSystem() {
-                document.body.className = "";
-                this.micronauts.forEach((micronaut) => {
-                    const card = document.getElementById(`micronaut-${micronaut.id}`);
-                    if (card) {
-                        card.classList.remove("active");
-                    }
-                    micronaut.status = "Active";
-                });
-
-                this.setCompressionState("active");
-                this.renderMicronauts();
-                this.updateLiveOutput("System reset to default state");
             }
         }
 

@@ -1,0 +1,144 @@
+{
+  "$schema": "xjson://schema/core/v1",
+  "$id": "fel://schema/micronaut-agent-registry/v1",
+  "title": "Micronaut Agent Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["v", "policy_hash", "abi_hash", "agents"],
+  "properties": {
+    "v": { "type": "string", "const": "micronaut.agent.registry.v1" },
+    "policy_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Pinned policy hash (must remain constant across a verified run)."
+    },
+    "abi_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Pinned ABI hash for event semantics (must remain constant across a verified run)."
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/agent" }
+    }
+  },
+  "$defs": {
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "agent_type",
+        "fold_scope",
+        "emit",
+        "forbidden",
+        "requires_proof",
+        "selectors"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9\\-_.]{2,63}$"
+        },
+        "agent_type": {
+          "type": "string",
+          "enum": ["css_micronaut", "python_bot", "wasm_bot", "service_worker_bot"]
+        },
+        "description": { "type": "string", "maxLength": 400 },
+        "fold_scope": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/fold" },
+          "description": "Folds the agent is allowed to reference in intents (never direct-mutate CONTROL/UI)."
+        },
+        "emit": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/emit_capability" },
+          "description": "What this agent is allowed to emit as FEL events."
+        },
+        "forbidden": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/forbidden_capability" },
+          "description": "Capabilities that must never be exercised by this agent."
+        },
+        "requires_proof": {
+          "type": "boolean",
+          "description": "If true, events from this agent must be proven/attested."
+        },
+        "selectors": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/selector" },
+          "description": "CSS selectors that identify this Micronaut in the DOM."
+        },
+        "css_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "requires_vars": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^--[a-z0-9\\-]+$" }
+            },
+            "forbids_vars": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^--[a-z0-9\\-]+$" }
+            }
+          }
+        }
+      }
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["css"],
+      "properties": {
+        "css": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "note": { "type": "string", "maxLength": 200 }
+      }
+    },
+    "fold": {
+      "type": "string",
+      "enum": [
+        "⟁DATA_FOLD⟁",
+        "⟁CODE_FOLD⟁",
+        "⟁STORAGE_FOLD⟁",
+        "⟁NETWORK_FOLD⟁",
+        "⟁UI_FOLD⟁",
+        "⟁AUTH_FOLD⟁",
+        "⟁DB_FOLD⟁",
+        "⟁COMPUTE_FOLD⟁",
+        "⟁STATE_FOLD⟁",
+        "⟁EVENTS_FOLD⟁",
+        "⟁TIME_FOLD⟁",
+        "⟁SPACE_FOLD⟁",
+        "⟁META_FOLD⟁",
+        "⟁CONTROL_FOLD⟁",
+        "⟁PATTERN_FOLD⟁"
+      ]
+    },
+    "emit_capability": {
+      "type": "string",
+      "enum": [
+        "emit_set_state",
+        "emit_delta_state",
+        "emit_request_seal",
+        "emit_request_attest",
+        "emit_label_pattern"
+      ]
+    },
+    "forbidden_capability": {
+      "type": "string",
+      "enum": [
+        "direct_state_mutation",
+        "target_control_fold",
+        "target_ui_fold",
+        "dynamic_eval",
+        "self_grant_capability",
+        "forge_hash",
+        "skip_verification"
+      ]
+    }
+  }
+}
