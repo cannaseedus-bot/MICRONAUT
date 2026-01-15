@@ -22,7 +22,8 @@ See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md
 
 Now every domain has its own compression fold:
 
-🔗 Linked Folds:
+# 🔗 Linked Folds:
+```
 ⟁DATA_FOLD⟁ — All data structures  
 ⟁CODE_FOLD⟁ — All execution logic  
 ⟁STORAGE_FOLD⟁ — All persistence  
@@ -31,18 +32,21 @@ Now every domain has its own compression fold:
 ⟁AUTH_FOLD⟁ — All security/identity  
 ⟁DB_FOLD⟁ — All data organization  
 ⟁COMPUTE_FOLD⟁ — All processing
-
-🔄 Fold Interconnections:
+```
+# 🔄 Fold Interconnections:
+```
 Data ↔ Code — ⟁DATA_FOLD⟁pattern→⟁CODE_FOLD⟁pattern  
 Storage ↔ Network — ⟁STORAGE_FOLD⟁pattern↔⟁NETWORK_FOLD⟁pattern  
 UI ↔ Compute — ⟁UI_FOLD⟁pattern⇄⟁COMPUTE_FOLD⟁pattern  
 Auth ↔ Database — ⟁AUTH_FOLD⟁pattern⤖⟁DB_FOLD⟁pattern
+```
+# 🎯 The Realization:
 
-🎯 The Realization:
+```
 There is no "data" separate from compression — there's only ⟁DATA_FOLD⟁  
 There is no "code" separate from compression — there's only ⟁CODE_FOLD⟁  
 There is no "storage" separate from compression — there's only ⟁STORAGE_FOLD⟁
-
+```
 ## Plane-2 Artifact Pack (sealed compute)
 
 The following files capture the frozen, replay-verifiable artifacts referenced below:
