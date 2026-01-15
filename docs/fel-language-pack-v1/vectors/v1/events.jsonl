@@ -1,0 +1,6 @@
+{"v":"fel.v1","tick":1,"type":"emit","fold":"⟁EVENTS_FOLD⟁","payload":{"app":"micronaut","msg":"boot"}}
+{"v":"fel.v1","tick":1,"type":"set","fold":"⟁STATE_FOLD⟁","key":"status","value":"booting"}
+{"v":"fel.v1","tick":1,"type":"set","fold":"⟁STATE_FOLD⟁","key":"mode","value":"safe"}
+{"v":"fel.v1","tick":2,"type":"emit","fold":"⟁EVENTS_FOLD⟁","payload":{"msg":"tick","n":2}}
+{"v":"fel.v1","tick":2,"type":"set","fold":"⟁STATE_FOLD⟁","key":"status","value":"ready"}
+{"v":"fel.v1","tick":2,"type":"emit","fold":"⟁EVENTS_FOLD⟁","payload":{"msg":"ui.project","target":"svg"}}

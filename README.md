@@ -15,6 +15,7 @@ See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md
 * SCXQ2 binary packing example: [`docs/scxq2_binary_packing_example.md`](docs/scxq2_binary_packing_example.md)
 * SVG replay generator: [`docs/svg_replay_generator.md`](docs/svg_replay_generator.md)
 * Golden vector pack: [`docs/golden_pack/`](docs/golden_pack/)
+* FEL language pack v1: [`docs/fel-language-pack-v1/`](docs/fel-language-pack-v1/)
 
 ## The Compression Fold Universe
 
