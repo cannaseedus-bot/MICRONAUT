@@ -1,0 +1,71 @@
+{
+  "v": "micronaut.agent.registry.v1",
+  "policy_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "abi_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "agents": [
+    {
+      "agent_id": "micronaut-db-master",
+      "agent_type": "css_micronaut",
+      "description": "UI control-plane agent for DB compression requests.",
+      "fold_scope": ["⟁STATE_FOLD⟁", "⟁PATTERN_FOLD⟁", "⟁EVENTS_FOLD⟁"],
+      "emit": ["emit_delta_state", "emit_request_seal", "emit_label_pattern"],
+      "forbidden": ["target_control_fold", "target_ui_fold", "direct_state_mutation", "skip_verification"],
+      "requires_proof": true,
+      "selectors": [{ "css": ".micronaut-db-master", "note": "CSS class declares capability vector = storage" }],
+      "css_contract": {
+        "requires_vars": ["--control-vector", "--operation-mode", "--compression-target"],
+        "forbids_vars": ["--state-root", "--svg-hash"]
+      }
+    },
+    {
+      "agent_id": "micronaut-vector-ctrl",
+      "agent_type": "css_micronaut",
+      "description": "UI control-plane agent for compression mode switching.",
+      "fold_scope": ["⟁STATE_FOLD⟁", "⟁EVENTS_FOLD⟁"],
+      "emit": ["emit_delta_state"],
+      "forbidden": ["target_control_fold", "target_ui_fold", "direct_state_mutation", "skip_verification"],
+      "requires_proof": true,
+      "selectors": [{ "css": ".micronaut-vector-ctrl", "note": "CSS class declares coordination control vector" }]
+    },
+    {
+      "agent_id": "python-exec-01",
+      "agent_type": "python_bot",
+      "description": "Execution agent that applies lawful STATE transitions and emits proofs.",
+      "fold_scope": ["⟁STATE_FOLD⟁", "⟁META_FOLD⟁", "⟁STORAGE_FOLD⟁", "⟁EVENTS_FOLD⟁"],
+      "emit": ["emit_set_state", "emit_delta_state", "emit_request_attest", "emit_request_seal"],
+      "forbidden": ["target_control_fold", "target_ui_fold", "skip_verification", "forge_hash"],
+      "requires_proof": true,
+      "selectors": [{ "css": ":root", "note": "Runtime agent identity (non-DOM)" }]
+    },
+    {
+      "agent_id": "online-research-micronaut",
+      "agent_type": "python_bot",
+      "description": "Online research execution agent: gathers sources, computes synthesis, emits verified artifacts.",
+      "fold_scope": [
+        "⟁EVENTS_FOLD⟁",
+        "⟁NETWORK_FOLD⟁",
+        "⟁DATA_FOLD⟁",
+        "⟁STATE_FOLD⟁",
+        "⟁META_FOLD⟁",
+        "⟁PATTERN_FOLD⟁"
+      ],
+      "emit": [
+        "emit_delta_state",
+        "emit_label_pattern",
+        "emit_request_attest",
+        "emit_request_seal"
+      ],
+      "forbidden": [
+        "direct_state_mutation",
+        "target_control_fold",
+        "target_ui_fold",
+        "dynamic_eval",
+        "self_grant_capability",
+        "forge_hash",
+        "skip_verification"
+      ],
+      "requires_proof": true,
+      "selectors": [{ "css": ".micronaut-online-research", "note": "Optional UI control surface (projection only)" }]
+    }
+  ]
+}
