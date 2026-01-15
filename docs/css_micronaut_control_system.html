@@ -8,7 +8,7 @@
         /* CSS MICRONAUT CONTROL VECTORS */
         :root {
             --compression-level: 94.1%;
-            --quantum-speed: 0.2ms;
+            --execution-speed: 0.2ms;
             --universe-scale: 1;
             --data-flow: normal;
             --logic-execution: running;
@@ -98,7 +98,7 @@
         .compression-maximum {
             --compression-state: maximum;
             --efficiency: 99.8%;
-            animation: quantum-oscillate 1s infinite;
+            animation: compression-oscillate 1s infinite;
         }
 
         /* Animation Keyframes for Compression */
@@ -118,11 +118,11 @@
             }
         }
 
-        @keyframes quantum-oscillate {
-            0%, 100% { --quantum-state: 0; }
-            25% { --quantum-state: 0.25; }
-            50% { --quantum-state: 0.5; }
-            75% { --quantum-state: 0.75; }
+        @keyframes compression-oscillate {
+            0%, 100% { --compression-state-step: 0; }
+            25% { --compression-state-step: 0.25; }
+            50% { --compression-state-step: 0.5; }
+            75% { --compression-state-step: 0.75; }
         }
 
         /* Base Styles */
@@ -385,7 +385,7 @@
 
 .data-compression {
   compression-ratio: var(--compression-level);
-  execution-speed: var(--quantum-speed);
+  execution-speed: var(--execution-speed);
 }
 
 .micronaut-db-master {
