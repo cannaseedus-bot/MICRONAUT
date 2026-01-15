@@ -35,7 +35,7 @@ import json
 import os
 import struct
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 # -----------------------------
@@ -321,6 +321,83 @@ def pack_scx2(records: List[Dict[str, Any]], has_att: bool) -> bytes:
 # -----------------------------
 
 FORBIDDEN_TARGET_FOLDS = {"⟁CONTROL_FOLD⟁", "⟁UI_FOLD⟁"}
+EMIT_TYPE_TO_CAP = {
+    "set": "emit_set_state",
+    "delta": "emit_delta_state",
+    "seal": "emit_request_seal",
+    "attest": "emit_request_attest",
+    "label": "emit_label_pattern",
+}
+
+
+@dataclass(frozen=True)
+class AgentCaps:
+    agent_id: str
+    emit: Set[str]
+    fold_scope: Set[str]
+    forbidden: Set[str]
+    requires_proof: bool
+
+
+def load_registry(path: str) -> Dict[str, Any]:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def index_registry(reg: Dict[str, Any]) -> Dict[str, AgentCaps]:
+    agents: Dict[str, AgentCaps] = {}
+    for agent in reg.get("agents", []):
+        agents[agent["agent_id"]] = AgentCaps(
+            agent_id=agent["agent_id"],
+            emit=set(agent.get("emit", [])),
+            fold_scope=set(agent.get("fold_scope", [])),
+            forbidden=set(agent.get("forbidden", [])),
+            requires_proof=bool(agent.get("requires_proof", True)),
+        )
+    return agents
+
+
+def assert_registry_pins(
+    reg: Dict[str, Any], policy_pin: Optional[str], abi_pin: Optional[str]
+) -> None:
+    if policy_pin and reg.get("policy_hash") != policy_pin:
+        raise ValueError("registry policy_hash does not match pinned policy_hash")
+    if abi_pin and reg.get("abi_hash") != abi_pin:
+        raise ValueError("registry abi_hash does not match pinned abi_hash")
+
+
+def check_event_against_registry(evt: Dict[str, Any], agents: Dict[str, AgentCaps]) -> None:
+    agent_id = evt.get("source_agent")
+    if not agent_id:
+        raise ValueError("FEL event missing source_agent (required for Micronaut governance)")
+
+    if agent_id not in agents:
+        raise ValueError(f"Unknown source_agent: {agent_id}")
+
+    caps = agents[agent_id]
+
+    fold = evt.get("fold")
+    if fold in FORBIDDEN_TARGET_FOLDS:
+        raise ValueError(f"Illegal target fold: {fold}")
+
+    if fold and fold not in caps.fold_scope:
+        raise ValueError(f"Agent {agent_id} used fold {fold} outside fold_scope")
+
+    evt_type = evt.get("type")
+    cap_needed = EMIT_TYPE_TO_CAP.get(evt_type)
+    if not cap_needed:
+        raise ValueError(f"Unknown/unsupported event type for capability mapping: {evt_type}")
+
+    if cap_needed not in caps.emit:
+        raise ValueError(f"Agent {agent_id} cannot emit capability {cap_needed}")
+
+    if "target_control_fold" in caps.forbidden and fold == "⟁CONTROL_FOLD⟁":
+        raise ValueError("Attempted CONTROL_FOLD targeting (forbidden)")
+    if "target_ui_fold" in caps.forbidden and fold == "⟁UI_FOLD⟁":
+        raise ValueError("Attempted UI_FOLD targeting (forbidden)")
+
+    if caps.requires_proof and not bool(evt.get("requires_proof", True)):
+        raise ValueError(f"Agent {agent_id} requires proof but event sets requires_proof=false")
 
 
 def validate_fel_line(e: Dict[str, Any], line_no: int, last_tick: int) -> int:
@@ -479,6 +556,21 @@ def main() -> None:
         action="store_true",
         help="generate deterministic META attestations per tick (even if FEL has none)",
     )
+    ap.add_argument(
+        "--registry",
+        default=None,
+        help="path to micronaut agent registry JSON for event governance",
+    )
+    ap.add_argument(
+        "--registry-policy-pin",
+        default=None,
+        help="policy_hash pin for registry verification (optional)",
+    )
+    ap.add_argument(
+        "--registry-abi-pin",
+        default=None,
+        help="abi_hash pin for registry verification (optional)",
+    )
 
     args = ap.parse_args()
 
@@ -486,6 +578,15 @@ def main() -> None:
 
     items = load_jsonl(args.fel_jsonl)
     ticks = group_by_tick(items)
+
+    if args.registry:
+        registry = load_registry(args.registry)
+        policy_pin = args.registry_policy_pin or args.policy
+        abi_pin = args.registry_abi_pin or args.abi
+        assert_registry_pins(registry, policy_pin, abi_pin)
+        agents = index_registry(registry)
+        for event in items:
+            check_event_against_registry(event, agents)
 
     # If FEL includes attest lines and user provided pins, verify chain/pinning/hashes
     if args.policy and args.abi:
