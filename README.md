@@ -12,6 +12,7 @@ See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md
 
 * Lattice proof rules: [`docs/fold_lattice_proofs.md`](docs/fold_lattice_proofs.md)
 * Verifier rules: [`docs/verifier_rules.md`](docs/verifier_rules.md)
+* FEL verifier minimal law: [`docs/fel_verifier_min_law.md`](docs/fel_verifier_min_law.md)
 * SCXQ2 binary packing example: [`docs/scxq2_binary_packing_example.md`](docs/scxq2_binary_packing_example.md)
 * SVG replay generator: [`docs/svg_replay_generator.md`](docs/svg_replay_generator.md)
 * Golden vector pack: [`docs/golden_pack/`](docs/golden_pack/)
