@@ -1,0 +1,91 @@
+{
+  "$schema": "xjson://schema/core/v1",
+  "$id": "kuhul://schema/fel/v1.1",
+  "title": "FEL — Fold Event Language v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["v", "tick", "type", "fold"],
+  "properties": {
+    "v": { "enum": ["fel.v1", "fel.v1.1"] },
+    "tick": { "type": "integer", "minimum": 0 },
+    "type": {
+      "type": "string",
+      "enum": ["emit", "set", "delta", "seal", "attest"]
+    },
+    "fold": {
+      "type": "string",
+      "enum": [
+        "⟁DATA_FOLD⟁",
+        "⟁CODE_FOLD⟁",
+        "⟁STORAGE_FOLD⟁",
+        "⟁NETWORK_FOLD⟁",
+        "⟁UI_FOLD⟁",
+        "⟁AUTH_FOLD⟁",
+        "⟁DB_FOLD⟁",
+        "⟁COMPUTE_FOLD⟁",
+        "⟁STATE_FOLD⟁",
+        "⟁EVENTS_FOLD⟁",
+        "⟁TIME_FOLD⟁",
+        "⟁SPACE_FOLD⟁",
+        "⟁META_FOLD⟁",
+        "⟁CONTROL_FOLD⟁",
+        "⟁PATTERN_FOLD⟁"
+      ]
+    },
+    "id": { "type": "string" },
+    "ref": { "type": "string" },
+    "payload": {},
+    "key": { "type": "string" },
+    "value": {},
+    "patch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "path"],
+      "properties": {
+        "op": { "type": "string", "enum": ["add", "replace", "remove"] },
+        "path": { "type": "string", "pattern": "^/" },
+        "value": {}
+      }
+    },
+    "lane": { "type": "string" },
+    "root": { "type": "string" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fold", "tick"],
+      "properties": {
+        "fold": { "type": "string" },
+        "tick": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "policy_hash": { "type": "string" },
+    "meta_hash": { "type": "string" },
+    "abi_hash": { "type": "string" },
+    "prev": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "emit" } } },
+      "then": {
+        "required": ["payload"],
+        "not": { "anyOf": [{ "required": ["key"] }, { "required": ["value"] }, { "required": ["patch"] }] }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "set" } } },
+      "then": { "required": ["key", "value"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delta" } } },
+      "then": { "required": ["patch"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "seal" } } },
+      "then": { "required": ["lane", "root", "source"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "attest" } } },
+      "then": { "required": ["policy_hash", "meta_hash", "abi_hash"] }
+    }
+  ]
+}
