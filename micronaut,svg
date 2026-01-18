@@ -1,0 +1,28 @@
+<svg viewBox="0 0 1200 200">
+  <!-- Baseline word (all Latin) -->
+  <text x="50" y="120" class="letter" font-size="80">
+    <!-- We’ll split letters so we can swap specific ones -->
+    <tspan id="M" x="50">M</tspan>
+    <tspan x="140">I</tspan>
+    <tspan x="230">C</tspan>
+    <tspan x="320">R</tspan>
+    <tspan x="410">O</tspan>
+    <tspan x="500">N</tspan>
+    <tspan id="A" x="590">A</tspan>
+    <tspan x="680">U</tspan>
+    <tspan id="T" x="770">T</tspan>
+  </text>
+
+  <!-- Glyph layer, same positions, initially hidden -->
+  <text x="50" y="120" class="glyph" font-size="80">
+    <tspan id="mu"    x="50">µ</tspan>
+    <tspan x="140">I</tspan>
+    <tspan x="230">C</tspan>
+    <tspan x="320">R</tspan>
+    <tspan x="410">O</tspan>
+    <tspan x="500">N</tspan>
+    <tspan id="nabla" x="590">∇</tspan>
+    <tspan x="680">U</tspan>
+    <tspan id="perp"  x="770">⊥</tspan>
+  </text>
+</svg>
