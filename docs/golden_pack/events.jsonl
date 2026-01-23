@@ -1,0 +1,6 @@
+{"tick":1,"type":"emit","fold":"⟁EVENTS_FOLD⟁","payload":{"msg":"boot","app":"micronaut"}}
+{"tick":1,"type":"set","fold":"⟁STATE_FOLD⟁","key":"status","value":"booting"}
+{"tick":1,"type":"set","fold":"⟁STATE_FOLD⟁","key":"mode","value":"safe"}
+{"tick":2,"type":"emit","fold":"⟁EVENTS_FOLD⟁","payload":{"msg":"tick","n":2}}
+{"tick":2,"type":"set","fold":"⟁STATE_FOLD⟁","key":"status","value":"ready"}
+{"tick":2,"type":"emit","fold":"⟁EVENTS_FOLD⟁","payload":{"msg":"ui.project","target":"svg"}}

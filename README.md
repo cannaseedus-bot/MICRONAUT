@@ -8,6 +8,17 @@
 
 See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md).
 
+## Deterministic proof packs
+
+* Lattice proof rules: [`docs/fold_lattice_proofs.md`](docs/fold_lattice_proofs.md)
+* Verifier rules: [`docs/verifier_rules.md`](docs/verifier_rules.md)
+* SCXQ2 binary packing example: [`docs/scxq2_binary_packing_example.md`](docs/scxq2_binary_packing_example.md)
+* SVG replay generator: [`docs/svg_replay_generator.md`](docs/svg_replay_generator.md)
+* Golden vector pack: [`docs/golden_pack/`](docs/golden_pack/)
+* FEL language pack v1: [`docs/fel-language-pack-v1/`](docs/fel-language-pack-v1/)
+* FEL language pack v1.1: [`docs/fel-language-pack-v1.1/`](docs/fel-language-pack-v1.1/)
+* Fold orchestrator reference: [`fold_orchestrator.py`](fold_orchestrator.py)
+
 ## The Compression Fold Universe
 
 Now every domain has its own compression fold:
@@ -1281,4 +1292,3 @@ If you want, I can emit a single **`abr_v1_constraints_guard.js`** module that:
 * runs static checks on your ABR kernel table,
 * runs runtime guards in dev,
 * and provides verifier assertions for the 5 constraints.
-
