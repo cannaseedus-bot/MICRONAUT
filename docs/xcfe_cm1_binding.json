@@ -1,0 +1,126 @@
+{
+  "$schema": "./control_micronaut.schema.json",
+  "version": "1.0.0",
+  "spec": "CONTROL-MICRONAUT-1",
+  "status": "draft-frozen",
+
+  "@control": {
+    "null": "\u0000",
+    "header.begin": "\u0001",
+    "body.begin": "\u0002",
+    "body.end": "\u0003",
+    "transmission.end": "\u0004",
+    "query": "\u0005",
+    "ack": "\u0006",
+    "attention": "\u0007",
+    "scope.push": "\u000E",
+    "scope.pop": "\u000F",
+    "literal.escape": "\u0010",
+    "nak": "\u0015",
+    "mode.switch": "\u001B",
+    "file.sep": "\u001C",
+    "group.sep": "\u001D",
+    "record.sep": "\u001E",
+    "unit.sep": "\u001F",
+    "space": "\u0020"
+  },
+
+  "@phase": {
+    "Pop": "@control.header.begin",
+    "Wo": "@control.body.begin",
+    "Sek": "@control.body.end",
+    "Collapse": "@control.transmission.end"
+  },
+
+  "safe_chars": [
+    { "code": "U+0000", "name": "NUL", "xcfe_mapping": "@control.null", "meaning": "Absolute inert region", "safety": "safe" },
+    { "code": "U+0001", "name": "SOH", "xcfe_mapping": "@control.header.begin", "meaning": "Metadata/header phase", "safety": "safe" },
+    { "code": "U+0002", "name": "STX", "xcfe_mapping": "@control.body.begin", "meaning": "Interpretable content", "safety": "safe" },
+    { "code": "U+0003", "name": "ETX", "xcfe_mapping": "@control.body.end", "meaning": "Content closure", "safety": "safe" },
+    { "code": "U+0004", "name": "EOT", "xcfe_mapping": "@control.transmission.end", "meaning": "Collapse / flush", "safety": "safe" },
+    { "code": "U+000E", "name": "SO", "xcfe_mapping": "@control.scope.push", "meaning": "Enter sub-context", "safety": "safe" },
+    { "code": "U+000F", "name": "SI", "xcfe_mapping": "@control.scope.pop", "meaning": "Exit sub-context", "safety": "safe" },
+    { "code": "U+0010", "name": "DLE", "xcfe_mapping": "@control.literal.escape", "meaning": "Bypass interpretation", "safety": "safe" },
+    { "code": "U+001C", "name": "FS", "xcfe_mapping": "@control.file.sep", "meaning": "Major boundary", "safety": "safe" },
+    { "code": "U+001D", "name": "GS", "xcfe_mapping": "@control.group.sep", "meaning": "Group boundary", "safety": "safe" },
+    { "code": "U+001E", "name": "RS", "xcfe_mapping": "@control.record.sep", "meaning": "Record boundary", "safety": "safe" },
+    { "code": "U+001F", "name": "US", "xcfe_mapping": "@control.unit.sep", "meaning": "Atomic unit boundary", "safety": "safe" },
+    { "code": "U+0020", "name": "SPACE", "xcfe_mapping": "@control.space", "meaning": "Whitespace separator", "safety": "safe" }
+  ],
+
+  "context_safe_chars": [
+    { "code": "U+0009", "name": "HT", "xcfe_mapping": "@control.tab", "meaning": "Horizontal tab", "safety": "context-safe", "allowed_in": ["comments", "text_nodes", "json_strings"], "forbidden_in": ["css_identifiers", "attribute_names"] },
+    { "code": "U+000A", "name": "LF", "xcfe_mapping": "@control.newline", "meaning": "Line feed", "safety": "context-safe", "allowed_in": ["comments", "text_nodes", "json_strings"], "forbidden_in": ["css_identifiers", "attribute_names"] },
+    { "code": "U+000D", "name": "CR", "xcfe_mapping": "@control.return", "meaning": "Carriage return", "safety": "context-safe", "allowed_in": ["comments", "text_nodes", "json_strings"], "forbidden_in": ["css_identifiers", "attribute_names"] },
+    { "code": "U+001B", "name": "ESC", "xcfe_mapping": "@control.mode.switch", "meaning": "Mode switch", "safety": "context-safe", "allowed_in": ["comments", "text_nodes", "json_strings"], "forbidden_in": ["css_identifiers", "attribute_names"] }
+  ],
+
+  "forbidden_chars": [
+    { "code": "U+0008", "name": "BS", "xcfe_mapping": null, "meaning": "Backspace - cursor motion", "safety": "forbidden", "reason": "Layout mutation" },
+    { "code": "U+000B", "name": "VT", "xcfe_mapping": null, "meaning": "Vertical tab", "safety": "forbidden", "reason": "Rendering side-effects" },
+    { "code": "U+000C", "name": "FF", "xcfe_mapping": null, "meaning": "Form feed", "safety": "forbidden", "reason": "Parser instability" },
+    { "code": "U+0018", "name": "CAN", "xcfe_mapping": null, "meaning": "Cancel", "safety": "forbidden", "reason": "Stream corruption" },
+    { "code": "U+001A", "name": "SUB", "xcfe_mapping": null, "meaning": "Substitute", "safety": "forbidden", "reason": "EOF signal in some systems" }
+  ],
+
+  "invariants": [
+    { "id": "CM1-S1", "description": "Every STX (U+0002) MUST have a matching ETX (U+0003)", "severity": "error" },
+    { "id": "CM1-S2", "description": "Scope stack (SO/SI) MUST be balanced", "severity": "error" },
+    { "id": "CM1-S3", "description": "Separators MAY NOT nest illegally", "severity": "error" },
+    { "id": "CM1-S4", "description": "ESC CANNOT appear inside literal-escaped regions", "severity": "error" },
+    { "id": "CM1-S5", "description": "NUL regions are non-observable", "severity": "warning" },
+    { "id": "CM1-P1", "description": "Removing all CM-1 characters MUST NOT change visible output", "severity": "error" }
+  ],
+
+  "scxq2_binding": {
+    "phase_control": {
+      "chars": ["U+0001", "U+0002", "U+0003", "U+0004"],
+      "lane": "EDGE",
+      "packing": "frame_header"
+    },
+    "scope_stack": {
+      "chars": ["U+000E", "U+000F", "U+001B", "U+0010"],
+      "lane": "EDGE",
+      "packing": "context_metadata"
+    },
+    "separators": {
+      "chars": ["U+001C", "U+001D", "U+001E", "U+001F"],
+      "lane": "FIELD",
+      "packing": "boundary_markers"
+    },
+    "transport": {
+      "chars": ["U+0005", "U+0006", "U+0015", "U+0007"],
+      "lane": "EDGE",
+      "packing": "negotiation_frames"
+    }
+  },
+
+  "verifier_binding": {
+    "V0": "CM-1 tokens deterministic (no randomness)",
+    "V2": "CM-1 phase transitions require control gate record",
+    "V3": "CM-1 stream replayable from identical input",
+    "V4": "CM-1 cannot produce floating-point values",
+    "V7": "CM-1 phase boundaries align with SCXQ2 frames"
+  },
+
+  "fold_binding": {
+    "owner": "CONTROL_FOLD",
+    "collapse_rule": "Resolve -> Gate -> Commit",
+    "scxq2_lane": "EDGE",
+    "interactions": {
+      "DATA_FOLD": "Receives CM-1 annotated payloads",
+      "COMPUTE_FOLD": "Ignores CM-1 (stripped before compute)",
+      "PROOF_FOLD": "Records CM-1 hashes for audit"
+    }
+  },
+
+  "security_guarantees": [
+    "Zero execution authority",
+    "Zero render authority",
+    "Deterministic processing",
+    "Compression-safe (SCXQ2)",
+    "Replayable streams",
+    "Auditable via PROOF_FOLD",
+    "Invisible by design"
+  ]
+}

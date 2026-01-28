@@ -8,6 +8,12 @@
 
 See the deterministic fold law contract in [`docs/fold_law.md`](docs/fold_law.md).
 
+## Control Alphabet (CM-1)
+
+* **CONTROL-MICRONAUT-1 Spec**: [`docs/control_micronaut_1.md`](docs/control_micronaut_1.md) - Invisible control alphabet for XCFE / DOM / CSS safe execution
+* CM-1 Schema: [`docs/control_micronaut.schema.json`](docs/control_micronaut.schema.json)
+* XCFE Binding: [`docs/xcfe_cm1_binding.json`](docs/xcfe_cm1_binding.json)
+
 ## Deterministic proof packs
 
 * Lattice proof rules: [`docs/fold_lattice_proofs.md`](docs/fold_lattice_proofs.md)
