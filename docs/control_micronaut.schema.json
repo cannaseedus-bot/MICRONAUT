@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://micronaut.dev/schemas/control_micronaut.schema.json",
+  "title": "CONTROL-MICRONAUT-1 (CM-1) Schema",
+  "description": "Invisible Control Alphabet for XCFE / DOM / CSS Safe Execution",
+  "version": "1.0.0",
+  "type": "object",
+  "definitions": {
+    "ControlCharacter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^U\\+00[0-2][0-9A-F]$",
+          "description": "Unicode code point (U+0000 to U+0020)"
+        },
+        "name": {
+          "type": "string",
+          "description": "ASCII control character name"
+        },
+        "xcfe_mapping": {
+          "type": "string",
+          "pattern": "^@control\\.[a-z._]+$",
+          "description": "XCFE @control vector binding"
+        },
+        "meaning": {
+          "type": "string",
+          "description": "Semantic meaning in CM-1 context"
+        },
+        "safety": {
+          "type": "string",
+          "enum": ["safe", "context-safe", "forbidden"],
+          "description": "DOM/CSS safety classification"
+        }
+      },
+      "required": ["code", "name", "xcfe_mapping", "safety"]
+    },
+    "PhaseState": {
+      "type": "string",
+      "enum": ["null", "header", "body", "closing", "collapsed"],
+      "description": "CM-1 phase machine state"
+    },
+    "CM1Stream": {
+      "type": "object",
+      "properties": {
+        "bytes": {
+          "type": "string",
+          "description": "Raw byte stream with CM-1 control characters"
+        },
+        "phase": {
+          "$ref": "#/definitions/PhaseState"
+        },
+        "scope_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Current SO/SI nesting level"
+        },
+        "mode": {
+          "type": "string",
+          "default": "normal",
+          "description": "Current parser mode (ESC-triggered)"
+        },
+        "literal_escape": {
+          "type": "boolean",
+          "default": false,
+          "description": "DLE escape active flag"
+        }
+      },
+      "required": ["bytes"]
+    },
+    "InvariantRule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CM1-[A-Z][0-9]+$",
+          "description": "Rule identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable invariant description"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning"],
+          "default": "error"
+        }
+      },
+      "required": ["id", "description"]
+    }
+  },
+  "properties": {
+    "@control": {
+      "type": "object",
+      "description": "XCFE @control vector to Unicode mapping",
+      "properties": {
+        "null": { "const": "\u0000" },
+        "header.begin": { "const": "\u0001" },
+        "body.begin": { "const": "\u0002" },
+        "body.end": { "const": "\u0003" },
+        "transmission.end": { "const": "\u0004" },
+        "query": { "const": "\u0005" },
+        "ack": { "const": "\u0006" },
+        "attention": { "const": "\u0007" },
+        "scope.push": { "const": "\u000E" },
+        "scope.pop": { "const": "\u000F" },
+        "literal.escape": { "const": "\u0010" },
+        "nak": { "const": "\u0015" },
+        "mode.switch": { "const": "\u001B" },
+        "file.sep": { "const": "\u001C" },
+        "group.sep": { "const": "\u001D" },
+        "record.sep": { "const": "\u001E" },
+        "unit.sep": { "const": "\u001F" },
+        "space": { "const": "\u0020" }
+      },
+      "additionalProperties": false
+    },
+    "@phase": {
+      "type": "object",
+      "description": "Phase name to @control vector mapping",
+      "properties": {
+        "Pop": { "const": "@control.header.begin" },
+        "Wo": { "const": "@control.body.begin" },
+        "Sek": { "const": "@control.body.end" },
+        "Collapse": { "const": "@control.transmission.end" }
+      },
+      "additionalProperties": false
+    },
+    "safe_chars": {
+      "type": "array",
+      "description": "CM-1-SAFE mode allowed characters",
+      "items": {
+        "$ref": "#/definitions/ControlCharacter"
+      },
+      "minItems": 13,
+      "maxItems": 13
+    },
+    "context_safe_chars": {
+      "type": "array",
+      "description": "Context-dependent allowed characters",
+      "items": {
+        "$ref": "#/definitions/ControlCharacter"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "forbidden_chars": {
+      "type": "array",
+      "description": "Hard-banned characters",
+      "items": {
+        "$ref": "#/definitions/ControlCharacter"
+      },
+      "minItems": 5,
+      "maxItems": 5
+    },
+    "invariants": {
+      "type": "array",
+      "description": "CM-1 structural invariant rules",
+      "items": {
+        "$ref": "#/definitions/InvariantRule"
+      }
+    },
+    "scxq2_binding": {
+      "type": "object",
+      "description": "SCXQ2 lane mapping for CM-1 categories",
+      "properties": {
+        "phase_control": {
+          "type": "object",
+          "properties": {
+            "lane": { "const": "EDGE" },
+            "packing": { "const": "frame_header" }
+          }
+        },
+        "scope_stack": {
+          "type": "object",
+          "properties": {
+            "lane": { "const": "EDGE" },
+            "packing": { "const": "context_metadata" }
+          }
+        },
+        "separators": {
+          "type": "object",
+          "properties": {
+            "lane": { "const": "FIELD" },
+            "packing": { "const": "boundary_markers" }
+          }
+        },
+        "transport": {
+          "type": "object",
+          "properties": {
+            "lane": { "const": "EDGE" },
+            "packing": { "const": "negotiation_frames" }
+          }
+        }
+      }
+    },
+    "verifier_binding": {
+      "type": "object",
+      "description": "Verifier rule applicability to CM-1",
+      "properties": {
+        "V0": {
+          "type": "string",
+          "const": "CM-1 tokens deterministic (no randomness)"
+        },
+        "V2": {
+          "type": "string",
+          "const": "CM-1 phase transitions require control gate record"
+        },
+        "V3": {
+          "type": "string",
+          "const": "CM-1 stream replayable from identical input"
+        },
+        "V4": {
+          "type": "string",
+          "const": "CM-1 cannot produce floating-point values"
+        },
+        "V7": {
+          "type": "string",
+          "const": "CM-1 phase boundaries align with SCXQ2 frames"
+        }
+      }
+    }
+  },
+  "required": ["@control", "@phase"]
+}
