@@ -107,6 +107,7 @@ Pre-semantic control layer using Unicode C0 characters for phase signaling. See 
 | [`docs/control_micronaut_1.md`](docs/control_micronaut_1.md) | CM-1 control alphabet |
 | [`docs/fold_lattice_proofs.md`](docs/fold_lattice_proofs.md) | Capability lattice proofs |
 | [`docs/scxq2_binary_packing_example.md`](docs/scxq2_binary_packing_example.md) | SCXQ2 frame format |
+| [`docs/atomic_dom_binary_ingest.md`](docs/atomic_dom_binary_ingest.md) | ATOMIC-DOM binary ingest pipeline |
 
 ## Verifier Rules
 
