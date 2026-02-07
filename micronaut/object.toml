@@ -1,0 +1,20 @@
+[object]
+name = "micronaut"
+standard = "SCO/1"
+profile = "object-server"
+version = "1.0"
+
+[orchestrator]
+language = "powershell"
+entrypoint = "micronaut.ps1"
+
+[io]
+chat = "io/chat.txt"
+stream = "io/stream.txt"
+snapshot_dir = "io/snapshot"
+
+[sealed]
+brains_dir = "brains"
+semantics = "semantics.xjson"
+proof = "proof/scxq2.proof"
+trace = "trace/scxq2.trace"
