@@ -1,0 +1,174 @@
+{
+  "$schema": "xjson://schema/core/v1",
+  "@id": "xjson://schema/micronaut.registry/v1",
+  "title": "Micronaut Registry Schema",
+  "description": "Canonical registry of all Micronauts. Defines orchestration-only entities with zero execution authority. Enforcement is exclusive to KUHUL π.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": [
+    "@schema",
+    "@status",
+    "@authority",
+    "@mutation",
+    "@branching",
+    "@timestamp",
+    "@invariant",
+    "micronauts",
+    "final_statement"
+  ],
+
+  "properties": {
+    "@schema": {
+      "type": "string",
+      "const": "xjson://schema/micronaut.registry/v1"
+    },
+
+    "@status": {
+      "type": "string",
+      "enum": ["canonical"]
+    },
+
+    "@authority": {
+      "type": "string",
+      "enum": ["KUHUL_π"]
+    },
+
+    "@mutation": {
+      "type": "string",
+      "enum": ["forbidden"]
+    },
+
+    "@branching": {
+      "type": "string",
+      "enum": ["impossible"]
+    },
+
+    "@timestamp": {
+      "type": "string"
+    },
+
+    "@invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "micronaut_has_no_authority",
+        "micronaut_cannot_execute",
+        "micronaut_cannot_enforce_law",
+        "enforcement_is_kuhul_only",
+        "projection_is_read_only"
+      ],
+      "properties": {
+        "micronaut_has_no_authority": { "type": "boolean", "const": true },
+        "micronaut_cannot_execute": { "type": "boolean", "const": true },
+        "micronaut_cannot_enforce_law": { "type": "boolean", "const": true },
+        "enforcement_is_kuhul_only": { "type": "boolean", "const": true },
+        "projection_is_read_only": { "type": "boolean", "const": true }
+      }
+    },
+
+    "micronauts": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/micronaut"
+      }
+    },
+
+    "final_statement": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+
+  "$defs": {
+    "micronaut": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "layer",
+        "role",
+        "authority",
+        "binds_to"
+      ],
+
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+
+        "layer": {
+          "type": "string",
+          "enum": [
+            "pre-semantic",
+            "orchestration",
+            "environment",
+            "data",
+            "inference",
+            "post-collapse",
+            "projection",
+            "audit"
+          ]
+        },
+
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+
+        "scope": {
+          "type": "string"
+        },
+
+        "authority": {
+          "type": "string",
+          "enum": ["none"]
+        },
+
+        "binds_to": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+
+        "responsibilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "forbidden": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "examples": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "targets": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "invariants": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "law": {
+          "type": "string"
+        }
+      }
+    }
+  },
+
+  "unevaluatedProperties": false
+}
