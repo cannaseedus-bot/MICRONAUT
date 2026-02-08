@@ -1,0 +1,11 @@
+{
+  "@spec": "SMCA",
+  "@version": "1.0.0",
+  "@status": "frozen",
+  "@authority": "constitutional",
+  "@registries": [
+    "collapse-geometry",
+    "cluster-roles"
+  ],
+  "@hash": "sha256:__CONTENT_HASH__"
+}

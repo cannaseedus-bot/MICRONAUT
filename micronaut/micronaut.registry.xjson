@@ -1,0 +1,193 @@
+{
+  "@schema": "xjson://schema/micronaut.registry/v1",
+  "@status": "frozen",
+  "@authority": "KUHUL_π",
+  "@mutation": "forbidden",
+  "@branching": "forbidden",
+
+  "structural_law": {
+    "authority": "none",
+    "execution": "forbidden",
+    "mutation": "forbidden",
+    "branching": "forbidden",
+    "enforcement": "kuhul_π_only",
+    "role": "orchestration_or_projection"
+  },
+
+  "micronauts": {
+    "CM-1": {
+      "id": "CM-1",
+      "name": "ControlMicronaut",
+      "domain": "pre-semantic",
+      "role": "phase_geometry",
+      "authority": "none",
+      "binds_to": "KUHUL_π",
+      "law": "control_without_behavior"
+    },
+
+    "PM-1": {
+      "id": "PM-1",
+      "name": "PerceptionMicronaut",
+      "domain": "orchestration",
+      "role": "field_selection",
+      "responsibilities": [
+        "select_input_fields",
+        "filter_noise",
+        "route_observable_curvature"
+      ],
+      "forbidden": [
+        "evaluate",
+        "interpret",
+        "collapse"
+      ],
+      "binds_to": "KUHUL_π"
+    },
+
+    "TM-1": {
+      "id": "TM-1",
+      "name": "TemporalMicronaut",
+      "domain": "orchestration",
+      "role": "collapse_timing",
+      "responsibilities": [
+        "schedule_collapse_request",
+        "gate_replay_windows",
+        "align_phase_transitions"
+      ],
+      "forbidden": [
+        "execute",
+        "delay_collapse_outcome",
+        "branch_time"
+      ],
+      "binds_to": "KUHUL_π"
+    },
+
+    "HM-1": {
+      "id": "HM-1",
+      "name": "HostMicronaut",
+      "domain": "environment",
+      "role": "host_abstraction",
+      "responsibilities": [
+        "detect_host_capabilities",
+        "normalize_io",
+        "expose_host_reality"
+      ],
+      "forbidden": [
+        "optimize_execution",
+        "alter_law",
+        "inject_logic"
+      ],
+      "binds_to": "MicronautLayer"
+    },
+
+    "SM-1": {
+      "id": "SM-1",
+      "name": "StorageMicronaut",
+      "domain": "data",
+      "role": "inert_persistence",
+      "responsibilities": [
+        "store_objects",
+        "retrieve_objects",
+        "preserve_byte_identity"
+      ],
+      "forbidden": [
+        "interpret_data",
+        "mutate_state",
+        "enforce_schema"
+      ],
+      "binds_to": "MicronautLayer"
+    },
+
+    "XM-1": {
+      "id": "XM-1",
+      "name": "ExtrapolationMicronaut",
+      "domain": "post-collapse",
+      "role": "narrative_expansion",
+      "responsibilities": [
+        "expand_explanations",
+        "generate_metaphor",
+        "provide_analogy",
+        "ramble_indefinitely"
+      ],
+      "invariants": [
+        "read_only",
+        "non_authoritative",
+        "no_feedback"
+      ],
+      "binds_to": "KUHUL_π_output"
+    },
+
+    "VM-1": {
+      "id": "VM-1",
+      "name": "VisualizationMicronaut",
+      "domain": "projection",
+      "role": "rendering_projection",
+      "targets": [
+        "css",
+        "dom",
+        "svg",
+        "canvas",
+        "terminal"
+      ],
+      "forbidden": [
+        "state_control",
+        "event_logic",
+        "execution"
+      ],
+      "binds_to": "KUHUL_π_output"
+    },
+
+    "MM-1": {
+      "id": "MM-1",
+      "name": "ModelMicronaut",
+      "domain": "inference",
+      "role": "token_signal_generator",
+      "examples": [
+        "phi-2-sft-lora",
+        "distilgpt2",
+        "gguf_models"
+      ],
+      "forbidden": [
+        "law_enforcement",
+        "policy_definition",
+        "memory_mutation"
+      ],
+      "binds_to": "XM-1"
+    },
+
+    "VM-2": {
+      "id": "VM-2",
+      "name": "VerificationMicronaut",
+      "domain": "audit",
+      "role": "proof_generation",
+      "responsibilities": [
+        "verify_replay_identity",
+        "verify_projection_invariance",
+        "verify_boundary_separation"
+      ],
+      "forbidden": [
+        "block_execution",
+        "correct_results"
+      ],
+      "binds_to": "KUHUL_π"
+    }
+  },
+
+  "micronaut_stack": [
+    "CM-1",
+    "PM-1",
+    "TM-1",
+    "HM-1",
+    "SM-1",
+    "MM-1",
+    "XM-1",
+    "VM-1",
+    "VM-2"
+  ],
+
+  "enforcement": "KUHUL_π",
+  "mutation": "none",
+  "branching": "impossible",
+  "architecture": "canonical",
+
+  "final_law": "Micronauts decide where, when, and how intelligence is framed. KUHUL π alone decides whether it is allowed to exist. Extrapolation may continue forever — execution may not."
+}
