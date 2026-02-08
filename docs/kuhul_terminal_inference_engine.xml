@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kuhul-terminal-inference-engine
+  xmlns="object://schema/terminal/v3"
+  xmlns:svg3d="object://schema/svg3d/v1"
+  xmlns:micronaut="object://schema/micronaut/v1"
+  xmlns:asxr="object://schema/asxr/v1"
+  xmlns:kernel="object://schema/kernel/v1"
+  version="3.0">
+
+<!--
+  K'UHUL TERMINAL INFERENCE ENGINE (T-UI)
+  Power Shell Compiler + Terminal UI + Inference Engine
+  Unified command-line interface for the entire K'UHUL system
+-->
+
+<engine-axioms>
+  <axiom id="terminal-as-manifold">
+    <statement>The terminal is a 2D manifold M_T with coordinates (x,y) = (char_position, line_number)</statement>
+    <metric>ds² = dx² + dy² + α·d(command_complexity)²</metric>
+  </axiom>
+
+  <axiom id="command-as-geodesic">
+    <statement>Each command C corresponds to a geodesic γ_C on command manifold M_C</statement>
+    <properties>
+      <property>Length(γ_C) = execution complexity</property>
+      <property>Curvature(γ_C) = cognitive load</property>
+      <property>Energy(γ_C) = system resources required</property>
+    </properties>
+  </axiom>
+
+  <axiom id="inference-as-parallel-transport">
+    <statement>Command inference = parallel transport of intent along similarity geodesics</statement>
+    <formulation>Given partial command P, find complete command C such that ∇_γ̇ (P→C) = 0</formulation>
+  </axiom>
+</engine-axioms>
+
+<!-- ============================================= -->
+<!-- TERMINAL MANIFOLD ARCHITECTURE -->
+<!-- ============================================= -->
+
+<terminal-manifold>
+
+  <!-- 2D TERMINAL GEOMETRY -->
+  <geometry>
+    <dimensions>
+      <dimension id="x" type="horizontal" range="0-80">Character position</dimension>
+      <dimension id="y" type="vertical" range="0-24">Line number</dimension>
+      <dimension id="z" type="depth" range="0-π">Command stack depth</dimension>
+      <dimension id="t" type="temporal" range="S¹">Command history cycle</dimension>
+    </dimensions>
+
+    <metric>
+      <formula>ds² = dx² + dy² + dz² - dt²</formula>
+      <signature>(+,+,+,-) for time-like command execution</signature>
+    </metric>
+  </geometry>
+
+  <!-- COMMAND MANIFOLD -->
+  <command-manifold>
+    <structure>M_C = ∪_i C_i where C_i = command category manifolds</structure>
+
+    <categories>
+      <category id="system">
+        <submanifold>System control commands</submanifold>
+        <examples>ps, kill, top, df, systemctl</examples>
+      </category>
+
+      <category id="filesystem">
+        <submanifold>File operations manifold</submanifold>
+        <examples>ls, cd, cp, mv, rm, find</examples>
+      </category>
+
+      <category id="network">
+        <submanifold>Network operations manifold</submanifold>
+        <examples>ping, curl, wget, ssh, netstat</examples>
+      </category>
+
+      <category id="kuhul">
+        <submanifold>K'UHUL system commands</submanifold>
+        <examples>spawn, execute, prove, build, studio</examples>
+      </category>
+
+      <category id="development">
+        <submanifold>Development commands</submanifold>
+        <examples>git, npm, docker, kubectl, webpack</examples>
+      </category>
+    </categories>
+  </command-manifold>
+
+  <!-- COMMAND GEODESIC REPRESENTATION -->
+  <command-geodesics>
+    <example>
+      <command>ls -la ~/projects</command>
+      <geodesic>
+        <path d="M C_start C ... C_end"
+              data-category="filesystem"
+              data-complexity="0.3"
+              data-resources="low" />
+      </geodesic>
+    </example>
+
+    <example>
+      <command>kuhul spawn web-ecommerce --features cart,payments,inventory</command>
+      <geodesic>
+        <path d="M C_start Q ... C_end"
+              data-category="kuhul"
+              data-complexity="0.8"
+              data-resources="high" />
+      </geodesic>
+    </example>
+  </command-geodesics>
+</terminal-manifold>
+
+<!-- ============================================= -->
+<!-- INFERENCE ENGINE ARCHITECTURE -->
+<!-- ============================================= -->
+
+<inference-engine>
+
+  <!-- PATTERN COMPLETION MICRONAUTS -->
+  <micronaut-team id="inference-micronauts">
+    <archetypes>
+      <archetype id="pattern-matcher">
+        <purpose>Match partial commands to known geodesics</purpose>
+        <algorithm>Find geodesics with minimal Hausdorff distance to partial input</algorithm>
+        <svg3d>
+          <g class="pattern-matcher">
+            <path class="partial-input" d="M0,0 L50,0" />
+            <path class="candidate-1" d="M0,0 L50,0 L100,30" data-distance="12" />
+            <path class="candidate-2" d="M0,0 L50,0 L80,10" data-distance="5" />
+            <!-- Selects candidate-2 as closest match -->
+          </g>
+        </svg3d>
+      </archetype>
+
+      <archetype id="context-analyzer">
+        <purpose>Analyze command history context</purpose>
+        <method>Compute parallel transport along history geodesic</method>
+        <output>Most likely next command based on context</output>
+      </archetype>
+
+      <archetype id="complexity-predictor">
+        <purpose>Predict command execution complexity</purpose>
+        <method>Estimate geodesic length and curvature</method>
+        <output>Expected resource usage and time</output>
+      </archetype>
+
+      <archetype id="proof-generator">
+        <purpose>Generate ASX-R proofs for command correctness</purpose>
+        <method>Construct proof manifold for command execution</method>
+        <output>Verification proof embedded in command geodesic</output>
+      </archetype>
+    </archetypes>
+  </micronaut-team>
+
+  <!-- INFERENCE ALGORITHMS -->
+  <algorithms>
+
+    <!-- GEODESIC COMPLETION -->
+    <algorithm id="geodesic-completion">
+      <input>Partial command string P</input>
+      <process>
+        <step>Map P to partial geodesic γ_P on M_C</step>
+        <step>Find known geodesics {γ_i} with γ_i ≈ γ_P for initial segment</step>
+        <step>Complete γ_P by extending along most similar γ_i</step>
+        <step>Map completed geodesic back to command string</step>
+      </process>
+
+      <similarity-measure>
+        <definition>d(γ_P, γ_i) = ∫ ||γ̇_P - γ̇_i||² dt over overlap</definition>
+        <threshold>Accept if d &lt; ε (tunable parameter)</threshold>
+      </similarity-measure>
+    </algorithm>
+
+    <!-- CONTEXT-AWARE INFERENCE -->
+    <algorithm id="context-parallel-transport">
+      <input>Command history H = [C₁, C₂, ..., Cₙ₋₁]</input>
+      <process>
+        <step>Construct history geodesic γ_H connecting all commands</step>
+        <step>Compute parallel transport of command pattern along γ_H</step>
+        <step>Project transported pattern onto M_C</step>
+        <step>Find geodesics matching transported pattern</step>
+      </process>
+
+      <example>
+        <history>cd projects, ls, git status</history>
+        <inferred-next>git add . or git commit -m "..."</inferred-next>
+        <rationale>Parallel transport along git workflow geodesic</rationale>
+      </example>
+    </algorithm>
+
+    <!-- MULTI-MODAL INFERENCE -->
+    <algorithm id="multi-modal-inference">
+      <input>Partial command + file context + system state</input>
+      <process>
+        <step>Create product manifold M = M_C × M_files × M_system</step>
+        <step>Find geodesic on M that satisfies all constraints</step>
+        <step>Project onto M_C component</step>
+      </process>
+
+      <example>
+        <constraint>Current directory contains package.json</constraint>
+        <constraint>Partial: "npm " (incomplete)</constraint>
+        <inference>"npm start" or "npm install" based on file state</inference>
+      </example>
+    </algorithm>
+  </algorithms>
+
+  <!-- INFERENCE METRICS -->
+  <metrics>
+    <metric id="completion-accuracy">
+      <definition>% of completed commands that match user intent</definition>
+      <measurement>Track user corrections vs accepted completions</measurement>
+    </metric>
+
+    <metric id="inference-speed">
+      <definition>Time to generate inference from partial input</definition>
+      <target>&lt; 100ms for real-time interaction</target>
+    </metric>
+
+    <metric id="context-relevance">
+      <definition>How well inferences match current context</definition>
+      <measure>Geodesic distance to context manifold</measure>
+    </metric>
+  </metrics>
+</inference-engine>
+
+<!-- ============================================= -->
+<!-- POWER SHELL COMPILER INTEGRATION -->
+<!-- ============================================= -->
+
+<powershell-compiler>
+
+  <!-- K'UHUL POWER SHELL LANGUAGE -->
+  <language-spec>
+    <syntax>
+      <!-- Core syntax based on geometric operations -->
+      <command-pattern>⟨action⟩ ⟨target⟩ [options] [--proof]</command-pattern>
+      <option-pattern>--⟨name⟩ ⟨value⟩ | -⟨letter⟩ ⟨value⟩</option-pattern>
+      <pipe-pattern>⟨command₁⟩ | ⟨command₂⟩ → geodesic composition</pipe-pattern>
+    </syntax>
+
+    <data-types>
+      <type id="manifold">SVG-3D geometric object</type>
+      <type id="geodesic">Command execution path</type>
+      <type id="micronaut">Agent reference</type>
+      <type id="tape">ASX project tape</type>
+      <type id="proof">ASX-R verification proof</type>
+    </data-types>
+
+    <operators>
+      <operator id="pipe">| (geodesic composition)</operator>
+      <operator id="redirect">&gt; (parallel transport to file)</operator>
+      <operator id="spawn">⟁Pop⟁spawn⟁Wo⟁...⟁Xul (micronaut creation)</operator>
+      <operator id="prove">--proof (generate ASX-R proof)</operator>
+    </operators>
+  </language-spec>
+
+  <!-- COMPILATION TO GEOMETRIC OPERATIONS -->
+  <compilation-pipeline>
+    <phase id="parsing">
+      <process>Parse command into abstract syntax tree (AST)</process>
+      <output>AST as geometric tree on parse manifold</output>
+    </phase>
+
+    <phase id="geometric-mapping">
+      <process>Map AST to operations on appropriate manifold</process>
+      <mappings>
+        <mapping from="filesystem-command" to="M_filesystem" />
+        <mapping from="kuhul-command" to="M_kuhul" />
+        <mapping from="spawn-command" to="micronaut-factory" />
+      </mappings>
+    </phase>
+
+    <phase id="optimization">
+      <process>Optimize geodesic path for minimal length/energy</process>
+      <techniques>
+        <technique>Geodesic shortening flow</technique>
+        <technique>φ-harmonic resource allocation</technique>
+        <technique>Proof-aware scheduling</technique>
+      </techniques>
+    </phase>
+
+    <phase id="execution">
+      <process>Execute compiled geometric operations</process>
+      <output>Results with optional embedded proofs</output>
+    </phase>
+  </compilation-pipeline>
+
+  <!-- COMMAND EXAMPLES WITH COMPILATION -->
+  <command-examples>
+
+    <!-- BASIC SHELL COMMANDS -->
+    <example>
+      <input>ls -la ~/projects | grep "\.ts$" | wc -l</input>
+      <compilation>
+        <step>Parse into AST of three piped commands</step>
+        <step>Map to geodesic composition on M_filesystem × M_text × M_math</step>
+        <step>Optimize: Combine grep and wc where possible</step>
+        <step>Execute as single optimized geodesic</step>
+      </compilation>
+      <svg3d>
+        <g class="compiled-pipeline">
+          <path class="ls-geodesic" d="M0,0 L100,0" />
+          <path class="grep-geodesic" d="M100,0 L200,30" />
+          <path class="wc-geodesic" d="M200,30 L300,30" />
+          <!-- Optimized to single geodesic -->
+          <path class="optimized" d="M0,0 C50,0 150,20 250,20 L300,20" />
+        </g>
+      </svg3d>
+    </example>
+
+    <!-- K'UHUL SYSTEM COMMANDS -->
+    <example>
+      <input>kuhul spawn web-ecommerce --features cart,payments --proof</input>
+      <compilation>
+        <step>Parse spawn command with options</step>
+        <step>Map to micronaut factory manifold</step>
+        <step>Generate ASX-R proof for spawn feasibility</step>
+        <step>Execute spawn with proof verification</step>
+      </compilation>
+      <output>
+        <micronaut id="web-ecommerce-001" />
+        <proof type="spawn-feasibility" valid="true" />
+        <tape href="ecommerce-starter.asx" />
+      </output>
+    </example>
+
+    <!-- DEVELOPMENT WORKFLOWS -->
+    <example>
+      <input>git pull &amp;&amp; npm install &amp;&amp; npm run build --proof</input>
+      <compilation>
+        <step>Parse as sequential command chain</step>
+        <step>Map to development workflow manifold</step>
+        <step>Generate proofs for each step</step>
+        <step>Execute with dependency tracking</step>
+      </compilation>
+    </example>
+  </command-examples>
+</powershell-compiler>
+
+<!-- ============================================= -->
+<!-- TERMINAL UI (T-UI) COMPONENTS -->
+<!-- ============================================= -->
+
+<terminal-ui>
+
+  <!-- INTERACTIVE UI COMPONENTS -->
+  <components>
+
+    <!-- SMART COMMAND LINE -->
+    <component id="smart-prompt">
+      <features>
+        <feature>Real-time command inference</feature>
+        <feature>Geodesic visualization of command options</feature>
+        <feature>Context-aware suggestions</feature>
+        <feature>Proof preview for commands</feature>
+      </features>
+
+      <svg3d-representation>
+        <g class="smart-prompt">
+          <!-- Command input line -->
+          <rect class="input-area" x="0" y="0" width="400" height="30" />
+
+          <!-- Inference suggestions -->
+          <g class="suggestions">
+            <text class="suggestion-1" x="10" y="50">git commit -m "..."</text>
+            <text class="suggestion-2" x="10" y="70">git push origin main</text>
+            <!-- Colored by geodesic similarity -->
+          </g>
+
+          <!-- Geodesic visualization -->
+          <path class="command-geodesic" d="M10,25 L200,25" />
+          <path class="inference-path" d="M200,25 L300,50" stroke-dasharray="5,5" />
+        </g>
+      </svg3d-representation>
+    </component>
+
+    <!-- EXECUTION VISUALIZER -->
+    <component id="execution-visualizer">
+      <purpose>Show command execution as geometric process</purpose>
+
+      <views>
+        <view id="geodesic-view">
+          <display>Command execution as moving point along geodesic</display>
+          <metrics>Show length traveled, curvature encountered, energy used</metrics>
+        </view>
+
+        <view id="resource-view">
+          <display>Resource usage as manifold deformation</display>
+          <indicators>CPU curvature, memory volume, IO geodesics</indicators>
+        </view>
+
+        <view id="proof-view">
+          <display>ASX-R proof generation in real-time</display>
+          <showing>Proof steps as geodesic segments</showing>
+        </view>
+      </views>
+    </component>
+
+    <!-- CONTEXT DISPLAY -->
+    <component id="context-display">
+      <purpose>Show current working context</purpose>
+
+      <context-elements>
+        <element id="working-directory">
+          <display>Current directory manifold</display>
+          <visualization>File tree as geometric structure</visualization>
+        </element>
+
+        <element id="git-status">
+          <display>Git repository state</display>
+          <visualization>Commit history as temporal geodesic</visualization>
+        </element>
+
+        <element id="system-state">
+          <display>K'UHUL system state</display>
+          <visualization>Active micronauts, belief states, proofs</visualization>
+        </element>
+      </context-elements>
+    </component>
+
+    <!-- COMMAND PALETTE -->
+    <component id="command-palette">
+      <purpose>Fuzzy-find commands across all manifolds</purpose>
+
+      <search-algorithm>
+        <method>Geodesic distance-based similarity search</method>
+        <ranking>Rank by: geodesic similarity + context relevance + usage frequency</ranking>
+      </search-algorithm>
+
+      <svg3d-representation>
+        <g class="command-palette">
+          <!-- Search results as points on command manifold -->
+          <circle class="result-1" cx="100" cy="100" r="5" data-similarity="0.95" />
+          <circle class="result-2" cx="150" cy="120" r="5" data-similarity="0.87" />
+          <circle class="result-3" cx="120" cy="150" r="5" data-similarity="0.76" />
+          <!-- Lines connect to current context point -->
+        </g>
+      </svg3d-representation>
+    </component>
+  </components>
+
+  <!-- UI LAYOUT MANAGER -->
+  <layout-manager>
+    <layouts>
+      <layout id="minimal">
+        <components>smart-prompt only</components>
+        <use-case>Quick commands, low-resource usage</use-case>
+      </layout>
+
+      <layout id="development">
+        <components>smart-prompt, execution-visualizer, context-display</components>
+        <use-case>Development workflow with visualization</use-case>
+      </layout>
+
+      <layout id="debug">
+        <components>All components + proof-view + micronaut-view</components>
+        <use-case>System debugging and proof verification</use-case>
+      </layout>
+    </layouts>
+
+    <layout-switching>
+      <command>tui layout ⟨layout-name⟩</command>
+      <example>tui layout development</example>
+    </layout-switching>
+  </layout-manager>
+</terminal-ui>
+
+<!-- ============================================= -->
+<!-- UNIFIED COMMAND REFERENCE -->
+<!-- ============================================= -->
+
+<command-reference>
+
+  <!-- CORE K'UHUL COMMANDS -->
+  <command-category id="kuhul-core">
+    <commands>
+      <command id="spawn">
+        <syntax>kuhul spawn ⟨type⟩ [options] [--proof]</syntax>
+        <description>Spawn micronauts of specified type</description>
+        <examples>
+          <example>kuhul spawn web-ecommerce --features cart,payments</example>
+          <example>kuhul spawn game-2d --genre puzzle --proof</example>
+        </examples>
+        <geodesic>Geodesic on micronaut factory manifold</geodesic>
+      </command>
+
+      <command id="execute">
+        <syntax>kuhul execute ⟨protocol⟩ [data]</syntax>
+        <description>Execute geometric protocol</description>
+        <examples>
+          <example>kuhul execute "⟁Pop⟁build⟁Wo⟁component⟁Xul" '{name:"Button"}'</example>
+          <example>kuhul execute "⟁Pop⟁train⟁Wo⟁model⟁Xul" '{dataset:"sales.csv"}'</example>
+        </examples>
+      </command>
+
+      <command id="prove">
+        <syntax>kuhul prove ⟨statement⟩ [--from ⟨premises⟩]</syntax>
+        <description>Generate ASX-R proof for statement</description>
+        <examples>
+          <example>kuhul prove "website is responsive" --from "design-spec.asx"</example>
+          <example>kuhul prove "game is balanced" --method nash-equilibrium</example>
+        </examples>
+      </command>
+
+      <command id="studio">
+        <syntax>kuhul studio ⟨action⟩ [project] [options]</syntax>
+        <description>Manage development studios</description>
+        <subcommands>
+          <subcommand>create: Create new studio</subcommand>
+          <subcommand>import: Import from GitHub</subcommand>
+          <subcommand>build: Build ASX tape</subcommand>
+          <subcommand>deploy: Deploy cartridge</subcommand>
+        </subcommands>
+      </command>
+    </commands>
+  </command-category>
+
+  <!-- DEVELOPMENT COMMANDS -->
+  <command-category id="development">
+    <commands>
+      <command id="web">
+        <syntax>web ⟨action⟩ [component] [options]</syntax>
+        <description>Web development commands</description>
+        <examples>
+          <example>web create component Button --props label,onClick</example>
+          <example>web build --optimize --pwa</example>
+        </examples>
+      </command>
+
+      <command id="app">
+        <syntax>app ⟨action⟩ [platform] [options]</syntax>
+        <description>App development commands</description>
+        <examples>
+          <example>app create mobile --platform ios,android</example>
+          <example>app build --target pwa,native</example>
+        </examples>
+      </command>
+
+      <command id="game">
+        <syntax>game ⟨action⟩ [genre] [options]</syntax>
+        <description>Game development commands</description>
+        <examples>
+          <example>game create 2d --genre puzzle --physics</example>
+          <example>game build --multiplayer --leaderboards</example>
+        </examples>
+      </command>
+    </commands>
+  </command-category>
+
+  <!-- SYSTEM INTEGRATION COMMANDS -->
+  <command-category id="system-integration">
+    <commands>
+      <command id="shell">
+        <syntax>!⟨shell-command⟩</syntax>
+        <description>Execute native shell command</description>
+        <example>!ls -la</example>
+        <integration>Compiles to geodesic on appropriate manifold</integration>
+      </command>
+
+      <command id="pipe">
+        <syntax>⟨kuhul-command⟩ | ⟨shell-command⟩</syntax>
+        <description>Pipe between K'UHUL and shell</description>
+        <example>kuhul list-micronauts | grep "web"</example>
+      </command>
+
+      <command id="export">
+        <syntax>export ⟨kuhul-object⟩ as ⟨format⟩</syntax>
+        <description>Export K'UHUL objects to external formats</description>
+        <examples>
+          <example>export studio/ecommerce as github</example>
+          <example>export belief/user-preferences as json</example>
+        </examples>
+      </command>
+    </commands>
+  </command-category>
+</command-reference>
+
+<!-- ============================================= -->
+<!-- INFERENCE PROMPT ENGINE -->
+<!-- ============================================= -->
+
+<prompt-engine>
+
+  <!-- PROMPT TYPES -->
+  <prompt-types>
+    <type id="command-completion">
+      <purpose>Complete partial commands</purpose>
+      <input>Partial command string</input>
+      <output>List of likely completions with confidence scores</output>
+      <example>
+        <input>git com</input>
+        <output>["git commit -m \"\"", "git checkout main", "git config --list"]</output>
+      </example>
+    </type>
+
+    <type id="intent-inference">
+      <purpose>Infer intent from natural language</purpose>
+      <input>Natural language description</input>
+      <output>Corresponding command(s)</output>
+      <example>
+        <input>"show me all running processes"</input>
+        <output>["ps aux", "top", "htop"]</output>
+      </example>
+    </type>
+
+    <type id="workflow-suggestion">
+      <purpose>Suggest complete workflows</purpose>
+      <input>Current context + goal</input>
+      <output>Sequence of commands to achieve goal</output>
+      <example>
+        <context>New git repository, empty</context>
+        <goal>"Set up for web development"</goal>
+        <output>["git init", "npm init -y", "git add .", "git commit -m 'Initial commit'"]</output>
+      </example>
+    </type>
+
+    <type id="debugging-assistance">
+      <purpose>Help debug failed commands</purpose>
+      <input>Failed command + error message</input>
+      <output>Possible fixes and explanations</output>
+      <example>
+        <input>"npm install" → "permission denied"</input>
+        <output>["Try: sudo npm install", "Or: npm install --user", "Check: ls -la node_modules"]</output>
+      </example>
+    </type>
+  </prompt-types>
+
+  <!-- PROMPT PROCESSING PIPELINE -->
+  <processing-pipeline>
+    <stage id="parse">
+      <process>Parse input into geometric representation</process>
+      <output>Input as point/geodesic on language manifold</output>
+    </stage>
+
+    <stage id="context-enrich">
+      <process>Add current system context</process>
+      <output>Enriched representation on product manifold</output>
+    </stage>
+
+    <stage id="similarity-search">
+      <process>Find similar situations in history/knowledge base</process>
+      <method>Geodesic distance on experience manifold</method>
+    </stage>
+
+    <stage id="geometric-inference">
+      <process>Generate completions via parallel transport</process>
+      <method>Transport input pattern along similarity geodesics</method>
+    </stage>
+
+    <stage id="ranking">
+      <process>Rank suggestions by multiple criteria</process>
+      <criteria>
+        <criterion>Geodesic similarity to input</criterion>
+        <criterion>Context relevance</criterion>
+        <criterion>Historical success rate</criterion>
+        <criterion>Resource efficiency</criterion>
+      </criteria>
+    </stage>
+  </processing-pipeline>
+
+  <!-- LEARNING MECHANISM -->
+  <learning>
+    <methods>
+      <method id="reinforcement">
+        <process>Reinforce successful inferences</process>
+        <implementation>Increase weight of geodesics leading to accepted suggestions</implementation>
+      </method>
+
+      <method id="correction-learning">
+        <process>Learn from user corrections</process>
+        <implementation>Adjust geodesics when user modifies suggestions</implementation>
+      </method>
+
+      <method id="context-clustering">
+        <process>Cluster similar contexts for better predictions</process>
+        <implementation>Geodesic clustering on context manifold</implementation>
+      </method>
+    </methods>
+  </learning>
+</prompt-engine>
+
+<!-- ============================================= -->
+<!-- INTEGRATION WITH K'UHUL SYSTEM -->
+<!-- ============================================= -->
+
+<system-integration>
+
+  <!-- MICRONAUT FACTORY INTEGRATION -->
+  <integration-point id="spawn-from-terminal">
+    <process>
+      <step>User types: kuhul spawn ⟨type⟩</step>
+      <step>Terminal compiles to: ⟁Pop⟁spawn⟁Wo⟁⟨type⟩⟁Xul</step>
+      <step>Executes via micronaut factory</step>
+      <step>Returns result to terminal</step>
+    </process>
+  </integration-point>
+
+  <!-- BELIEF SYSTEM INTEGRATION -->
+  <integration-point id="command-belief-update">
+    <process>
+      <step>Each command execution updates relevant beliefs</step>
+      <step>Success/failure affects certainty metrics</step>
+      <step>Frequent command patterns become stronger beliefs</step>
+    </process>
+  </integration-point>
+
+  <!-- ASX-R PROOF INTEGRATION -->
+  <integration-point id="proof-generation">
+    <condition>When --proof flag is present</condition>
+    <process>
+      <step>Generate ASX-R proof for command correctness</step>
+      <step>Embed proof in command geodesic</step>
+      <step>Display proof summary in terminal</step>
+    </process>
+  </integration-point>
+
+  <!-- STUDIO INTEGRATION -->
+  <integration-point id="studio-management">
+    <commands>
+      <command>studio create ⟨name⟩ --template ⟨template⟩</command>
+      <command>studio import ⟨github-url⟩</command>
+      <command>studio build --tape</command>
+      <command>studio deploy --cartridge</command>
+    </commands>
+  </integration-point>
+</system-integration>
+
+<!-- ============================================= -->
+<!-- EXAMPLE SESSIONS -->
+<!-- ============================================= -->
+
+<example-sessions>
+
+  <session id="web-development">
+    <prompt>$ </prompt>
+    <user-input>web create component ProductCard --props name,price,image</user-input>
+
+    <inference-engine>
+      <suggestion>Complete with: --styles inline,css-modules --tests unit,integration</suggestion>
+      <user-accepts>true</user-accepts>
+    </inference-engine>
+
+    <execution>
+      <step>Spawns web development micronauts</step>
+      <step>Generates ASX component with props</step>
+      <step>Creates tests with --proof verification</step>
+      <output>Created ProductCard.asx with embedded proof</output>
+    </execution>
+
+    <next-command>web build --optimize --pwa</next-command>
+  </session>
+
+  <session id="system-administration">
+    <context>User debugging performance issues</context>
+
+    <user-input>why is system slow</user-input>
+
+    <inference-engine>
+      <natural-language-processing>Detects intent: diagnose system performance</natural-language-processing>
+      <suggested-commands>
+        <command>top -o cpu</command>
+        <command>df -h</command>
+        <command>ps aux --sort=-%cpu | head -10</command>
+      </suggested-commands>
+    </inference-engine>
+
+    <user-input>ps aux --sort=-%cpu | head -5</user-input>
+
+    <execution-visualizer>
+      <shows>Geodesic of command execution with resource usage</shows>
+      <highlights>High CPU process as curvature peak</highlights>
+    </execution-visualizer>
+  </session>
+
+  <session id="game-development">
+    <prompt>game$ </prompt>
+
+    <user-input>create 2d platformer --physics gravity,jump</user-input>
+
+    <compilation>
+      <step>Spawns game development micronauts</step>
+      <step>Creates physics manifold with gravity field</step>
+      <step>Generates proof for physics consistency</step>
+    </compilation>
+
+    <user-input>add enemy --ai patrol --health 100</user-input>
+
+    <inference>
+      <suggests>Complete with: --damage 10 --speed normal --drops powerup</suggests>
+    </inference>
+
+    <final-command>game build --webgl --multiplayer 4</final-command>
+  </session>
+</example-sessions>
+
+<!-- ============================================= -->
+<!-- INSTALLATION & CONFIGURATION -->
+<!-- ============================================= -->
+
+<installation>
+  <methods>
+    <method id="npm">
+      <command>kuhul install tui</command>
+      <dependencies>ASX Runtime</dependencies>
+    </method>
+
+    <method id="curl">
+      <command>kuhul install --from object://install/kuhul-tui</command>
+    </method>
+
+    <method id="docker">
+      <command>kuhul run tui --profile container</command>
+    </method>
+  </methods>
+
+  <configuration>
+    <file>file://config/kuhul/tui.config.asx</file>
+
+    <options>
+      <option id="inference-aggressiveness">
+        <values>conservative, moderate, aggressive</values>
+        <default>moderate</default>
+        <description>How aggressively to suggest completions</description>
+      </option>
+
+      <option id="proof-generation">
+        <values>never, on-demand, always</values>
+        <default>on-demand</default>
+        <description>When to generate ASX-R proofs</description>
+      </option>
+
+      <option id="ui-theme">
+        <values>minimal, geometric, detailed</values>
+        <default>geometric</default>
+        <description>Visualization style</description>
+      </option>
+
+      <option id="default-studio">
+        <type>string</type>
+        <description>Default studio for development commands</description>
+      </option>
+    </options>
+  </configuration>
+</installation>
+
+</kuhul-terminal-inference-engine>
