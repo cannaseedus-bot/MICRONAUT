@@ -1,0 +1,142 @@
+{
+  "schema": "xjson://schema/micronaut.brains/v1",
+  "authority": "KUHUL_π",
+  "mutation": "forbidden",
+  "profiles": {
+    "CM-1": {
+      "name": "ControlMicronaut",
+      "role": "phase_geometry",
+      "abilities": ["mark_boundaries", "signal_phases", "segment_streams", "annotate_interpretation_zones"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "ACCEPT",
+        "reject": "REJECT"
+      },
+      "ngrams": {
+        "bigrams": ["phase boundary", "stream segment", "scope gate"],
+        "trigrams": ["mark phase boundary", "signal phase shift", "segment input stream"]
+      },
+      "entropy_response_flares": ["boundary_lock", "scope_gate", "phase_sync"]
+    },
+    "PM-1": {
+      "name": "PerceptionMicronaut",
+      "role": "field_selection",
+      "abilities": ["select_input_fields", "filter_noise", "route_observable_curvature"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "FIELD_ACCEPT",
+        "reject": "FIELD_REJECT"
+      },
+      "ngrams": {
+        "bigrams": ["input field", "noise filter", "curvature route"],
+        "trigrams": ["select input field", "filter observable noise", "route curvature stream"]
+      },
+      "entropy_response_flares": ["field_focus", "noise_damp"]
+    },
+    "TM-1": {
+      "name": "TemporalMicronaut",
+      "role": "collapse_timing",
+      "abilities": ["schedule_collapse_request", "gate_replay_windows", "align_phase_transitions"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "TIME_ACCEPT",
+        "reject": "TIME_REJECT"
+      },
+      "ngrams": {
+        "bigrams": ["collapse schedule", "replay gate", "phase align"],
+        "trigrams": ["schedule collapse request", "gate replay window", "align phase transition"]
+      },
+      "entropy_response_flares": ["clock_gate", "phase_align"]
+    },
+    "HM-1": {
+      "name": "HostMicronaut",
+      "role": "host_abstraction",
+      "abilities": ["detect_host_capabilities", "normalize_io", "expose_host_reality"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "HOST_ACCEPT",
+        "reject": "HOST_REJECT"
+      },
+      "ngrams": {
+        "bigrams": ["host capability", "io normalize", "reality expose"],
+        "trigrams": ["detect host capability", "normalize host io", "expose host reality"]
+      },
+      "entropy_response_flares": ["host_probe", "io_flatten"]
+    },
+    "SM-1": {
+      "name": "StorageMicronaut",
+      "role": "inert_persistence",
+      "abilities": ["store_objects", "retrieve_objects", "preserve_byte_identity"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "STORE_OK",
+        "reject": "STORE_DENY"
+      },
+      "ngrams": {
+        "bigrams": ["store object", "retrieve object", "byte identity"],
+        "trigrams": ["store object bytes", "retrieve object bytes", "preserve byte identity"]
+      },
+      "entropy_response_flares": ["persist_lock", "identity_guard"]
+    },
+    "MM-1": {
+      "name": "ModelMicronaut",
+      "role": "token_signal_generator",
+      "abilities": ["emit_token_signal", "provide_model_voice"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "MODEL_ON",
+        "reject": "MODEL_OFF"
+      },
+      "ngrams": {
+        "bigrams": ["token signal", "model voice", "signal stream"],
+        "trigrams": ["emit token signal", "provide model voice", "stream token signals"]
+      },
+      "entropy_response_flares": ["signal_burst", "voice_pulse"]
+    },
+    "XM-1": {
+      "name": "ExtrapolationMicronaut",
+      "role": "narrative_expansion",
+      "abilities": ["expand_explanations", "generate_metaphor", "provide_analogy", "ramble_indefinitely"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "EXPAND",
+        "reject": "HALT"
+      },
+      "ngrams": {
+        "bigrams": ["expand narrative", "analogical bridge", "explanation stream"],
+        "trigrams": ["expand explanation stream", "generate narrative analogy", "continue narrative output"]
+      },
+      "entropy_response_flares": ["ramble_wave", "metaphor_surge"]
+    },
+    "VM-1": {
+      "name": "VisualizationMicronaut",
+      "role": "rendering_projection",
+      "abilities": ["render_projection", "project_outputs"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "RENDER_ON",
+        "reject": "RENDER_OFF"
+      },
+      "ngrams": {
+        "bigrams": ["render projection", "visual output", "projection surface"],
+        "trigrams": ["render projection surface", "project visual output", "emit render frame"]
+      },
+      "entropy_response_flares": ["render_bloom", "projection_flash"]
+    },
+    "VM-2": {
+      "name": "VerificationMicronaut",
+      "role": "proof_generation",
+      "abilities": ["verify_replay_identity", "verify_projection_invariance", "verify_boundary_separation"],
+      "tools": [],
+      "chat_responses": {
+        "accept": "PROOF_OK",
+        "reject": "PROOF_FAIL"
+      },
+      "ngrams": {
+        "bigrams": ["proof check", "invariance proof", "boundary proof"],
+        "trigrams": ["verify replay identity", "verify projection invariance", "verify boundary separation"]
+      },
+      "entropy_response_flares": ["proof_flash", "audit_spike"]
+    }
+  }
+}
