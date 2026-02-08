@@ -2,17 +2,17 @@
 
 # MICRONAUT
 
-A **three-plane deterministic computing system** using SVG as structured memory, CSS as execution rules, and SCXQ2 for proof-verified replay.
+A **SCO/1 object server** where Micronaut exists as sealed data and file-based projections, with PowerShell acting as the host-native orchestrator.
 
 ## What It Is
 
-MICRONAUT treats web primitives as computation infrastructure, not presentation:
+MICRONAUT treats web primitives as computation infrastructure, not presentation, while enforcing a file-only control plane:
 
 | Primitive | Traditional Use | MICRONAUT Use |
 |-----------|-----------------|---------------|
 | SVG | Graphics | Spatial state lattice / structured memory |
 | CSS | Styling | Deterministic state machine / execution rules |
-| JS | Application logic | Transport / kernel orchestration only |
+| PowerShell | Host automation | Orchestrator only (file router, loopback glue) |
 | JSON | Configuration | Law / contracts / declarations |
 
 The system is **proof-driven**: the verifier decides correctness, not runtime.
@@ -21,24 +21,34 @@ The system is **proof-driven**: the verifier decides correctness, not runtime.
 
 ```
 Plane 0/1 — Control & Law
-├── manifest.json          Server law (routes, capabilities, contracts)
-├── SVG + CSS Micronauts   State lattice + deterministic rule engine
-└── ABR Black Code         Collapse + judgment + reward propagation
+├── object.toml            Object server declaration
+├── semantics.xjson        KUHUL-TSG schema + CM-1 contract
+└── SVG + CSS Micronauts   State lattice + deterministic rule engine
 
 Plane 2 — Sealed Compute
-├── GGL / ggltensors       Tensor operations (isolated)
-└── transformers.py/js     Swappable, pure input → output
+├── brains/                Read-only sealed data
+└── micronaut.s7           SCO/1 executable object
 
 Plane 3 — Proof & Replay
-├── SCXQ2 frame streams    Append-only evidence log
-├── Proof hashes           pack/input/output/ABI hashes
-└── Verifier               Replay validation, barrier enforcement
+├── io/chat.txt            Append-only input (CM-1)
+├── io/stream.txt          Append-only semantic emission
+├── trace/scxq2.trace       Evidence stream
+└── proof/scxq2.proof       Proof artifacts
 ```
 
 ## Directory Structure
 
 ```
 MICRONAUT/
+├── micronaut/                    # SCO/1 object server
+│   ├── micronaut.s7              # Sealed executable object
+│   ├── micronaut.ps1             # PowerShell orchestrator
+│   ├── object.toml               # Object declaration
+│   ├── semantics.xjson           # KUHUL-TSG schema
+│   ├── brains/                   # Sealed n-gram data
+│   ├── io/                       # Append-only I/O
+│   ├── trace/                    # SCXQ2 evidence
+│   └── proof/                    # Proof artifacts
 ├── src/                          # Python implementation
 │   ├── fold_orchestrator.py      # Headless fold governor (15 fold types)
 │   ├── verifier.py               # One-pass FEL verifier
@@ -136,7 +146,7 @@ python src/verifier.py events.fel.jsonl --write-bin
 
 - **Deterministic**: CSS variable math, static SVG structure, append-only frames
 - **Verifiable**: Proofs replay without executing models
-- **Replaceable**: Swap transformers.py → js → wasm; proofs still validate
+- **Replaceable**: Swap sealed executors; proofs still validate
 - **Compressible**: SCXQ2 crushes state into symbolic lanes
 
 ## Related

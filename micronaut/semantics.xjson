@@ -1,0 +1,17 @@
+{
+  "$schema": "xjson://schema/kuhul-tsg/v1",
+  "object": "micronaut",
+  "standard": "SCXQ7",
+  "declares": {
+    "chat_record": {
+      "type": "append-only",
+      "format": "cm1",
+      "location": "io/chat.txt"
+    },
+    "stream_record": {
+      "type": "append-only",
+      "format": "scxq2-stream",
+      "location": "io/stream.txt"
+    }
+  }
+}
