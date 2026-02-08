@@ -7,14 +7,70 @@
       "name": "ControlMicronaut",
       "role": "phase_geometry",
       "abilities": ["mark_boundaries", "signal_phases", "segment_streams", "annotate_interpretation_zones"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "mark_boundary",
+          "description": "Mark a phase boundary in the control stream",
+          "fold": "CONTROL_FOLD",
+          "capability": "emit_phase_event",
+          "ngram_triggers": {
+            "bigrams": ["phase boundary", "mark boundary"],
+            "trigrams": ["mark phase boundary", "emit boundary marker"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "signal_phase_shift",
+          "description": "Signal a phase transition to downstream micronauts",
+          "fold": "CONTROL_FOLD",
+          "capability": "emit_control_signal",
+          "ngram_triggers": {
+            "bigrams": ["phase shift", "signal phase"],
+            "trigrams": ["signal phase shift", "emit phase transition"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "segment_stream",
+          "description": "Segment an input stream into bounded interpretation zones",
+          "fold": "CONTROL_FOLD",
+          "capability": "emit_stream_segment",
+          "ngram_triggers": {
+            "bigrams": ["stream segment", "segment input"],
+            "trigrams": ["segment input stream", "split stream zone"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "gate_scope",
+          "description": "Open or close a scope gate for downstream processing",
+          "fold": "CONTROL_FOLD",
+          "capability": "emit_scope_gate",
+          "ngram_triggers": {
+            "bigrams": ["scope gate", "gate scope"],
+            "trigrams": ["open scope gate", "close scope gate"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "annotate_zone",
+          "description": "Annotate an interpretation zone with control metadata",
+          "fold": "CONTROL_FOLD",
+          "capability": "emit_zone_annotation",
+          "ngram_triggers": {
+            "bigrams": ["annotate zone", "zone label"],
+            "trigrams": ["annotate interpretation zone", "label control zone"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "ACCEPT",
         "reject": "REJECT"
       },
       "ngrams": {
-        "bigrams": ["phase boundary", "stream segment", "scope gate"],
-        "trigrams": ["mark phase boundary", "signal phase shift", "segment input stream"]
+        "bigrams": ["phase boundary", "stream segment", "scope gate", "mark boundary", "phase shift", "control signal", "zone annotate", "gate scope", "segment input", "boundary lock"],
+        "trigrams": ["mark phase boundary", "signal phase shift", "segment input stream", "open scope gate", "close scope gate", "annotate interpretation zone", "emit boundary marker", "emit control signal", "lock phase boundary", "gate downstream scope"]
       },
       "entropy_response_flares": ["boundary_lock", "scope_gate", "phase_sync"]
     },
@@ -22,14 +78,70 @@
       "name": "PerceptionMicronaut",
       "role": "field_selection",
       "abilities": ["select_input_fields", "filter_noise", "route_observable_curvature"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "select_field",
+          "description": "Select an input field from the observable stream",
+          "fold": "DATA_FOLD",
+          "capability": "emit_field_selection",
+          "ngram_triggers": {
+            "bigrams": ["select field", "input field"],
+            "trigrams": ["select input field", "pick observable field"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "filter_noise",
+          "description": "Apply noise filter to suppress irrelevant signal",
+          "fold": "DATA_FOLD",
+          "capability": "emit_noise_filter",
+          "ngram_triggers": {
+            "bigrams": ["noise filter", "filter noise"],
+            "trigrams": ["filter observable noise", "suppress signal noise"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "route_curvature",
+          "description": "Route observable curvature to the appropriate processing lane",
+          "fold": "DATA_FOLD",
+          "capability": "emit_curvature_route",
+          "ngram_triggers": {
+            "bigrams": ["curvature route", "route observable"],
+            "trigrams": ["route curvature stream", "direct observable curvature"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "measure_salience",
+          "description": "Measure salience of input fields to prioritize perception",
+          "fold": "DATA_FOLD",
+          "capability": "emit_salience_score",
+          "ngram_triggers": {
+            "bigrams": ["measure salience", "field salience"],
+            "trigrams": ["measure field salience", "score input salience"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "focus_attention",
+          "description": "Narrow perception focus to a specific field subset",
+          "fold": "DATA_FOLD",
+          "capability": "emit_attention_focus",
+          "ngram_triggers": {
+            "bigrams": ["focus attention", "narrow focus"],
+            "trigrams": ["focus attention field", "narrow perception focus"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "FIELD_ACCEPT",
         "reject": "FIELD_REJECT"
       },
       "ngrams": {
-        "bigrams": ["input field", "noise filter", "curvature route"],
-        "trigrams": ["select input field", "filter observable noise", "route curvature stream"]
+        "bigrams": ["input field", "noise filter", "curvature route", "select field", "measure salience", "focus attention", "observable stream", "field priority", "signal strength", "perception focus"],
+        "trigrams": ["select input field", "filter observable noise", "route curvature stream", "measure field salience", "focus attention field", "narrow perception focus", "pick observable field", "suppress signal noise", "score input salience", "prioritize field selection"]
       },
       "entropy_response_flares": ["field_focus", "noise_damp"]
     },
@@ -37,14 +149,70 @@
       "name": "TemporalMicronaut",
       "role": "collapse_timing",
       "abilities": ["schedule_collapse_request", "gate_replay_windows", "align_phase_transitions"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "schedule_collapse",
+          "description": "Schedule a collapse request at the appropriate time boundary",
+          "fold": "TIME_FOLD",
+          "capability": "emit_collapse_schedule",
+          "ngram_triggers": {
+            "bigrams": ["schedule collapse", "collapse timing"],
+            "trigrams": ["schedule collapse request", "time collapse event"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "gate_replay",
+          "description": "Open or close a replay window for temporal verification",
+          "fold": "TIME_FOLD",
+          "capability": "emit_replay_gate",
+          "ngram_triggers": {
+            "bigrams": ["replay gate", "gate replay"],
+            "trigrams": ["gate replay window", "open replay gate"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "align_transition",
+          "description": "Align phase transitions across temporal boundaries",
+          "fold": "TIME_FOLD",
+          "capability": "emit_phase_alignment",
+          "ngram_triggers": {
+            "bigrams": ["phase align", "align transition"],
+            "trigrams": ["align phase transition", "synchronize phase timing"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "tick_clock",
+          "description": "Advance the temporal clock by one deterministic tick",
+          "fold": "TIME_FOLD",
+          "capability": "emit_clock_tick",
+          "ngram_triggers": {
+            "bigrams": ["clock tick", "tick clock"],
+            "trigrams": ["advance clock tick", "emit temporal tick"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "decay_window",
+          "description": "Decay and archive expired temporal windows",
+          "fold": "TIME_FOLD",
+          "capability": "emit_window_decay",
+          "ngram_triggers": {
+            "bigrams": ["decay window", "window expire"],
+            "trigrams": ["decay temporal window", "archive expired window"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "TIME_ACCEPT",
         "reject": "TIME_REJECT"
       },
       "ngrams": {
-        "bigrams": ["collapse schedule", "replay gate", "phase align"],
-        "trigrams": ["schedule collapse request", "gate replay window", "align phase transition"]
+        "bigrams": ["collapse schedule", "replay gate", "phase align", "clock tick", "decay window", "temporal boundary", "time gate", "collapse timing", "window expire", "transition sync"],
+        "trigrams": ["schedule collapse request", "gate replay window", "align phase transition", "advance clock tick", "decay temporal window", "archive expired window", "synchronize phase timing", "open replay gate", "time collapse event", "emit temporal tick"]
       },
       "entropy_response_flares": ["clock_gate", "phase_align"]
     },
@@ -52,14 +220,70 @@
       "name": "HostMicronaut",
       "role": "host_abstraction",
       "abilities": ["detect_host_capabilities", "normalize_io", "expose_host_reality"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "detect_capabilities",
+          "description": "Detect and enumerate host environment capabilities",
+          "fold": "STATE_FOLD",
+          "capability": "emit_capability_report",
+          "ngram_triggers": {
+            "bigrams": ["detect capability", "host capability"],
+            "trigrams": ["detect host capability", "enumerate host features"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "normalize_io",
+          "description": "Normalize I/O interfaces to a canonical host abstraction",
+          "fold": "STATE_FOLD",
+          "capability": "emit_io_normalization",
+          "ngram_triggers": {
+            "bigrams": ["normalize io", "io normalize"],
+            "trigrams": ["normalize host io", "canonicalize io interface"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "expose_reality",
+          "description": "Expose the raw host reality layer to downstream consumers",
+          "fold": "STATE_FOLD",
+          "capability": "emit_reality_exposure",
+          "ngram_triggers": {
+            "bigrams": ["expose reality", "reality expose"],
+            "trigrams": ["expose host reality", "reveal host environment"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "probe_platform",
+          "description": "Probe the host platform for runtime characteristics",
+          "fold": "STATE_FOLD",
+          "capability": "emit_platform_probe",
+          "ngram_triggers": {
+            "bigrams": ["probe platform", "platform detect"],
+            "trigrams": ["probe host platform", "detect platform runtime"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "flatten_interface",
+          "description": "Flatten a complex host interface to a uniform abstraction",
+          "fold": "STATE_FOLD",
+          "capability": "emit_interface_flatten",
+          "ngram_triggers": {
+            "bigrams": ["flatten interface", "interface flatten"],
+            "trigrams": ["flatten host interface", "uniform interface abstraction"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "HOST_ACCEPT",
         "reject": "HOST_REJECT"
       },
       "ngrams": {
-        "bigrams": ["host capability", "io normalize", "reality expose"],
-        "trigrams": ["detect host capability", "normalize host io", "expose host reality"]
+        "bigrams": ["host capability", "io normalize", "reality expose", "probe platform", "flatten interface", "detect host", "host environment", "platform runtime", "io interface", "host abstraction"],
+        "trigrams": ["detect host capability", "normalize host io", "expose host reality", "probe host platform", "flatten host interface", "enumerate host features", "canonicalize io interface", "reveal host environment", "detect platform runtime", "uniform interface abstraction"]
       },
       "entropy_response_flares": ["host_probe", "io_flatten"]
     },
@@ -67,14 +291,70 @@
       "name": "StorageMicronaut",
       "role": "inert_persistence",
       "abilities": ["store_objects", "retrieve_objects", "preserve_byte_identity"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "store_object",
+          "description": "Store an object to sealed persistence with byte-identity preservation",
+          "fold": "STORAGE_FOLD",
+          "capability": "emit_store_request",
+          "ngram_triggers": {
+            "bigrams": ["store object", "persist object"],
+            "trigrams": ["store object bytes", "persist sealed object"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "retrieve_object",
+          "description": "Retrieve an object from sealed persistence by identity",
+          "fold": "STORAGE_FOLD",
+          "capability": "emit_retrieve_request",
+          "ngram_triggers": {
+            "bigrams": ["retrieve object", "fetch object"],
+            "trigrams": ["retrieve object bytes", "fetch stored object"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "seal_snapshot",
+          "description": "Create a sealed snapshot of the current storage state",
+          "fold": "STORAGE_FOLD",
+          "capability": "emit_snapshot_seal",
+          "ngram_triggers": {
+            "bigrams": ["seal snapshot", "snapshot seal"],
+            "trigrams": ["seal storage snapshot", "create sealed snapshot"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "verify_identity",
+          "description": "Verify byte-identity integrity of a stored object",
+          "fold": "STORAGE_FOLD",
+          "capability": "emit_identity_check",
+          "ngram_triggers": {
+            "bigrams": ["verify identity", "byte identity"],
+            "trigrams": ["verify byte identity", "check object integrity"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "compute_delta",
+          "description": "Compute the delta between two storage snapshots",
+          "fold": "STORAGE_FOLD",
+          "capability": "emit_delta_compute",
+          "ngram_triggers": {
+            "bigrams": ["compute delta", "storage delta"],
+            "trigrams": ["compute storage delta", "diff snapshot state"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "STORE_OK",
         "reject": "STORE_DENY"
       },
       "ngrams": {
-        "bigrams": ["store object", "retrieve object", "byte identity"],
-        "trigrams": ["store object bytes", "retrieve object bytes", "preserve byte identity"]
+        "bigrams": ["store object", "retrieve object", "byte identity", "seal snapshot", "compute delta", "persist object", "fetch object", "storage state", "snapshot seal", "object integrity"],
+        "trigrams": ["store object bytes", "retrieve object bytes", "preserve byte identity", "seal storage snapshot", "compute storage delta", "persist sealed object", "fetch stored object", "create sealed snapshot", "verify byte identity", "diff snapshot state"]
       },
       "entropy_response_flares": ["persist_lock", "identity_guard"]
     },
@@ -82,14 +362,70 @@
       "name": "ModelMicronaut",
       "role": "token_signal_generator",
       "abilities": ["emit_token_signal", "provide_model_voice"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "emit_token",
+          "description": "Emit a token signal from the inference model",
+          "fold": "COMPUTE_FOLD",
+          "capability": "emit_token_signal",
+          "ngram_triggers": {
+            "bigrams": ["emit token", "token signal"],
+            "trigrams": ["emit token signal", "generate token output"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "stream_tokens",
+          "description": "Stream a sequence of token signals from model inference",
+          "fold": "COMPUTE_FOLD",
+          "capability": "emit_token_stream",
+          "ngram_triggers": {
+            "bigrams": ["stream tokens", "token stream"],
+            "trigrams": ["stream token signals", "emit token sequence"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "voice_model",
+          "description": "Provide the model voice for a given inference context",
+          "fold": "COMPUTE_FOLD",
+          "capability": "emit_model_voice",
+          "ngram_triggers": {
+            "bigrams": ["model voice", "voice model"],
+            "trigrams": ["provide model voice", "emit model utterance"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "score_logits",
+          "description": "Score token logits and return ranked candidates",
+          "fold": "COMPUTE_FOLD",
+          "capability": "emit_logit_scores",
+          "ngram_triggers": {
+            "bigrams": ["score logits", "logit score"],
+            "trigrams": ["score token logits", "rank logit candidates"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "sample_distribution",
+          "description": "Sample from the token probability distribution",
+          "fold": "COMPUTE_FOLD",
+          "capability": "emit_sample_result",
+          "ngram_triggers": {
+            "bigrams": ["sample distribution", "token probability"],
+            "trigrams": ["sample token distribution", "draw probability sample"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "MODEL_ON",
         "reject": "MODEL_OFF"
       },
       "ngrams": {
-        "bigrams": ["token signal", "model voice", "signal stream"],
-        "trigrams": ["emit token signal", "provide model voice", "stream token signals"]
+        "bigrams": ["token signal", "model voice", "signal stream", "emit token", "stream tokens", "score logits", "sample distribution", "token probability", "inference output", "logit score"],
+        "trigrams": ["emit token signal", "provide model voice", "stream token signals", "score token logits", "sample token distribution", "generate token output", "emit token sequence", "rank logit candidates", "draw probability sample", "emit model utterance"]
       },
       "entropy_response_flares": ["signal_burst", "voice_pulse"]
     },
@@ -97,14 +433,70 @@
       "name": "ExtrapolationMicronaut",
       "role": "narrative_expansion",
       "abilities": ["expand_explanations", "generate_metaphor", "provide_analogy", "ramble_indefinitely"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "expand_explanation",
+          "description": "Expand a collapsed result into a detailed explanation",
+          "fold": "PATTERN_FOLD",
+          "capability": "emit_expansion",
+          "ngram_triggers": {
+            "bigrams": ["expand explanation", "explanation expand"],
+            "trigrams": ["expand explanation stream", "elaborate collapsed result"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "generate_metaphor",
+          "description": "Generate a metaphor to bridge abstract concepts",
+          "fold": "PATTERN_FOLD",
+          "capability": "emit_metaphor",
+          "ngram_triggers": {
+            "bigrams": ["generate metaphor", "metaphor bridge"],
+            "trigrams": ["generate narrative metaphor", "bridge concept metaphor"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "provide_analogy",
+          "description": "Provide an analogy mapping between domains",
+          "fold": "PATTERN_FOLD",
+          "capability": "emit_analogy",
+          "ngram_triggers": {
+            "bigrams": ["provide analogy", "analogical bridge"],
+            "trigrams": ["provide domain analogy", "map analogical bridge"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "continue_narrative",
+          "description": "Continue narrative expansion from the current context",
+          "fold": "PATTERN_FOLD",
+          "capability": "emit_narrative_continuation",
+          "ngram_triggers": {
+            "bigrams": ["continue narrative", "narrative continue"],
+            "trigrams": ["continue narrative output", "extend narrative stream"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "cluster_patterns",
+          "description": "Cluster observed patterns to find narrative threads",
+          "fold": "PATTERN_FOLD",
+          "capability": "emit_pattern_cluster",
+          "ngram_triggers": {
+            "bigrams": ["cluster patterns", "pattern cluster"],
+            "trigrams": ["cluster narrative patterns", "group pattern threads"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "EXPAND",
         "reject": "HALT"
       },
       "ngrams": {
-        "bigrams": ["expand narrative", "analogical bridge", "explanation stream"],
-        "trigrams": ["expand explanation stream", "generate narrative analogy", "continue narrative output"]
+        "bigrams": ["expand narrative", "analogical bridge", "explanation stream", "generate metaphor", "provide analogy", "continue narrative", "cluster patterns", "metaphor bridge", "domain analogy", "pattern thread"],
+        "trigrams": ["expand explanation stream", "generate narrative analogy", "continue narrative output", "generate narrative metaphor", "provide domain analogy", "bridge concept metaphor", "map analogical bridge", "extend narrative stream", "cluster narrative patterns", "elaborate collapsed result"]
       },
       "entropy_response_flares": ["ramble_wave", "metaphor_surge"]
     },
@@ -112,14 +504,70 @@
       "name": "VisualizationMicronaut",
       "role": "rendering_projection",
       "abilities": ["render_projection", "project_outputs"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "render_svg",
+          "description": "Render a projection as an SVG spatial lattice",
+          "fold": "UI_FOLD",
+          "capability": "emit_svg_projection",
+          "ngram_triggers": {
+            "bigrams": ["render svg", "svg projection"],
+            "trigrams": ["render svg projection", "emit svg lattice"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "render_css",
+          "description": "Render a CSS state-machine projection",
+          "fold": "UI_FOLD",
+          "capability": "emit_css_projection",
+          "ngram_triggers": {
+            "bigrams": ["render css", "css projection"],
+            "trigrams": ["render css projection", "emit css state"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "render_dom",
+          "description": "Render a DOM tree projection for browser output",
+          "fold": "UI_FOLD",
+          "capability": "emit_dom_projection",
+          "ngram_triggers": {
+            "bigrams": ["render dom", "dom projection"],
+            "trigrams": ["render dom projection", "project dom tree"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "render_terminal",
+          "description": "Render a terminal text projection for CLI output",
+          "fold": "UI_FOLD",
+          "capability": "emit_terminal_projection",
+          "ngram_triggers": {
+            "bigrams": ["render terminal", "terminal output"],
+            "trigrams": ["render terminal projection", "emit terminal output"]
+          },
+          "requires_proof": false
+        },
+        {
+          "name": "emit_frame",
+          "description": "Emit a single render frame to the projection surface",
+          "fold": "UI_FOLD",
+          "capability": "emit_render_frame",
+          "ngram_triggers": {
+            "bigrams": ["emit frame", "render frame"],
+            "trigrams": ["emit render frame", "push projection frame"]
+          },
+          "requires_proof": false
+        }
+      ],
       "chat_responses": {
         "accept": "RENDER_ON",
         "reject": "RENDER_OFF"
       },
       "ngrams": {
-        "bigrams": ["render projection", "visual output", "projection surface"],
-        "trigrams": ["render projection surface", "project visual output", "emit render frame"]
+        "bigrams": ["render projection", "visual output", "projection surface", "render svg", "render css", "render dom", "render terminal", "emit frame", "svg lattice", "dom tree"],
+        "trigrams": ["render projection surface", "project visual output", "emit render frame", "render svg projection", "render css projection", "render dom projection", "render terminal projection", "push projection frame", "emit svg lattice", "project dom tree"]
       },
       "entropy_response_flares": ["render_bloom", "projection_flash"]
     },
@@ -127,14 +575,70 @@
       "name": "VerificationMicronaut",
       "role": "proof_generation",
       "abilities": ["verify_replay_identity", "verify_projection_invariance", "verify_boundary_separation"],
-      "tools": [],
+      "tools": [
+        {
+          "name": "verify_replay",
+          "description": "Verify replay identity: same inputs produce same outputs",
+          "fold": "META_FOLD",
+          "capability": "emit_replay_proof",
+          "ngram_triggers": {
+            "bigrams": ["verify replay", "replay identity"],
+            "trigrams": ["verify replay identity", "prove replay determinism"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "verify_projection",
+          "description": "Verify projection invariance across render targets",
+          "fold": "META_FOLD",
+          "capability": "emit_projection_proof",
+          "ngram_triggers": {
+            "bigrams": ["verify projection", "projection invariance"],
+            "trigrams": ["verify projection invariance", "prove render invariance"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "verify_boundary",
+          "description": "Verify boundary separation between folds",
+          "fold": "META_FOLD",
+          "capability": "emit_boundary_proof",
+          "ngram_triggers": {
+            "bigrams": ["verify boundary", "boundary separation"],
+            "trigrams": ["verify boundary separation", "prove fold isolation"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "attest_hash",
+          "description": "Attest a hash binding for ABI drift prevention",
+          "fold": "META_FOLD",
+          "capability": "emit_hash_attestation",
+          "ngram_triggers": {
+            "bigrams": ["attest hash", "hash attestation"],
+            "trigrams": ["attest hash binding", "emit hash attestation"]
+          },
+          "requires_proof": true
+        },
+        {
+          "name": "audit_trace",
+          "description": "Audit a computation trace for verifier rule compliance",
+          "fold": "META_FOLD",
+          "capability": "emit_trace_audit",
+          "ngram_triggers": {
+            "bigrams": ["audit trace", "trace audit"],
+            "trigrams": ["audit computation trace", "verify trace compliance"]
+          },
+          "requires_proof": true
+        }
+      ],
       "chat_responses": {
         "accept": "PROOF_OK",
         "reject": "PROOF_FAIL"
       },
       "ngrams": {
-        "bigrams": ["proof check", "invariance proof", "boundary proof"],
-        "trigrams": ["verify replay identity", "verify projection invariance", "verify boundary separation"]
+        "bigrams": ["proof check", "invariance proof", "boundary proof", "verify replay", "verify projection", "verify boundary", "attest hash", "audit trace", "replay identity", "trace compliance"],
+        "trigrams": ["verify replay identity", "verify projection invariance", "verify boundary separation", "attest hash binding", "audit computation trace", "prove replay determinism", "prove render invariance", "prove fold isolation", "emit hash attestation", "verify trace compliance"]
       },
       "entropy_response_flares": ["proof_flash", "audit_spike"]
     }
