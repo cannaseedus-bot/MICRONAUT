@@ -16,5 +16,6 @@ snapshot_dir = "io/snapshot"
 [sealed]
 brains_dir = "brains"
 semantics = "semantics.xjson"
+folds = "folds.toml"
 proof = "proof/scxq2.proof"
 trace = "trace/scxq2.trace"
