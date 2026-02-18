@@ -86,8 +86,8 @@ MICRONAUT/
 ⟁DATA_FOLD⟁      ⟁CODE_FOLD⟁      ⟁STORAGE_FOLD⟁
 ⟁NETWORK_FOLD⟁   ⟁UI_FOLD⟁        ⟁AUTH_FOLD⟁
 ⟁DB_FOLD⟁        ⟁COMPUTE_FOLD⟁   ⟁STATE_FOLD⟁
-⟁EVENTS_FOLD⟁    ⟁TIME_FOLD⟁      ⟁ERROR_FOLD⟁
-⟁CONFIG_FOLD⟁    ⟁PROOF_FOLD⟁     ⟁CONTROL_FOLD⟁
+⟁EVENTS_FOLD⟁    ⟁TIME_FOLD⟁      ⟁SPACE_FOLD⟁
+⟁META_FOLD⟁      ⟁PATTERN_FOLD⟁   ⟁CONTROL_FOLD⟁
 ```
 
 See [`docs/fold_law.md`](docs/fold_law.md) for collapse rules.
@@ -102,14 +102,15 @@ Deterministic rule-sets that:
 
 ### SCXQ2 Lanes
 
-Binary packing into four lanes:
+Binary packing into five lanes (magic `SCX2`, CRC32-terminated):
 
-| Lane | Content |
-|------|---------|
-| DICT | Symbol table (names, IDs, opcodes) |
-| FIELD | Typed scalars (f32/q16/u32) |
-| LANE | Payload blocks (canonical JSON, b64) |
-| EDGE | Causality links (prev_hash, call_id) |
+| Lane | ID | Content | Folds |
+|------|----|---------|-------|
+| DICT | 1 | Symbol tables (names, IDs, opcodes) | DATA, AUTH, META, PATTERN |
+| FIELD | 2 | Typed scalars (f32/q16/u32) | STORAGE, DB, STATE |
+| LANE | 3 | Ordered events (canonical JSON) | UI, EVENTS, TIME |
+| EDGE | 4 | Causality links / relations | CODE, NETWORK, SPACE, CONTROL |
+| BATCH | 5 | Ephemeral compute jobs | COMPUTE |
 
 ### Cluster Node DFA (State Machine)
 
@@ -128,14 +129,74 @@ The 1000-node cluster is fold-scoped with allocation:
 
 See [`src/CLUSTER_NODE_DFA.md`](src/CLUSTER_NODE_DFA.md) for full specification.
 
-### Phi-2 GGUF LLM Integration
+### LLM Model Format
 
-A lightweight deterministic LLM control plane:
-- **Model**: Phi-2 2.7B (Q2_K quantized GGUF)
-- **Binding**: MM-1 micronaut within ⟁COMPUTE_FOLD⟁
-- **Inference**: Deterministic (temperature=0, top_k=1, seed=42)
-- **Tools**: 5 MM-1 tools (emit_token, stream_tokens, voice_model, score_logits, sample_distribution)
-- **Routing**: 9 micronauts as MoE experts via ngram-based gating
+MICRONAUT supports three model formats via `safetensors_cluster_orchestrator.py`. The `ModelFormat` enum selects the loader at runtime:
+
+| Format | Enum Value | Use Case |
+|--------|-----------|----------|
+| **GGUF** | `ModelFormat.GGUF` | Primary format — quantized inference via transformers.js WASM |
+| **SafeTensors** | `ModelFormat.SAFETENSORS` | HuggingFace native weights, zero-copy mmap loading |
+| **PyTorch** | `ModelFormat.PYTORCH` | `.pt`/`.bin` checkpoint files, full-precision or quantized |
+
+#### Primary Model: Phi-2 GGUF
+
+The canonical model declared in `micronaut/models.toml`:
+
+| Field | Value |
+|-------|-------|
+| Model | Phi-2 (Microsoft) |
+| Parameters | 2.7B |
+| Source | `TheBloke/phi-2-GGUF` |
+| File | `models/phi-2/phi-2.Q2_K.gguf` |
+| Tokenizer | `models/phi-2/tokenizer.json` |
+| Config | `models/phi-2/config.json` |
+| Quantization | Q2_K |
+| Context length | 2048 tokens |
+| Vocabulary | 51200 tokens |
+
+#### Quantization Levels
+
+The transformers.js WASM runtime supports four GGUF quantization types, ordered by quality vs. size trade-off:
+
+| Quantization | Bits/weight | Notes |
+|-------------|------------|-------|
+| Q2_K | ~2.6 | Smallest — default for sealed deployment |
+| Q4_K_M | ~4.8 | Balanced quality/size |
+| Q5_K_M | ~5.7 | Near-lossless for most tasks |
+| Q8_0 | ~8.5 | Near-full-precision |
+
+#### Runtime and Inference
+
+- **Runtime**: `transformers.js` WASM backend (browser and Node.js compatible)
+- **Fold binding**: MM-1 micronaut → `⟁COMPUTE_FOLD⟁` → BATCH lane (lane 5)
+- **Inference is fully deterministic**:
+
+```
+temperature = 0.0   # No sampling randomness
+top_k       = 1     # Greedy decode
+seed        = 42    # Fixed RNG seed
+max_tokens  = 512   # Hard output limit
+```
+
+Because temperature is 0 and top_k is 1, every run with identical input produces byte-identical output. This is required for V6 replay determinism (same inputs → identical hashes).
+
+#### Fold-Scoped Model Authority
+
+The LLM is not a free agent — it is law-bound within the fold system:
+
+```
+Input text
+  → NgramRouter (bigrams/trigrams → meta-intent-map.json)
+  → MM-1 selected as active expert
+  → CM-1 control gate must be open (V2 gate record required)
+  → ComputeFold.process() wraps inference call
+  → trace_hash recorded (input_hash + output_hash)
+  → BATCH lane packs ephemeral result
+  → State discarded (ComputeFold is ephemeral — no persistence)
+```
+
+Micronauts orchestrate and constrain the model; they never execute autonomously. KUHUL_π is the sole execution authority.
 
 ### CM-1 Control Alphabet
 
@@ -282,14 +343,13 @@ console.log(result.hash);            // SHA-256 of output
   - 3D visualization with isometric projection
   - Deterministic inference (temperature=0, seed=42)
 
-### 📋 Planned
-- [ ] **Phase 6**: PowerShell orchestrator (micronaut.ps1) full integration
-- [ ] **Phase 7**: SCXQ2 binary lane packing and replay verification
-- [ ] **Phase 8**: CM-1 control alphabet pre-semantic layer
-- [ ] **Phase 9**: Multi-worker bot orchestration and fold routing
-- [ ] **Phase 10**: Token streaming and adaptive batching for MM-1
-- [ ] **Phase 11**: Proof generation and attestation chains (META_FOLD)
-- [ ] **Phase 12**: Production verifier and golden pack conformance
+- [x] **Phase 6**: V2/V3 verifier gap-fill (`--strict-v2`, `--strict-v3` flags added to `verifier.py`)
+- [x] **Phase 7**: SCXQ2 full 5-lane binary packer (`src/scxq2_packer.py`, fold→lane routing table)
+- [x] **Phase 8**: CM-1 control alphabet pre-semantic layer (`src/cm1_parser.py`, 5 invariants CM1-S1–S5)
+- [x] **Phase 9**: Multi-worker bot orchestration and fold routing (`src/orchestrator_bot.py` fold dispatch + `src/ngram_router.py`)
+- [x] **Phase 10**: GGL sealed compute integration (`src/ggl_orchestrator.py`, `src/scxq2_ggl_packer.py`, 10/10 bootstrap vectors)
+- [x] **Phase 11**: VM-1 rendering projections — CSS, DOM, and terminal renderers added to UIFold
+- [x] **Phase 12**: Golden pack conformance maintained throughout all phases (SVG sha256 `905fa675…`, binary sha256 `544e2899…` unchanged)
 
 ## License
 
