@@ -175,6 +175,7 @@ The 9 micronauts operate as fold-scoped experts in a gated MoE system:
 | Document | Description |
 |----------|-------------|
 | [`docs/fold_law.md`](docs/fold_law.md) | Fold collapse rules (locked) |
+| [`docs/micronaut_fold_law_unified.md`](docs/micronaut_fold_law_unified.md) | Unified fold algebra + frozen law artifacts |
 | [`docs/verifier_rules.md`](docs/verifier_rules.md) | V0-V7 determinism invariants |
 | [`docs/control_micronaut_1.md`](docs/control_micronaut_1.md) | CM-1 control alphabet |
 | [`docs/fold_lattice_proofs.md`](docs/fold_lattice_proofs.md) | Capability lattice proofs |
@@ -206,6 +207,9 @@ python src/verifier.py events.fel.jsonl --out replay_out --write-svg
 
 # With binary packing
 python src/verifier.py events.fel.jsonl --write-bin
+
+# Validate frozen fold law input (default input: system.json)
+python src/fold_verifier.py system.json
 ```
 
 ### MoE Inference Cluster
