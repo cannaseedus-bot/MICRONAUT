@@ -1,0 +1,89 @@
+{
+  "$schema": "xjson://schema/core/v1",
+  "$id": "kuhul://schema/micronaut-fold-law/v1",
+  "title": "Micronaut Fold Law (Frozen)",
+  "type": "object",
+  "required": ["system", "folds", "lanes", "events"],
+  "additionalProperties": false,
+  "properties": {
+    "system": {
+      "type": "object",
+      "required": ["version", "law"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "const": "1.0.0" },
+        "law": { "const": "identity-preserving contraction" }
+      }
+    },
+    "folds": {
+      "type": "array",
+      "minItems": 15,
+      "maxItems": 15,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "⟁DATA_FOLD⟁",
+          "⟁CODE_FOLD⟁",
+          "⟁STORAGE_FOLD⟁",
+          "⟁NETWORK_FOLD⟁",
+          "⟁UI_FOLD⟁",
+          "⟁AUTH_FOLD⟁",
+          "⟁DB_FOLD⟁",
+          "⟁COMPUTE_FOLD⟁",
+          "⟁STATE_FOLD⟁",
+          "⟁EVENTS_FOLD⟁",
+          "⟁TIME_FOLD⟁",
+          "⟁SPACE_FOLD⟁",
+          "⟁META_FOLD⟁",
+          "⟁CONTROL_FOLD⟁",
+          "⟁PATTERN_FOLD⟁"
+        ]
+      }
+    },
+    "lanes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "⟁DATA_FOLD⟁",
+        "⟁CODE_FOLD⟁",
+        "⟁STORAGE_FOLD⟁",
+        "⟁NETWORK_FOLD⟁",
+        "⟁UI_FOLD⟁",
+        "⟁AUTH_FOLD⟁",
+        "⟁DB_FOLD⟁",
+        "⟁COMPUTE_FOLD⟁",
+        "⟁STATE_FOLD⟁",
+        "⟁EVENTS_FOLD⟁",
+        "⟁TIME_FOLD⟁",
+        "⟁SPACE_FOLD⟁",
+        "⟁META_FOLD⟁",
+        "⟁CONTROL_FOLD⟁",
+        "⟁PATTERN_FOLD⟁"
+      ],
+      "patternProperties": {
+        ".*": {
+          "type": "string",
+          "enum": ["DICT", "FIELD", "LANE", "EDGE", "BATCH"]
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["fold", "payload"],
+        "additionalProperties": false,
+        "properties": {
+          "fold": {
+            "type": "string",
+            "const": "⟁EVENTS_FOLD⟁"
+          },
+          "payload": {
+            "type": ["string", "object"]
+          }
+        }
+      }
+    }
+  }
+}
