@@ -1,10 +1,15 @@
 """
 Leader orchestrator that spawns and manages subordinate bot workers.
 This is an example controller for fold orchestrators and Micronauts.
+
+Phase 8 enhancement: BotOrchestrator now also supports fold-aware dispatch
+via _dispatch_to_micronaut(), which routes tasks through the FoldOrchestrator
+using ngram-based intent classification rather than subprocess spawning.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -45,13 +50,32 @@ class BotTask:
     worker_pid: Optional[int] = None
 
 
+_MICRONAUT_TO_FOLD = {
+    "CM-1": "⟁CONTROL_FOLD⟁",
+    "PM-1": "⟁DATA_FOLD⟁",
+    "TM-1": "⟁TIME_FOLD⟁",
+    "HM-1": "⟁STATE_FOLD⟁",
+    "SM-1": "⟁STORAGE_FOLD⟁",
+    "MM-1": "⟁COMPUTE_FOLD⟁",
+    "XM-1": "⟁PATTERN_FOLD⟁",
+    "VM-1": "⟁UI_FOLD⟁",
+    "VM-2": "⟁META_FOLD⟁",
+}
+
+
 class BotOrchestrator:
-    def __init__(self, max_workers: int = 3) -> None:
+    def __init__(self, max_workers: int = 3, use_fold_dispatch: bool = False) -> None:
         self.max_workers = max_workers
         self.tasks: Dict[str, BotTask] = {}
         self.active_workers: Dict[int, subprocess.Popen[str]] = {}
         self.task_queue: "queue.Queue[str]" = queue.Queue()
         self.is_running = True
+
+        # Fold-aware dispatch (Phase 8)
+        self._fold_orchestrator: Any = None
+        self._ngram_router: Any = None
+        if use_fold_dispatch:
+            self._init_fold_dispatch()
 
         self.monitor_thread = threading.Thread(target=self._monitor_workers, daemon=True)
         self.monitor_thread.start()
@@ -60,6 +84,78 @@ class BotOrchestrator:
         self.processor_thread.start()
 
         logger.info("Orchestrator initialized with %s max workers", max_workers)
+
+    def _init_fold_dispatch(self) -> None:
+        """Lazily initialize FoldOrchestrator and NgramRouter for fold-aware dispatch."""
+        try:
+            from fold_orchestrator import FoldOrchestrator
+            self._fold_orchestrator = FoldOrchestrator()
+            logger.info("FoldOrchestrator initialized for fold-aware dispatch")
+        except Exception as exc:
+            logger.warning("FoldOrchestrator unavailable: %s", exc)
+        try:
+            from ngram_router import NgramRouter
+            self._ngram_router = NgramRouter()
+            logger.info("NgramRouter initialized for intent classification")
+        except Exception as exc:
+            logger.warning("NgramRouter unavailable: %s", exc)
+
+    def _dispatch_to_micronaut(self, micronaut_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Route *payload* through the fold corresponding to *micronaut_id*.
+
+        Returns the CollapseProof dict on success, or an error dict on failure.
+        """
+        if self._fold_orchestrator is None:
+            return {"error": "FoldOrchestrator not initialized"}
+
+        fold_value = _MICRONAUT_TO_FOLD.get(micronaut_id)
+        if fold_value is None:
+            return {"error": f"Unknown micronaut_id: {micronaut_id}"}
+
+        try:
+            from fold_orchestrator import FoldEvent, FoldType
+            payload_bytes = json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
+            event_id = hashlib.sha256(payload_bytes).hexdigest()[:16]
+            event = FoldEvent(
+                event_id=event_id,
+                fold=FoldType.EVENTS,
+                data={
+                    **payload,
+                    "target_fold": fold_value,
+                    "action": payload.get("action", "process"),
+                },
+                source_agent=micronaut_id,
+                requires_proof=True,
+            )
+            proof = self._fold_orchestrator.receive_event(event)
+            if proof is not None:
+                return proof.to_dict()
+            return {"error": "gate_denied", "micronaut": micronaut_id}
+        except Exception as exc:
+            logger.error("Fold dispatch failed for %s: %s", micronaut_id, exc)
+            return {"error": str(exc), "micronaut": micronaut_id}
+
+    def dispatch_text_task(self, text: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Classify *text* via ngram routing and dispatch to the appropriate micronaut.
+
+        This is the primary fold-aware entry point. It:
+        1. Routes *text* through NgramRouter to find the target micronaut
+        2. Calls _dispatch_to_micronaut() with the payload
+        3. Returns the CollapseProof dict
+
+        Falls back to XM-1 if no confident match.
+        """
+        if self._ngram_router is None or self._fold_orchestrator is None:
+            return {"error": "Fold dispatch not initialized (pass use_fold_dispatch=True)"}
+
+        route = self._ngram_router.route(text)
+        micronaut_id = route["target"]
+        combined_payload = {"text": text, "route": route}
+        if payload:
+            combined_payload.update(payload)
+        result = self._dispatch_to_micronaut(micronaut_id, combined_payload)
+        result["routing"] = route
+        return result
 
     def create_task(self, task_type: str, parameters: Dict[str, Any]) -> str:
         """Create a new task and add it to the queue."""

@@ -94,15 +94,40 @@ export default {
       };
     }
 
-    // Simple intent classification
     const intent = classifyIntent(text, brainModels.intents);
 
     return {
       success: true,
       text,
       intent: intent.name,
+      target: intent.target,
       confidence: intent.confidence,
       alternatives: intent.alternatives
+    };
+  },
+
+  /**
+   * Route - Classify text and return micronaut routing decision (does not execute)
+   */
+  micronaut_route: async ({ input }) => {
+    const { text } = input;
+
+    await loadBrains();
+
+    if (!brainModels.intents) {
+      return {
+        error: 'Intent model not loaded',
+        target: 'XM-1',
+        confidence: 0
+      };
+    }
+
+    const route = micronautRoute(text, brainModels.intents);
+
+    return {
+      success: true,
+      text,
+      ...route,
     };
   },
 
@@ -198,32 +223,91 @@ function generateCompletion(prompt, maxTokens, temperature) {
   return completions[lastWord.toLowerCase()] || 'completion not available';
 }
 
-function classifyIntent(text, intents) {
-  // Mock intent classification
-  const lowerText = text.toLowerCase();
+// -----------------------------------------------------------------------
+// Real ngram intent classifier using meta-intent-map.json triggers
+// -----------------------------------------------------------------------
 
-  const patterns = {
-    'create': { name: 'create', confidence: 0.9 },
-    'delete': { name: 'delete', confidence: 0.9 },
-    'update': { name: 'update', confidence: 0.85 },
-    'get': { name: 'read', confidence: 0.8 },
-    'list': { name: 'list', confidence: 0.85 },
-    'help': { name: 'help', confidence: 0.95 }
-  };
+function extractBigrams(text) {
+  const words = text.toLowerCase().split(/\s+/).filter(Boolean);
+  const result = [];
+  for (let i = 0; i < words.length - 1; i++) {
+    result.push(`${words[i]} ${words[i + 1]}`);
+  }
+  return result;
+}
 
-  for (const [keyword, result] of Object.entries(patterns)) {
-    if (lowerText.includes(keyword)) {
-      return {
-        ...result,
-        alternatives: []
-      };
+function extractTrigrams(text) {
+  const words = text.toLowerCase().split(/\s+/).filter(Boolean);
+  const result = [];
+  for (let i = 0; i < words.length - 2; i++) {
+    result.push(`${words[i]} ${words[i + 1]} ${words[i + 2]}`);
+  }
+  return result;
+}
+
+function scoreIntent(text, intentDef) {
+  const BIGRAM_WEIGHT = 1.0;
+  const TRIGRAM_WEIGHT = 1.5;
+  const bigrams = extractBigrams(text);
+  const trigrams = extractTrigrams(text);
+  let score = 0;
+  for (const bg of (intentDef.trigger_bigrams || [])) {
+    if (bigrams.includes(bg)) score += BIGRAM_WEIGHT;
+  }
+  for (const tg of (intentDef.trigger_trigrams || [])) {
+    if (trigrams.includes(tg)) score += TRIGRAM_WEIGHT;
+  }
+  return score;
+}
+
+function classifyIntent(text, intentMap) {
+  const MIN_CONFIDENCE = intentMap?.routing?.minimum_confidence ?? 0.3;
+  const FALLBACK = intentMap?.routing?.fallback ?? 'XM-1';
+  const intents = intentMap?.intents ?? {};
+
+  const scored = [];
+  for (const [name, def] of Object.entries(intents)) {
+    const score = scoreIntent(text, def);
+    if (score > 0) {
+      scored.push({ name, score, def });
     }
+  }
+  scored.sort((a, b) => b.score - a.score || (a.def.priority ?? 99) - (b.def.priority ?? 99));
+
+  if (scored.length > 0 && scored[0].score >= MIN_CONFIDENCE) {
+    const winner = scored[0];
+    return {
+      name: winner.name,
+      target: winner.def.target,
+      confidence: winner.score,
+      alternatives: scored.slice(1, 4).map(s => s.name),
+    };
   }
 
   return {
-    name: 'unknown',
-    confidence: 0.3,
-    alternatives: ['help', 'create', 'read']
+    name: 'expand',
+    target: FALLBACK,
+    confidence: 0,
+    alternatives: [],
+  };
+}
+
+/**
+ * micronaut_route — classify text and return routing decision.
+ * Does NOT execute any tool; only routes.
+ */
+function micronautRoute(text, intentMap) {
+  const result = classifyIntent(text, intentMap);
+  const intents = intentMap?.intents ?? {};
+  const intentDef = Object.values(intents).find(d => d.target === result.target) ?? {};
+  const tools = intentDef.tools ?? [];
+  return {
+    target: result.target,
+    intent: result.name,
+    target_fold: intentDef.fold ?? '',
+    tool: tools[0] ?? null,
+    confidence: result.confidence,
+    alternatives: result.alternatives,
   };
 }
 
