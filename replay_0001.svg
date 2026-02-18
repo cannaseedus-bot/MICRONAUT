@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect x="0" y="0" width="1200" height="675" fill="#060b14"/>
+  <!-- Header -->
+  <rect x="24" y="18" width="1152" height="60" rx="14" fill="rgba(22,242,170,0.08)" stroke="rgba(22,242,170,0.25)"/>
+  <text x="44" y="44" fill="#e8f5ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">
+<tspan x="44" y="44">tick: 1</tspan>
+<tspan x="44" y="62">replay: svg.replay.v1</tspan>
+<tspan x="44" y="80">projection: fold→svg (read-only)</tspan>
+</text>
+
+  <!-- Panels -->
+  <rect x="24" y="96" width="552" height="555" rx="16" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)"/>
+  <rect x="600" y="96" width="576" height="555" rx="16" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)"/>
+
+  <!-- Titles -->
+  <text x="44" y="128" fill="#16f2aa" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16">STATE (⟁STATE_FOLD⟁)</text>
+  <text x="620" y="128" fill="#16f2aa" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16">EVENTS (⟁EVENTS_FOLD⟁)</text>
+
+  <!-- Content -->
+  <text x="44" y="156" fill="#e8f5ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">
+<tspan x="44" y="156">mode: &quot;safe&quot;</tspan>
+<tspan x="44" y="174">status: &quot;booting&quot;</tspan>
+</text>
+  <text x="620" y="156" fill="#e8f5ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">
+<tspan x="620" y="156">[emit] ⟁EVENTS_FOLD⟁ {&quot;msg&quot;:&quot;boot&quot;,&quot;app&quot;:&quot;micronaut&quot;}</tspan>
+<tspan x="620" y="174">[set] ⟁STATE_FOLD⟁ {}</tspan>
+<tspan x="620" y="192">[set] ⟁STATE_FOLD⟁ {}</tspan>
+</text>
+
+  <!-- Provenance -->
+  <metadata>
+    {&quot;tick&quot;:1,&quot;state_keys&quot;:[&quot;mode&quot;,&quot;status&quot;]}
+  </metadata>
+</svg>

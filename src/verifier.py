@@ -571,6 +571,16 @@ def main() -> None:
         default=None,
         help="abi_hash pin for registry verification (optional)",
     )
+    ap.add_argument(
+        "--strict-v2",
+        action="store_true",
+        help="V2: enforce that every set/delta mutation in a tick is preceded by a gate record",
+    )
+    ap.add_argument(
+        "--strict-v3",
+        action="store_true",
+        help="V3: enforce that any tick with STATE/DATA mutations carries a compute.trace_hash or collapse.hash witness",
+    )
 
     args = ap.parse_args()
 
@@ -608,6 +618,43 @@ def main() -> None:
     combined_svg_hash_stream = hashlib.sha256()
 
     for frame_idx, (tick, evs) in enumerate(ticks, start=1):
+        # V2: control gate monopoly — all mutations must have a gate record in the same tick
+        if args.strict_v2:
+            has_mutation = any(e.get("type") in ("set", "delta") for e in evs)
+            if has_mutation:
+                gate_records = [e for e in evs if e.get("type") == "gate"]
+                if not gate_records:
+                    raise SystemExit(
+                        f"FAIL V2: tick {tick} has set/delta mutation but no gate record"
+                    )
+                for gate in gate_records:
+                    ctrl = gate.get("control", {})
+                    missing = [
+                        k for k in ("allow", "target_fold", "decide_hash", "policy_hash")
+                        if k not in ctrl
+                    ]
+                    if missing:
+                        raise SystemExit(
+                            f"FAIL V2: tick {tick} gate record missing fields: {missing}"
+                        )
+                    if ctrl.get("allow") is not True:
+                        raise SystemExit(
+                            f"FAIL V2: tick {tick} gate record has allow != true"
+                        )
+
+        # V3: compute mediation — mutations must be witnessed by a compute trace or collapse hash
+        if args.strict_v3:
+            has_mutation = any(e.get("type") in ("set", "delta") for e in evs)
+            if has_mutation:
+                has_witness = any(
+                    "trace_hash" in e.get("compute", {}) or "hash" in e.get("collapse", {})
+                    for e in evs
+                )
+                if not has_witness:
+                    raise SystemExit(
+                        f"FAIL V3: tick {tick} has mutations but no compute.trace_hash or collapse.hash witness"
+                    )
+
         # Apply state mutations (only STATE)
         for e in evs:
             typ = e.get("type")

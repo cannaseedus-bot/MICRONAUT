@@ -1,0 +1,18 @@
+{
+  "<unk>": 0,
+  "<bos>": 1,
+  "<eos>": 2,
+  "hello": 3,
+  "world": 4,
+  "the": 5,
+  "a": 6,
+  "is": 7,
+  "what": 8,
+  "micronaut": 9,
+  "fold": 10,
+  "compute": 11,
+  "token": 12,
+  "model": 13,
+  "seal": 14,
+  "proof": 15
+}
