@@ -1,0 +1,103 @@
+╔════════════════════════════════════════════════════════════════╗
+║  Cluster Node DFA State Machine Test Suite                     ║
+║  Testing Deterministic Finite Automaton Behavior               ║
+╚════════════════════════════════════════════════════════════════╝
+
+=== Test 1: Basic State Transitions ===
+Node: test_node_1
+Final State: S5 (expected: S5)
+State History: S1 → S2 → S3 → S5
+Accumulator: 2
+PC: 2
+✓ PASS
+
+=== Test 2: V2 Control Gate Enforcement ===
+✓ Caught expected V2 error: "V2 violation: control gate must be open before state transition. Execute openControlGate() first."
+✓ Transition succeeded after gate opened
+✓ PASS: V2 gate enforcement working
+
+=== Test 3: Error State Handling ===
+✓ Error state reached after error input
+Final state: S4
+Error was triggered: true
+✓ PASS: Error handling works
+
+=== Test 4: Stack Operations ===
+After push 1: depth = 1 (expected: 1)
+After push 2: depth = 2 (expected: 2)
+After push 3: depth = 3 (expected: 3)
+Popped frame: frame3, depth = 2 (expected: 2)
+Popped frame: frame2, depth = 1 (expected: 1)
+✓ PASS: Stack operations correct
+
+=== Test 5: Register Operations ===
+ACC = 5 (expected: 5)
+PC after nextInstruction: 1 (expected: 1)
+PC after nextInstruction: 2 (expected: 2)
+Zero flag when ACC=0: true (expected: true)
+Negative flag when ACC=-10: true (expected: true)
+✓ PASS: Register operations correct
+
+=== Test 6: Input Tape Determinism ===
+Tape 1 hash: fcbd3d7b39651c9c...
+Tape 2 hash: fcbd3d7b39651c9c...
+✓ PASS: Identical tapes produce identical hashes
+
+=== Test 7: Deterministic Execution (V6 Compliance) ===
+Node 1 execution hash: 3c1a1d36f4c09e0e...
+Node 2 execution hash: 3c1a1d36f4c09e0e...
+Hashes match: true
+Final states match: true
+Accumulators match: true
+✓ PASS: V6 deterministic execution verified
+
+=== Test 8: Multi-Node Cluster Orchestration ===
+Total nodes: 1000 (expected: 1000)
+By type: {
+  compute: 500,
+  routing: 200,
+  storage: 150,
+  verification: 100,
+  control: 50
+}
+By fold: [
+  '⟁COMPUTE_FOLD⟁',
+  '⟁DATA_FOLD⟁',
+  '⟁STORAGE_FOLD⟁',
+  '⟁META_FOLD⟁',
+  '⟁CONTROL_FOLD⟁'
+] ...
+Execution on compute node:
+  Node: node_0
+  Final State: S5
+  Accumulator: 2
+✓ PASS: Cluster orchestrator working
+
+=== Test 9: Broadcast Execution on Fold ===
+Broadcast on ⟁CONTROL_FOLD⟁:
+  Total nodes: 50
+  Successful: 50
+  Failed: 0
+  Success rate: 100.0%
+✓ PASS: Broadcast execution successful
+
+=== Test 10: Undefined Transition Handling ===
+Current state: S4
+✓ PASS: Undefined transition handled correctly
+
+╔════════════════════════════════════════════════════════════════╗
+║ Test Summary                                                   ║
+╚════════════════════════════════════════════════════════════════╝
+✓ Basic Transitions                        PASS
+✓ V2 Control Gate                          PASS
+✓ Error Handling                           PASS
+✓ Stack Operations                         PASS
+✓ Register Operations                      PASS
+✓ Tape Determinism                         PASS
+✓ V6 Execution                             PASS
+✓ Cluster Orchestration                    PASS
+✓ Broadcast on Fold                        PASS
+✓ Undefined Transition                     PASS
+
+Total: 10/10 tests passed (100.0%)
+
