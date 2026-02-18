@@ -23,6 +23,9 @@ import {
   MatrixOperations,
   PI, TAU, PHI,
 } from './tensor_math_cluster.js';
+import {
+  XCFEIntegration,
+} from './xcfe_interface.js';
 
 // ---------------------------------------------------------------------------
 // Node Types (mirrors models.toml cluster.node_types)
@@ -163,8 +166,12 @@ export class InferenceCluster {
     // Tensor math integration
     this.tensorIntegration = new TensorClusterIntegration();
 
+    // XCFE communication interface
+    this.xcfe = new XCFEIntegration(gridSize);
+
     this._buildGrid();
     this._bindTensors();
+    this._bindXCFE();
   }
 
   /**
@@ -267,6 +274,16 @@ export class InferenceCluster {
     }
 
     console.log(`[InferenceCluster] Tensor bindings: ${this.tensorIntegration.tensorNodeBindings.size} nodes bound`);
+  }
+
+  /**
+   * Bind XCFE communication interface.
+   * Registers all 9 micronauts with Kuramoto synchronization,
+   * curvature authentication, and geometric IPC.
+   */
+  _bindXCFE() {
+    const bound = this.xcfe.bindAllMicronauts();
+    console.log(`[InferenceCluster] XCFE bindings: ${bound} micronauts registered`);
   }
 
   /**
@@ -408,6 +425,9 @@ export class InferenceCluster {
     // Tensor validation across pipeline
     const tensorValidation = this.tensorIntegration.validate();
 
+    // XCFE validation
+    const xcfeValidation = this.xcfe.validate();
+
     return {
       pipelineId,
       input,
@@ -423,6 +443,14 @@ export class InferenceCluster {
         stability: tensorValidation.weightStability,
         valid: tensorValidation.valid,
         tensorHash: tensorValidation.piTensorHash,
+      },
+      xcfeValidation: {
+        valid: xcfeValidation.valid,
+        micronauntCount: xcfeValidation.micronauntCount,
+        kuramotoOrder: xcfeValidation.kuramotoOrder,
+        ipcChannels: xcfeValidation.ipcChannels,
+        totalMessages: xcfeValidation.totalMessages,
+        stateHash: xcfeValidation.stateHash,
       },
     };
   }
@@ -560,6 +588,9 @@ export class InferenceCluster {
     // Tensor integration stats
     const tensorValidation = this.tensorIntegration.validate();
 
+    // XCFE communication stats
+    const xcfeValidation = this.xcfe.validate();
+
     return {
       totalNodes: this.totalNodes,
       gridSize: this.gridSize,
@@ -577,6 +608,14 @@ export class InferenceCluster {
         valid: tensorValidation.valid,
         piTensorHash: tensorValidation.piTensorHash,
         weightMatrixHash: tensorValidation.weightMatrixHash,
+      },
+      xcfe: {
+        micronauntCount: xcfeValidation.micronauntCount,
+        kuramotoOrder: xcfeValidation.kuramotoOrder,
+        ipcChannels: xcfeValidation.ipcChannels,
+        totalMessages: xcfeValidation.totalMessages,
+        valid: xcfeValidation.valid,
+        stateHash: xcfeValidation.stateHash,
       },
     };
   }
