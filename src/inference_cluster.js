@@ -16,6 +16,16 @@
  */
 
 import crypto from 'crypto';
+import {
+  TensorClusterIntegration,
+  ValidationMetrics,
+  QuantumCognitiveState,
+  MatrixOperations,
+  PI, TAU, PHI,
+} from './tensor_math_cluster.js';
+import {
+  XCFEIntegration,
+} from './xcfe_interface.js';
 
 // ---------------------------------------------------------------------------
 // Node Types (mirrors models.toml cluster.node_types)
@@ -67,6 +77,11 @@ class ClusterNode {
     this.lastTokenHash = null;
     this.neighbors = [];            // Adjacent node IDs
     this.assignedMicronaut = null;
+
+    // Tensor state (bound by TensorClusterIntegration)
+    this.tensorBinding = null;      // Pi-geometry tensor binding
+    this.tensorWeight = 0;          // Effective weight from 4D manifold
+    this.quantumState = null;       // Quantum cognitive state vector
   }
 
   /**
@@ -80,6 +95,11 @@ class ClusterNode {
 
     const inputHash = hashData(token + JSON.stringify(context));
 
+    // Apply tensor weight to output hash if bound
+    const tensorFactor = this.tensorBinding
+      ? hashData(inputHash + this.id + String(this.tensorWeight))
+      : hashData(inputHash + this.id);
+
     const result = {
       nodeId: this.id,
       type: this.type,
@@ -87,10 +107,12 @@ class ClusterNode {
       lane: this.lane,
       token,
       inputHash,
-      outputHash: hashData(inputHash + this.id),
+      outputHash: tensorFactor,
       micronaut: this.assignedMicronaut,
       position: this.position,
       inferenceIndex: this.inferenceCount,
+      tensorWeight: this.tensorWeight,
+      quantumMeasurement: this.quantumState ? this.quantumState.measure() : null,
     };
 
     this.lastTokenHash = result.outputHash;
@@ -118,6 +140,11 @@ class ClusterNode {
       load: this.load,
       inferenceCount: this.inferenceCount,
       micronaut: this.assignedMicronaut,
+      tensorWeight: this.tensorWeight,
+      hasTensorBinding: !!this.tensorBinding,
+      quantumState: this.quantumState
+        ? { p0: this.quantumState.probability0(), p1: this.quantumState.probability1() }
+        : null,
     };
   }
 }
@@ -136,7 +163,15 @@ export class InferenceCluster {
     this.activePipeline = null;
     this.totalInferences = 0;
 
+    // Tensor math integration
+    this.tensorIntegration = new TensorClusterIntegration();
+
+    // XCFE communication interface
+    this.xcfe = new XCFEIntegration(gridSize);
+
     this._buildGrid();
+    this._bindTensors();
+    this._bindXCFE();
   }
 
   /**
@@ -214,6 +249,41 @@ export class InferenceCluster {
     console.log(`[InferenceCluster] Fold distribution:`,
       Object.fromEntries([...this.foldIndex.entries()].map(([k, v]) => [k, v.length]))
     );
+  }
+
+  /**
+   * Bind pi-geometry tensors to every node in the cluster.
+   * Each node receives a 4D tensor coordinate based on its grid position,
+   * a neural weight from the weight matrix, and a quantum cognitive state.
+   */
+  _bindTensors() {
+    for (const [nodeId, node] of this.nodes) {
+      // Bind pi-geometry tensor to node position
+      const binding = this.tensorIntegration.bindNodeTensor(nodeId, node.position);
+      node.tensorBinding = binding;
+      node.tensorWeight = binding.tensorWeight;
+
+      // Initialize quantum cognitive state per node
+      // Alpha/beta derived deterministically from position
+      const { x, y, z } = node.position;
+      const alpha = Math.cos(PI * x / (this.gridSize - 1));
+      const beta = Math.sin(PI * y / (this.gridSize - 1));
+      node.quantumState = new QuantumCognitiveState(
+        `qstate_${nodeId}`, alpha, beta
+      );
+    }
+
+    console.log(`[InferenceCluster] Tensor bindings: ${this.tensorIntegration.tensorNodeBindings.size} nodes bound`);
+  }
+
+  /**
+   * Bind XCFE communication interface.
+   * Registers all 9 micronauts with Kuramoto synchronization,
+   * curvature authentication, and geometric IPC.
+   */
+  _bindXCFE() {
+    const bound = this.xcfe.bindAllMicronauts();
+    console.log(`[InferenceCluster] XCFE bindings: ${bound} micronauts registered`);
   }
 
   /**
@@ -352,6 +422,12 @@ export class InferenceCluster {
     });
     trace.push(renderResult);
 
+    // Tensor validation across pipeline
+    const tensorValidation = this.tensorIntegration.validate();
+
+    // XCFE validation
+    const xcfeValidation = this.xcfe.validate();
+
     return {
       pipelineId,
       input,
@@ -361,6 +437,21 @@ export class InferenceCluster {
       finalHash: renderResult.outputHash,
       totalNodesActivated: trace.reduce((sum, t) => sum + t.nodesUsed, 0),
       deterministic: true,
+      tensorValidation: {
+        consistency: tensorValidation.tensorConsistency,
+        confidence: tensorValidation.inferenceConfidence,
+        stability: tensorValidation.weightStability,
+        valid: tensorValidation.valid,
+        tensorHash: tensorValidation.piTensorHash,
+      },
+      xcfeValidation: {
+        valid: xcfeValidation.valid,
+        micronauntCount: xcfeValidation.micronauntCount,
+        kuramotoOrder: xcfeValidation.kuramotoOrder,
+        ipcChannels: xcfeValidation.ipcChannels,
+        totalMessages: xcfeValidation.totalMessages,
+        stateHash: xcfeValidation.stateHash,
+      },
     };
   }
 
@@ -397,6 +488,7 @@ export class InferenceCluster {
 
   /**
    * Process a pipeline stage through a set of fold-scoped nodes.
+   * Includes tensor math: attention weighting, quantum measurement, validation.
    */
   _processStage(nodeIds, input, meta) {
     const results = [];
@@ -411,12 +503,36 @@ export class InferenceCluster {
     // Combine results: chain hashes for determinism (V6)
     const combinedHash = hashData(results.map(r => r.outputHash).join(':'));
 
+    // Tensor attention: compute pi-weighted attention across stage nodes
+    let tensorAttention = null;
+    if (nodeIds.length >= 2) {
+      const half = Math.floor(nodeIds.length / 2);
+      const queryIds = nodeIds.slice(0, half);
+      const keyIds = nodeIds.slice(half);
+      const valueIds = nodeIds;
+      try {
+        tensorAttention = this.tensorIntegration.computeAttention(queryIds, keyIds, valueIds);
+      } catch (e) {
+        tensorAttention = { error: e.message };
+      }
+    }
+
+    // Aggregate tensor weights for stage
+    const stageTensorWeights = results
+      .filter(r => r.tensorWeight !== undefined)
+      .map(r => r.tensorWeight);
+    const avgTensorWeight = stageTensorWeights.length > 0
+      ? stageTensorWeights.reduce((a, b) => a + b, 0) / stageTensorWeights.length
+      : 0;
+
     return {
       ...meta,
       nodesUsed: nodeIds.length,
       nodeIds,
       outputHash: combinedHash,
       results: results.length,
+      tensorAttention: tensorAttention ? { computed: true } : null,
+      avgTensorWeight,
     };
   }
 
@@ -469,6 +585,12 @@ export class InferenceCluster {
       };
     }
 
+    // Tensor integration stats
+    const tensorValidation = this.tensorIntegration.validate();
+
+    // XCFE communication stats
+    const xcfeValidation = this.xcfe.validate();
+
     return {
       totalNodes: this.totalNodes,
       gridSize: this.gridSize,
@@ -479,6 +601,22 @@ export class InferenceCluster {
       typeDistribution: Object.fromEntries(
         [...this.typeIndex.entries()].map(([type, ids]) => [type, ids.length])
       ),
+      tensor: {
+        boundNodes: tensorValidation.boundNodes,
+        consistency: tensorValidation.tensorConsistency,
+        confidence: tensorValidation.inferenceConfidence,
+        valid: tensorValidation.valid,
+        piTensorHash: tensorValidation.piTensorHash,
+        weightMatrixHash: tensorValidation.weightMatrixHash,
+      },
+      xcfe: {
+        micronauntCount: xcfeValidation.micronauntCount,
+        kuramotoOrder: xcfeValidation.kuramotoOrder,
+        ipcChannels: xcfeValidation.ipcChannels,
+        totalMessages: xcfeValidation.totalMessages,
+        valid: xcfeValidation.valid,
+        stateHash: xcfeValidation.stateHash,
+      },
     };
   }
 
