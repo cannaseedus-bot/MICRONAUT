@@ -1,0 +1,1581 @@
+{
+  "_schema": "micronaut://test/inference-cluster/v1",
+  "_generated": "2026-02-17T22:45:23.145Z",
+  "_authority": "KUHUL_π",
+  "_deterministic": true,
+  "summary": {
+    "total_tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "pass_rate": 1,
+    "total_pipeline_runs": 10,
+    "total_node_inferences": 300
+  },
+  "model": {
+    "name": "phi-2-gguf",
+    "format": "gguf",
+    "quantization": "Q2_K",
+    "stub_mode": true,
+    "inference_count": 20,
+    "deterministic": true,
+    "fold": "⟁COMPUTE_FOLD⟁",
+    "micronaut": "MM-1",
+    "lane": "BATCH"
+  },
+  "cluster": {
+    "total_nodes": 1000,
+    "grid_size": 10,
+    "active_nodes": 300,
+    "type_distribution": {
+      "control": 50,
+      "routing": 280,
+      "storage": 230,
+      "compute": 360,
+      "verification": 80
+    },
+    "fold_stats": {
+      "⟁CONTROL_FOLD⟁": {
+        "count": 50,
+        "active": 20,
+        "avgLoad": 0.036,
+        "totalInferences": 20
+      },
+      "⟁DATA_FOLD⟁": {
+        "count": 80,
+        "active": 30,
+        "avgLoad": 0.034,
+        "totalInferences": 30
+      },
+      "⟁STORAGE_FOLD⟁": {
+        "count": 150,
+        "active": 30,
+        "avgLoad": 0.018,
+        "totalInferences": 30
+      },
+      "⟁NETWORK_FOLD⟁": {
+        "count": 40,
+        "active": 0,
+        "avgLoad": 0,
+        "totalInferences": 0
+      },
+      "⟁UI_FOLD⟁": {
+        "count": 60,
+        "active": 20,
+        "avgLoad": 0.03,
+        "totalInferences": 20
+      },
+      "⟁AUTH_FOLD⟁": {
+        "count": 20,
+        "active": 0,
+        "avgLoad": 0,
+        "totalInferences": 0
+      },
+      "⟁DB_FOLD⟁": {
+        "count": 30,
+        "active": 0,
+        "avgLoad": 0,
+        "totalInferences": 0
+      },
+      "⟁COMPUTE_FOLD⟁": {
+        "count": 320,
+        "active": 100,
+        "avgLoad": 0.028,
+        "totalInferences": 100
+      },
+      "⟁STATE_FOLD⟁": {
+        "count": 50,
+        "active": 20,
+        "avgLoad": 0.036,
+        "totalInferences": 20
+      },
+      "⟁EVENTS_FOLD⟁": {
+        "count": 30,
+        "active": 0,
+        "avgLoad": 0,
+        "totalInferences": 0
+      },
+      "⟁TIME_FOLD⟁": {
+        "count": 30,
+        "active": 20,
+        "avgLoad": 0.06,
+        "totalInferences": 20
+      },
+      "⟁SPACE_FOLD⟁": {
+        "count": 20,
+        "active": 0,
+        "avgLoad": 0,
+        "totalInferences": 0
+      },
+      "⟁META_FOLD⟁": {
+        "count": 80,
+        "active": 30,
+        "avgLoad": 0.034,
+        "totalInferences": 30
+      },
+      "⟁PATTERN_FOLD⟁": {
+        "count": 40,
+        "active": 30,
+        "avgLoad": 0.067,
+        "totalInferences": 30
+      }
+    }
+  },
+  "moe_routing": {
+    "strategy": "ngram_match_score",
+    "fallback": "XM-1",
+    "intents_loaded": 9,
+    "routing_accuracy": 1
+  },
+  "inference_settings": {
+    "temperature": 0,
+    "top_k": 1,
+    "top_p": 1,
+    "repetition_penalty": 1,
+    "seed": 42,
+    "max_tokens": 512,
+    "deterministic": true,
+    "note": "temperature=0.0 + top_k=1 = argmax (fully deterministic)"
+  },
+  "tests": [
+    {
+      "test": "test_control",
+      "category": "control",
+      "prompt": "mark phase boundary and open scope gate for downstream processing",
+      "expectedExpert": "CM-1",
+      "actualExpert": "CM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_1",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "6eb9062afd9d05e55c22cc939657c02d8688022107ff2291df178bfd7e9d5f26",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "da2ec95b2c49e215d5bb5ea6dc62e2dd5ca05f88e3cb2227e0f8c5eff5049fc0",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "27c38d504345dcce193ebcf2911675fa620b2765e82c814b12cbf3438beb281a",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "2b5456469b92e5a427c8107dee22e6faa79afbf182e4884d1ced65ed169b0d63",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "81d34db2ff26a0ef0ab037d63047c28f676e293c4fa6948ae0fe51ddb9094abb",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "069239a68fc5b435ebbd2e5780016bb079049a3a15d28b8ce7dccdf75e261c05",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "05f0bd2512263519a3b7e3d244120e162d89e0ece199bdc91f0fcf64f17fbe78",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "bf6cba5982c8665d8c5bc8edff8deba5f58cac68efe095b95387e90dfb893415",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "cb8a2d87eff0b2659ae5c08778d9e013bf8bc94fd567143471c7c4b784b4bf1c",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "6eb9062afd9d05e55c22cc939657c02d8688022107ff2291df178bfd7e9d5f26",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "c78030",
+          "hash": "1b7e8c8fa7e1e671681d805ff78a4390f3da5445a1bb6df38343373df54df416",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "562aad b062bc 7eaa89 7dcc6b d4b407 184106 5bf2e8 300243",
+          "tokens_generated": 8,
+          "hash": "96bbe11873c507ce40208cc9d497d9bd7b333eb8125c123ea5c32cd71bf617d2"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "scope",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "gate",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "for",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "downstream",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "processing",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "117c3ecd18fbcf8950c83887a74702bbe63b6512088b340f343d44ee97aee933"
+        }
+      }
+    },
+    {
+      "test": "test_perception",
+      "category": "perception",
+      "prompt": "select input field from the observable stream and filter noise",
+      "expectedExpert": "PM-1",
+      "actualExpert": "PM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_2",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "519f452222764ac1ea3e7cd3494a6c2ef0c06edae03333a38479b336b65c217d",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "5688d3c458a01eee6817071c92218636df98e1def71ebf931e613886a2a8f98c",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "43b5ae50d51e31a53020b10057d5074fc8c40ae3653737ed532b67b6a14f971c",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "16596a067205e15aca3b1db4a08f23807e9c6441838c95c15834a25c155d6ee1",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "cb15f69629e6990e9c5fc7897460551da8adb67720357e931b4ed19010695b92",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "b1fd9754fcdea6b80412ed276be74b851efe139985df6e696575a483610814ea",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "db80f604424526eb884fb4817ef36bac1ae51d07f8944634f412a340a2725700",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "660f70ff5e4b956cba4864141d67ee2e79ec6d1b5698364fcb6114c4a315d436",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "21b940bd50570944154eadbd4487b099ca2f92da92b29d951012197c92a19756",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "519f452222764ac1ea3e7cd3494a6c2ef0c06edae03333a38479b336b65c217d",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "6debfb",
+          "hash": "77bf49f83e483f19754ccdbc97a4e5a6ba5fd696943f3f36b6e7c3fc668fcf18",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "ae00d2 7690fe cec3cc 35dc04 872036 301e57 d411a2 42624f",
+          "tokens_generated": 8,
+          "hash": "4e8e9eda7ae0c2538e6b13ef3561f502f1657239b92d6f65bdac47d22cd1f2f2"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "observable",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "stream",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "and",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "filter",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "noise",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "dff5530898e2c4bdd773e176e12cafd19789e225c694509037dba0fc3758acfb"
+        }
+      }
+    },
+    {
+      "test": "test_temporal",
+      "category": "temporal",
+      "prompt": "schedule collapse request and gate replay window for verification",
+      "expectedExpert": "TM-1",
+      "actualExpert": "TM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_3",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "b46373d0dcae6b79f674d2ff310e8020c149433e1824ad4fa201787eb0c3374f",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "a7a25c256b0bee11f62e8f1f3c0475770a0810b0a9000d71160cc5ee756e2ace",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "43d762e3b7465c0e468d2dd3e46ac8a539bb352284055f558c057c3800d3b512",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "49eef038868b0d963b85fbf7714ee3b2c5f94ab765ff2b6740e32fee0841c7d7",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "40576a3e996894ee5e9fcb628307eacd5fa511bec1601dc8bf830476aa1004bf",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "c3e4621f62b65bdbac10ee017ca1b1f00a3d1c648a3b80eb2403830c2b7732ef",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "b79d618787d7d827ee61afa7267936434d8bec2bf369b2fd8f90540cb879f6f3",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "b6f9582a772f1cf21d973ae41f54409772d0ad31fb59c7c1552a0043f53e7742",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "effd91fd4e4b0f37f4d6a30c71ddec335ae481d9360939dc3c53989bda7357e0",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "b46373d0dcae6b79f674d2ff310e8020c149433e1824ad4fa201787eb0c3374f",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "3de779",
+          "hash": "4d60673b6728273cee24bf3aa88d942c78c1a13d5bbcda5fff4070df87874896",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "829c3e 371624 dbd769 666f57 ea892d 770df3 748900 5956aa",
+          "tokens_generated": 8,
+          "hash": "61296bd3d966c4788a16e5a6664117417a6b0f5b61b5771772bfdb127dd0ebd5"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "gate",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "replay",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "window",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "for",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "verification",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "c35a38bc3a4fa479c34ca8c3b7a9a8ccefbd43d129eb33edf737e189d9f00f7d"
+        }
+      }
+    },
+    {
+      "test": "test_host",
+      "category": "host",
+      "prompt": "detect host capability and normalize io interface for the platform",
+      "expectedExpert": "HM-1",
+      "actualExpert": "HM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_4",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "5afdccd8bfeddd34a6ce925094531bc7b2886b585f01242fd75782d72a61f8bd",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "fab14d97269907f0db2d8eb18bd9f4661988b7519385002b23a9f33f2edc2d7c",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "fa131b9ea7eaa391ea07f285326b8e2d9e185d07a8701a6da79367beac9d1fee",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "72c280115d603f419908bb00335ee1cef3d77336b8962268cc20bf729222fc28",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "9f684f22e3918a47d3a74e839654aa6e14b5e15328a0622ef7e0be29a7660c59",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "2de8efbe7a405fba9bf3c432d22f5e18c110980e0b0795d8f196e770fb3d81e7",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "6c3101d3d605f80376d758cbd9f559b31858fa1ad01bec8e3898851315c31a0e",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "64d5dff1f64ea321868c4bf152c7f1d5eae6078f8459fbbaa67ec0219352b90b",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "d86bf9e059aadcedd63f10cc402a2d0f596984376bef48d5f65831a5fded066b",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "5afdccd8bfeddd34a6ce925094531bc7b2886b585f01242fd75782d72a61f8bd",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "06fa44",
+          "hash": "1b0f7053aa9cf90fe782a5fdecc20a194d9562480bfca1289ddf3052fe7a5ebd",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "9f6b43 8e598c 796320 60c72a b0d99c aa0669 78e757 28ab56",
+          "tokens_generated": 8,
+          "hash": "c8e9a70b6c6831d063650dc233632160f2e94512c32c4dbf1c1ae24341a7a078"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "io",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "interface",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "for",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "the",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "platform",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "2c26e6cb76b55f169e297319dcf85363eb632b0874dd7c2d1d8fe1c6b9391ac3"
+        }
+      }
+    },
+    {
+      "test": "test_storage",
+      "category": "storage",
+      "prompt": "store object bytes and seal storage snapshot with byte identity",
+      "expectedExpert": "SM-1",
+      "actualExpert": "SM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_5",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "e4d901fc9ac8a4a9104b9dc05f84223d80faeb1cbc88342d5b51788379c49c74",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "4014412f42810e0516c693d832916b3b57192102a1cb4c6816e8ae906760667c",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "d7f6a9152693c5ead9cdbacc1157db45bfc9e39972a249c4c3d17f627ada19d1",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "25443e2dc216521c983692c5b82596b76f6a08773b762b63febc79f59d6aa5d9",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "bb2caa1818e0ae5a247265436b1f4c96535dd92360b601d95f8e379450e06252",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "e011a26e9609a8f96c6a3357f9e445ccf2240a628dabaa8db67331434e09815b",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "6dc889372cedb6e3f67310e527e50011f96030ce865eb2d3ed66d0e7c9540b18",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "460474f1bd2f560261a9c7cdd90f18d95370b37ab98e1f48dc223e9afa698abf",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "458b54d11e8e639c782618114eb87e42d5b8ad7d1ef6291390e03dd311da4df7",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "e4d901fc9ac8a4a9104b9dc05f84223d80faeb1cbc88342d5b51788379c49c74",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "24d5b4",
+          "hash": "a40ed29854faf894f56009910a3b159a6616a43657fc5e7354658d27ba1cb8b1",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "884bf8 54bf1a 8fe14c 2cd489 d73e37 4df98e 5c0703 f4a18c",
+          "tokens_generated": 8,
+          "hash": "5b7e85025ef19bb1ad06e43f137fb2f4e917dc324196649d8e5e0a1c1f88a3ee"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "storage",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "snapshot",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "with",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "byte",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "identity",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "610fbda0729626f3e7d002e17f150d11e0f712581eca50ab7eb4d6f2e7df0b79"
+        }
+      }
+    },
+    {
+      "test": "test_inference",
+      "category": "inference",
+      "prompt": "emit token signal from the model and stream token signals",
+      "expectedExpert": "MM-1",
+      "actualExpert": "MM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_6",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "7f305c9d33337800c1840400e25ad41d37e126ae0cc6b606f7a3f226ff6eae11",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "cbfae647efd7658fad83597c12c3e6c0ca2f6dae084482cbd6c3319a1aa3e6c8",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "afcb1723f7fa4d5a3c1c0d13be66c4c4d5a1582f187f8ab8bbd3e5a542cc3119",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "e9f975be3dc1b2891113aa61176af8e9097f83bdbef81135ca54613f375a0fa2",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "bd4bbeeea6e1a8b0646c07cc0bf38451c17842f103fd0d2f160fe48b393cea65",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "1f1b46856e7b214a81a13b8f588dd96856dc79a921f798fd0b3e180b370d560a",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "d24d9203b5e547ed1a9691e98ee6a48f4bd06aefad3026dc88425e58370f4388",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "1a303f828dd64f35e11f088ebbe5dffa4251cd5442e211dc8eb2e912713c2809",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "aa53e5d0bebf9423f51e3261bf4caa503182d5af2310e149c75a26a0f2b4487f",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "7f305c9d33337800c1840400e25ad41d37e126ae0cc6b606f7a3f226ff6eae11",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "86ec45",
+          "hash": "e2aa80cd6f0d1e5bf19f0f1d4f41a1ddc7bc7b8e758e4a66815049efacb0fbb3",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "22a7dc 91b70d 46d62c 85b9a8 7e4698 a22aa4 9211ec f85630",
+          "tokens_generated": 8,
+          "hash": "bcb1c6c62ee659b05086b048fd6b371a6f722760a113669a73a82cee3d307adf"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "model",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "and",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "stream",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "token",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "signals",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "038f08dacd02bbdcb3f83aaef89557f15e3cefbb683cf19a733444c8202f9e85"
+        }
+      }
+    },
+    {
+      "test": "test_expansion",
+      "category": "expansion",
+      "prompt": "expand explanation stream and generate narrative metaphor",
+      "expectedExpert": "XM-1",
+      "actualExpert": "XM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_7",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "4e2be36d474fd3efc5db733194e40a759903a33c18859bc7506e32096cf7fb9a",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "4e493ee3aebd4c0913c63997cb605b1c626d391c518987d63d6b149342d7121e",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "929ca964212a642677cdef7dea9f423d01094733fe8c31722b947d846f67c9ce",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "519ea5a472f914df5b0967abeea41ae0cebdfdee76cbbe2d5c39cc4692c90b56",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "c7a4dd5717ac281adfb98a2905e49a6081d673628b7c5d74fcb59b5341af2ed4",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "0c4e353a83414c85a3c2b2b627f5433a1ba304b543796ed67d36d89e47306162",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "4e8bb8382373d90c2774977a657e3bdd645cb3acd83cd8b0b3fc56bd1d6fa1fd",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "554078e92c755edbf02ed7df967015d6aa28736da970194a402dc7750b1d6af5",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "3fb4fb22e2f56d88d851ed4a6cdade81e3fcc469e88ccdbcefc4dea984c812fb",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "4e2be36d474fd3efc5db733194e40a759903a33c18859bc7506e32096cf7fb9a",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "98eef9",
+          "hash": "aa8d43585076d2b5e38295862a013d400b5d00b4b7e89076d0320f64e61322ba",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "742808 9abaf8 77a26f 26dc34 d42724 a271b7 3eb2e5 81895c",
+          "tokens_generated": 8,
+          "hash": "3922bddd5685b5852fbc5f3b75252e81ced3fcefe6097049c04d961b6809fc2e"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "stream",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "and",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "generate",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "narrative",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "metaphor",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "37acb92eaf06bf85ca6b7258d91a529b7a59b9cb8ec1fb91aba6ff3148ca9460"
+        }
+      }
+    },
+    {
+      "test": "test_render",
+      "category": "render",
+      "prompt": "render svg projection and emit render frame to the surface",
+      "expectedExpert": "VM-1",
+      "actualExpert": "VM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_8",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "19076013aa633a8fd7a849e8b04a38a73e9e2f1a1b27f04c95b4dc07c27f581c",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "9100b8b62dc31e604b64985a1472c43cf7e88371daef0bdcedd8e21f2be54eca",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "3c33192041b3ffa56a330b4cf37249b3dd40b44d873bb5ce6a1da6dc077ef912",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "c4c1ef77610b56d5516c0aff69e84c14c81de2948c8d3c7cb63ac2f865b2d71a",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "e184083acffa0e6fd597d2006fb94e31a68f4feb5cea0e435f58bd5422d235a3",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "bf4064df1fd6cf0ac440ae5c9dc8c17cf05cb7845abd57a9059d36cfff3e4231",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "b7798fd18ac9b220ce9e4f706ece4965149e8ef0da39a185bc93fa394e47b751",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "114984c1e27a9d57adb449db67ea885fcdd28252b5f941b6a5547871b136db3d",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "a2c16f1ae0ac261a339f831659eaf23294e123a32c057df25183653bb6a15791",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "19076013aa633a8fd7a849e8b04a38a73e9e2f1a1b27f04c95b4dc07c27f581c",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "cd3b68",
+          "hash": "89b1e20aba48ae4b1811056f75cad800799b1b1d008989661822fe53d16dc78f",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "f0dd2f b2cc64 521301 a5885e a0e15a 9071b7 de62f4 d56b2d",
+          "tokens_generated": 8,
+          "hash": "a267d5d86bbc8208813dfd740937056d00c919726f947d934505c9e2d689e701"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "render",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "frame",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "to",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "the",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "surface",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "fed533dcf54c2df3eba301236dc31eea7f112829513586fc77780457fbb477e2"
+        }
+      }
+    },
+    {
+      "test": "test_verify",
+      "category": "verification",
+      "prompt": "verify replay identity and attest hash binding for proof",
+      "expectedExpert": "VM-2",
+      "actualExpert": "VM-2",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_9",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "5488250583fe287768ac23501815cea462814d8e77c2ca7e6b27a2e0f79ff2e3",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "6c7c3d1051164a6d4cbb9342fd7240ba28820e84574dfac5c1122254474e450a",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "0715ea777bde92a0bf86931bb99d5be3d9d51d7d32d0567095e9d8769a88ef1b",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "a1e23b67c75a09ed6ff78df99ce1165f22c9b354a2c08f217ad154f2f9ee7c35",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "c5dc84f0d35c22c379bf7737918c06eac755a608118685ee4cd9c0b5fe0d91cf",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "8678ebf5b2426da379eb5f4308b41446ac789d9b59c9021d3f0506b25842e464",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "6d3c230a7bd3c40dae692180d4d5661610a229b591f70490534268f0c508ad47",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "9f59301752105d2bc613eaf36dc076fbde50caf75b767449ea3652b051a5f6d7",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "972bc797c01bfcb198ecc374fd57b236fabd4fd0277b7237ce84b8e9586d24ac",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "5488250583fe287768ac23501815cea462814d8e77c2ca7e6b27a2e0f79ff2e3",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "e15e43",
+          "hash": "883e9c043f041394b5296d6dfb0ac6a0ea43ec7b9b08a8cfe0e0a448cbd5959a",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "cb081d 5a876f 8c1762 b14174 c069bb 3e4f9a 21d1d2 1faedb",
+          "tokens_generated": 8,
+          "hash": "4d4ad9d03be477b5e54c9eba87132491302ecafbcab46d2672ceda3ee0e10b71"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "attest",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "hash",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "binding",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "for",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "proof",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "24937d3d71f35613bdba4a6052bfe9c000ac00d08dee1267eaa071c92aa38105"
+        }
+      }
+    },
+    {
+      "test": "test_ambiguous",
+      "category": "fallback",
+      "prompt": "help me understand how the system works please",
+      "expectedExpert": "XM-1",
+      "actualExpert": "XM-1",
+      "routedCorrectly": true,
+      "pipeline": {
+        "id": "pipeline_10",
+        "stages": 9,
+        "totalNodesActivated": 30,
+        "finalHash": "47905a0eb33461baecea6b925eaba75cd53f440bf070ee9ac0c2d2957d46ce71",
+        "deterministic": true,
+        "trace": [
+          {
+            "stage": "perceive",
+            "micronaut": "PM-1",
+            "action": "select_field + route_curvature",
+            "nodesUsed": 3,
+            "outputHash": "c07f49be7879589302dea7032b46558e59f8ce2861c3059e3cc8f36fa7f951a9",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "gate",
+            "micronaut": "CM-1",
+            "action": "mark_boundary + gate_scope",
+            "nodesUsed": 2,
+            "outputHash": "a85e7e303f0e4f52c1a8f1772749a3ee5b91579971f6485ebc70cabac1d16b97",
+            "phase": "@control.header.begin",
+            "cm1_code": "U+0001"
+          },
+          {
+            "stage": "schedule",
+            "micronaut": "TM-1",
+            "action": "schedule_collapse + tick_clock",
+            "nodesUsed": 2,
+            "outputHash": "2ba2119f5896ddaa709e96cd2837f6285a2b69d7dce6f3c9f2923f6b19963d20",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "normalize",
+            "micronaut": "HM-1",
+            "action": "detect_capabilities + normalize_io",
+            "nodesUsed": 2,
+            "outputHash": "f59803169a616ea484851e01e593c71f410b5d4d065e687448f325fb16334e07",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "infer",
+            "micronaut": "MM-1",
+            "action": "emit_token + stream_tokens",
+            "nodesUsed": 10,
+            "outputHash": "8c911b70b4cac3705451290bf1d4b013853cecc8eb3f27b87b64c8017e1d3923",
+            "phase": "@control.body.begin",
+            "cm1_code": "U+0002"
+          },
+          {
+            "stage": "expand",
+            "micronaut": "XM-1",
+            "action": "expand_explanation + continue_narrative",
+            "nodesUsed": 3,
+            "outputHash": "50e9363331e1274c3ced45bffb092494035f6f8486c84cc5b6fd9cdfc66cc6c5",
+            "phase": "@control.body.end",
+            "cm1_code": "U+0003"
+          },
+          {
+            "stage": "seal",
+            "micronaut": "SM-1",
+            "action": "store_object + seal_snapshot",
+            "nodesUsed": 3,
+            "outputHash": "5b6a31c78a9703bdbff2b7ccead121a909f1a20690186c9e2a49b60ef317c63d",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "verify",
+            "micronaut": "VM-2",
+            "action": "verify_replay + attest_hash",
+            "nodesUsed": 3,
+            "outputHash": "70a653e8d94dc4f9d3b515c883afb05ef1d8bffac24d7636adb8cf2e69c6f39a",
+            "phase": null,
+            "cm1_code": null
+          },
+          {
+            "stage": "render",
+            "micronaut": "VM-1",
+            "action": "render_svg + emit_frame",
+            "nodesUsed": 2,
+            "outputHash": "47905a0eb33461baecea6b925eaba75cd53f440bf070ee9ac0c2d2957d46ce71",
+            "phase": "@control.transmission.end",
+            "cm1_code": "U+0004"
+          }
+        ]
+      },
+      "phi2_inference": {
+        "emit_token": {
+          "tool": "emit_token",
+          "token": "678246",
+          "hash": "a6fb9761e7def1fec34a28debc2b6b096127a5924c53bf6b244856ad9c5be848",
+          "fold": "⟁COMPUTE_FOLD⟁",
+          "lane": "BATCH"
+        },
+        "voice_model": {
+          "tool": "voice_model",
+          "text": "b17a10 4577f1 d32c97 00b46d 966947 6cdc72 d81676 6b423d",
+          "tokens_generated": 8,
+          "hash": "021fedb377c01663b31bde7124ca24ad303c5d2448fd8d540477500427e9d9c6"
+        },
+        "score_logits": {
+          "tool": "score_logits",
+          "candidates": [
+            {
+              "token": "how",
+              "logit": 1,
+              "rank": 1
+            },
+            {
+              "token": "the",
+              "logit": 0.85,
+              "rank": 2
+            },
+            {
+              "token": "system",
+              "logit": 0.7,
+              "rank": 3
+            },
+            {
+              "token": "works",
+              "logit": 0.55,
+              "rank": 4
+            },
+            {
+              "token": "please",
+              "logit": 0.4,
+              "rank": 5
+            }
+          ],
+          "hash": "eb888fb5ba611458e09dd5e16c55f14caaf45229deb98597ca31df52896389b1"
+        }
+      }
+    }
+  ]
+}

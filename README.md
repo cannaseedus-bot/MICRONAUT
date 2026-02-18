@@ -153,6 +153,24 @@ python src/verifier.py events.fel.jsonl --write-bin
 
 - [MATRIX](https://github.com/cannaseedus-bot/MATRIX) — Universal language server bridge
 
+## Development Phases
+
+### ✅ Completed
+- [x] **Phase 1**: Sealed data architecture (object.toml, semantics.xjson, brains/)
+- [x] **Phase 2**: 15-fold collapse law specification and FEL verifier (V0-V7 rules)
+- [x] **Phase 3**: Micronauts registry and role definitions (9 micronauts, fold scoping)
+- [x] **Phase 4**: Job-specific ngram tools for micronauts (bigrams, trigrams, intent routing)
+
+### 📋 Planned
+- [ ] **Phase 5**: SVG/CSS deterministic state machine implementation
+- [ ] **Phase 6**: PowerShell orchestrator (micronaut.ps1) full integration
+- [ ] **Phase 7**: SCXQ2 binary lane packing and replay verification
+- [ ] **Phase 8**: CM-1 control alphabet pre-semantic layer
+- [ ] **Phase 9**: Multi-worker bot orchestration and fold routing
+- [ ] **Phase 10**: Model inference via MM-1 with token streaming
+- [ ] **Phase 11**: Proof generation and attestation chains (META_FOLD)
+- [ ] **Phase 12**: Production verifier and golden pack conformance
+
 ## License
 
 See repository for license information.

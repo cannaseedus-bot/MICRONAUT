@@ -1,0 +1,227 @@
+# Model Configuration for MICRONAUT MoE Inference System
+# Authority: KUHUL_π
+# Status: Sealed declaration (mutation forbidden)
+# Pattern: Mixture-of-Experts — 9 Micronauts as fold-scoped experts around Phi-2
+
+[metadata]
+schema = "fel-toml://models/v1"
+authority = "KUHUL_π"
+mutation = "forbidden"
+pattern = "mixture_of_experts"
+description = "Fold-enclosed, deterministic, static model owned entirely by the Micronaut system"
+
+# ============================================================================
+# PRIMARY MODEL: Phi-2 GGUF (2-bit quantized)
+# ============================================================================
+
+[model.phi2]
+name = "phi-2-gguf"
+source = "TheBloke/phi-2-GGUF"
+format = "gguf"
+quantization = "Q2_K"
+parameters = "2.7B"
+context_length = 2048
+vocab_size = 51200
+architecture = "transformer"
+dtype = "q2_k"
+ownership = "static"
+deterministic = true
+fold_enclosed = true
+
+# File paths (relative to project root)
+model_path = "models/phi-2/phi-2.Q2_K.gguf"
+tokenizer_path = "models/phi-2/tokenizer.json"
+config_path = "models/phi-2/config.json"
+
+# Inference constraints
+max_tokens = 512
+temperature = 0.0
+top_p = 1.0
+top_k = 1
+repetition_penalty = 1.0
+seed = 42
+
+# Fold binding — MM-1 is the sole model interface
+bound_micronaut = "MM-1"
+bound_fold = "⟁COMPUTE_FOLD⟁"
+bound_lane = "BATCH"
+
+# ============================================================================
+# RUNTIME: transformers.js (browser/Node.js compatible)
+# ============================================================================
+
+[runtime.transformers_js]
+engine = "transformers.js"
+version = ">=2.0.0"
+backend = "wasm"
+threads = 4
+description = "GGUF loading via @huggingface/transformers WASM backend"
+
+[runtime.transformers_js.gguf_support]
+enabled = true
+quantization_types = ["Q2_K", "Q4_K_M", "Q5_K_M", "Q8_0"]
+memory_map = true
+
+# ============================================================================
+# INFERENCE CLUSTER: 1000-Node JSON Runtime Object Cluster
+# ============================================================================
+
+[cluster]
+name = "kuhul-inference-cluster"
+description = "JSON runtime objects as a distributed inference grid (hybrid CUDA-core pattern)"
+total_nodes = 1000
+topology = "3d_grid"
+grid_dimensions = [10, 10, 10]
+
+[cluster.node_types]
+compute_nodes = 500
+routing_nodes = 200
+storage_nodes = 150
+verification_nodes = 100
+control_nodes = 50
+
+[cluster.fold_allocation]
+# Each fold gets a dedicated slice of the cluster
+CONTROL_FOLD = { nodes = 50, type = "control", lane = "EDGE" }
+DATA_FOLD = { nodes = 80, type = "routing", lane = "DICT" }
+STORAGE_FOLD = { nodes = 150, type = "storage", lane = "FIELD" }
+NETWORK_FOLD = { nodes = 40, type = "routing", lane = "EDGE" }
+UI_FOLD = { nodes = 60, type = "routing", lane = "LANE" }
+AUTH_FOLD = { nodes = 20, type = "routing", lane = "DICT" }
+DB_FOLD = { nodes = 30, type = "storage", lane = "FIELD" }
+COMPUTE_FOLD = { nodes = 300, type = "compute", lane = "BATCH" }
+STATE_FOLD = { nodes = 50, type = "storage", lane = "FIELD" }
+EVENTS_FOLD = { nodes = 30, type = "routing", lane = "LANE" }
+TIME_FOLD = { nodes = 30, type = "routing", lane = "LANE" }
+SPACE_FOLD = { nodes = 20, type = "routing", lane = "EDGE" }
+META_FOLD = { nodes = 80, type = "verification", lane = "DICT" }
+PATTERN_FOLD = { nodes = 40, type = "compute", lane = "DICT" }
+
+[cluster.inference_pipeline]
+description = "Token flow through the MoE expert pipeline"
+stages = [
+    "PM-1: perceive input → select fields → route to intent",
+    "CM-1: gate input → resolve phase → permit/deny",
+    "TM-1: schedule collapse timing → gate replay window",
+    "HM-1: detect host → normalize IO for cluster",
+    "MM-1: load Phi-2 → emit tokens → stream signals",
+    "XM-1: expand output → generate metaphors (post-collapse)",
+    "SM-1: seal result → snapshot → preserve byte identity",
+    "VM-2: verify proof → attest hash → audit trace",
+    "VM-1: render projection → emit frame (SVG/CSS/DOM/3D)"
+]
+
+# ============================================================================
+# 3D VISUALIZATION: Three.js / kuhul-3D Inference Cluster
+# ============================================================================
+
+[visualization]
+engine = "three.js"
+renderer = "webgl"
+description = "3D inference cluster rendering — nodes as cubes, folds as planes, tokens as particles"
+
+[visualization.scene]
+width = 1200
+height = 800
+background = "#0a0a0f"
+camera_fov = 60
+camera_distance = 25
+
+[visualization.node_rendering]
+compute_color = "#00ff88"
+routing_color = "#4488ff"
+storage_color = "#ff8844"
+verification_color = "#ff44ff"
+control_color = "#ffff00"
+node_size = 0.15
+active_glow = true
+token_particle_size = 0.05
+token_particle_speed = 2.0
+
+[visualization.fold_planes]
+enabled = true
+opacity = 0.08
+grid_visible = true
+
+# ============================================================================
+# MoE EXPERT ROUTING (Micronaut-as-Expert)
+# ============================================================================
+
+[moe]
+description = "Mixture-of-Experts pattern: 9 Micronauts as fold-scoped experts"
+gating_mechanism = "ngram_match_score"
+gating_source = "micronaut/brains/meta-intent-map.json"
+top_k_experts = 3
+load_balancing = true
+
+[[moe.experts]]
+id = "CM-1"
+role = "phase_geometry"
+fold = "⟁CONTROL_FOLD⟁"
+gate_priority = 1
+expert_type = "control_gate"
+description = "Pre-semantic gating — decides if inference is permitted"
+
+[[moe.experts]]
+id = "PM-1"
+role = "field_selection"
+fold = "⟁DATA_FOLD⟁"
+gate_priority = 2
+expert_type = "input_router"
+description = "Perception gating — selects relevant input fields"
+
+[[moe.experts]]
+id = "TM-1"
+role = "collapse_timing"
+fold = "⟁TIME_FOLD⟁"
+gate_priority = 3
+expert_type = "scheduler"
+description = "Temporal gating — schedules collapse and replay"
+
+[[moe.experts]]
+id = "HM-1"
+role = "host_abstraction"
+fold = "⟁STATE_FOLD⟁"
+gate_priority = 4
+expert_type = "environment"
+description = "Host detection — normalizes IO for cluster topology"
+
+[[moe.experts]]
+id = "SM-1"
+role = "inert_persistence"
+fold = "⟁STORAGE_FOLD⟁"
+gate_priority = 5
+expert_type = "storage"
+description = "Seals inference results — snapshot and byte identity"
+
+[[moe.experts]]
+id = "MM-1"
+role = "token_signal_generator"
+fold = "⟁COMPUTE_FOLD⟁"
+gate_priority = 6
+expert_type = "inference_core"
+description = "Primary inference expert — Phi-2 GGUF token emission"
+
+[[moe.experts]]
+id = "XM-1"
+role = "narrative_expansion"
+fold = "⟁PATTERN_FOLD⟁"
+gate_priority = 7
+expert_type = "expansion"
+description = "Post-collapse expansion — metaphors, analogies, narrative"
+
+[[moe.experts]]
+id = "VM-1"
+role = "rendering_projection"
+fold = "⟁UI_FOLD⟁"
+gate_priority = 8
+expert_type = "projection"
+description = "Output rendering — SVG, CSS, DOM, terminal, 3D"
+
+[[moe.experts]]
+id = "VM-2"
+role = "proof_generation"
+fold = "⟁META_FOLD⟁"
+gate_priority = 9
+expert_type = "verification"
+description = "Proof attestation — hash binding, replay determinism"

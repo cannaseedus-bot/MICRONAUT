@@ -35,9 +35,22 @@ python docs/golden_pack/svg_replay.py docs/golden_pack/events.jsonl --out replay
 
 ### Three-Plane Model
 
-- **Plane 0/1 (Control & Law)**: `micronaut/object.toml` declares the object server; `micronaut/semantics.xjson` defines the KUHUL-TSG schema. These are the law layer — no execution happens here.
+- **Plane 0/1 (Control & Law)**: `micronaut/object.toml` declares the object server; `micronaut/semantics.xjson` defines the KUHUL-TSG schema; `micronaut/folds.toml` is the unified fold/micronaut/routing metadata. These are the law layer — no execution happens here.
 - **Plane 2 (Sealed Compute)**: `micronaut/brains/` contains read-only sealed data (ngram profiles, bigrams, trigrams, intent maps). `micronaut/micronaut.s7` is the sealed executable object.
 - **Plane 3 (Proof & Replay)**: `micronaut/io/` has append-only I/O (chat.txt, stream.txt). `micronaut/trace/` and `micronaut/proof/` hold evidence and proof artifacts.
+
+### FEL-TOML Metadata (`micronaut/folds.toml`)
+
+The authoritative single source of truth for the fold system. Consolidates:
+- All 15 fold declarations with collapse rules, SCXQ2 lane mappings, and CM-1 phase bindings
+- All 9 micronaut registrations with their 5 job-specific tools and ngram triggers
+- Intent routing table for ngram-based tool selection (fallback: XM-1)
+- CM-1 control phase mappings (U+0000–U+0004 Unicode C0 characters)
+- Verifier rules V0–V7 declarations
+
+### SMCA Authority Automaton (`smca/`)
+
+A DFA-based authority model defining the legal state transitions for operations. States flow: MATRIX_PROPOSAL → CM1_GATE → SCXQ7_LAW → SCXQ2_SEMANTIC → SCO_EXECUTION → IDB_COMMIT. Any illegal transition lands in S⊥ (rejected). Contains SVG diagrams for cluster roles, collapse geometry, and authority gradient.
 
 ### 15-Fold System
 
@@ -82,8 +95,18 @@ Binary packing into 5 lanes: DICT (symbols), FIELD (typed scalars), LANE (payloa
 - `src/fel_svg_replay.py` — SVG replay frame generator
 - `src/fel_meta_fold.py` — META_FOLD attestation chain executor
 - `src/orchestrator_bot.py` — Bot orchestration with worker spawning
+- `src/safetensors_cluster_orchestrator.py` — Model loader for SafeTensors/PyTorch/GGUF formats
 - `src/kuhul_micronaut_factory.js` — Agent spawning and capability matrix (JS)
 - `src/micronaut_handlers.js` — N-gram inference handlers (JS)
+
+### LLM Integration Model
+
+The system is designed as a **control plane around an LLM**, not a standalone model:
+- **MM-1 (ModelMicronaut)** handles token signal generation within `⟁COMPUTE_FOLD⟁`
+- `safetensors_cluster_orchestrator.py` supports SafeTensors, PyTorch, and GGUF model formats
+- The micronaut registry references `phi-2-sft-lora`, `distilgpt2`, `gguf_models` as candidate model types
+- Micronauts route, constrain, and verify LLM output — they never execute autonomously
+- The ngram system (bigrams/trigrams/intent-map) provides lightweight local inference for tool routing independent of the LLM
 
 ## Important Conventions
 
@@ -93,3 +116,4 @@ Binary packing into 5 lanes: DICT (symbols), FIELD (typed scalars), LANE (payloa
 - **Fold delimiters**: Folds are referenced using the `⟁FOLD_NAME⟁` Unicode delimiter syntax throughout the codebase.
 - **No runtime authority**: Micronauts orchestrate and project but never execute autonomously. KUHUL_π is the sole execution authority.
 - **Proof over execution**: The verifier decides correctness. If the verifier can't reproduce identical hashes from the same inputs, the system is broken.
+- **folds.toml is authoritative**: `micronaut/folds.toml` is the single source of truth for fold declarations, micronaut tools, ngram routing, and CM-1 phases. Keep it in sync with the JSON brain files.
