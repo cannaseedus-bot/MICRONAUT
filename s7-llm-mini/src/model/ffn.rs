@@ -7,7 +7,7 @@ pub struct FFN {
 
 /// Deterministic ReLU: max(0, x) for INT8.
 fn relu(v: &[i8]) -> Vec<i8> {
-    v.iter().map(|x| x.max(0)).collect()
+    v.iter().map(|x| (*x).max(0)).collect()
 }
 
 impl FFN {

@@ -43,6 +43,21 @@ s7-llm-mini/
     └── inference/        # Greedy decode
 ```
 
+## FIELD Tensor Payload Contract
+
+Within lane `id=2` (FIELD), INT8 tensors are packed as:
+
+```text
+[u16 name_len][name bytes][u8 rank][u32 dims...][f32 scale][i8 data...]
+```
+
+`S7Mini::from_s7()` parses this payload deterministically, validates shape/data consistency, and wires:
+
+- `embedding.weight`
+- `lm_head.weight`
+
+If the FIELD lane is missing (like the current minimal header-only artifact), the runtime uses deterministic zero-tensor bootstrap weights so the reference binary still runs.
+
 ## `.s7l` File Format
 
 ```
@@ -77,3 +92,11 @@ Lane IDs map to SCXQ2 lanes:
 - Merkle root seals the full artifact
 - CM-1 governed (bound fold: `⟁COMPUTE_FOLD⟁`)
 - V6 compliant: same input → byte-identical output
+
+## Family Roadmap
+
+The 1M mini reference is the base tier. The next serious small-model tier is documented in:
+
+- [`docs/s7_llm_code_8m_family_spec.md`](../docs/s7_llm_code_8m_family_spec.md)
+
+This defines the S7 8M family (`CODE`, `MATH`, `GENERAL`, and deterministic `MOE`) with fold-law deterministic training and INT8 inference constraints.
