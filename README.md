@@ -115,13 +115,15 @@ Binary packing into five lanes (magic `SCX2`, CRC32-terminated):
 
 ### Cluster Node DFA (State Machine)
 
+> **Scaling note:** the 1000-node cluster described here is a **logical runtime grid** used for deterministic routing and fold allocation. It is not 1000 CPU/GPU cores and not 1000 model replicas. Treat high user concurrency, local shared-memory worker parallelism, and optional volunteer mesh compute as separate scaling layers.
+
 Each cluster node is a Deterministic Finite Automaton (DFA) with:
 - **6 states**: S0(IDLE) → S1(PARSE) → S2(TRANSFORM) → S3(EXECUTE) → S5(COMPLETE) or S4(ERROR)
 - **Deterministic transitions**: δ(state, input) → (next_state, action, micronaut)
 - **Pure compute semantics**: stack, tape, registers, program counter, accumulator
 - **V2/V6 compliance**: control gate enforcement + deterministic hashing
 
-The 1000-node cluster is fold-scoped with allocation:
+The logical 1000-node cluster is fold-scoped with allocation:
 - Compute nodes (500): Run MM-1 inference within ⟁COMPUTE_FOLD⟁
 - Routing nodes (200): Route tokens via ngram matching
 - Storage nodes (150): Seal results via SM-1
@@ -129,6 +131,7 @@ The 1000-node cluster is fold-scoped with allocation:
 - Control nodes (50): Gate operations via CM-1
 
 See [`src/CLUSTER_NODE_DFA.md`](src/CLUSTER_NODE_DFA.md) for full specification.
+See [`docs/scaling_concurrency_vs_mesh.md`](docs/scaling_concurrency_vs_mesh.md) for the operational scaling model.
 
 ### LLM Model Format
 
