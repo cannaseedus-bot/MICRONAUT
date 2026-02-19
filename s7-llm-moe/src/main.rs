@@ -24,7 +24,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     // Parse CLI flags.
-    let model_path = flag_val(&args, "--model").unwrap_or("model/moe.s7l");
+    let model_path = flag_val(&args, "--model").unwrap_or("model/moe-300m.s7l");
     let vocab_path = flag_val(&args, "--vocab").unwrap_or("model/vocab.json");
     let prompt     = flag_val(&args, "--prompt").unwrap_or("hello");
     let max_tokens = flag_val(&args, "--max-tokens")
@@ -55,13 +55,22 @@ fn main() {
     );
 
     // Greedy decode — deterministic, V6 compliant.
-    let output_tokens = decode(&model, &tokenizer, prompt_tokens, max_tokens);
-    let output_text   = tokenizer.decode(&output_tokens);
+    // Returns tokens, proof chain, and expert activation histogram.
+    let result = decode(&model, &tokenizer, prompt_tokens, max_tokens);
+    let output_text = tokenizer.decode(&result.tokens);
 
     // CM-1 gate: assert EOT after generation completes.
     print!("{}", CM1_EOT);
 
     println!("{}", output_text);
+
+    // Print proof chain and expert utilization to stderr for verification.
+    eprintln!(
+        "[PROOF] chain_hash={} steps={}",
+        result.proof_chain.chain_hash_hex(),
+        result.proof_chain.records.len(),
+    );
+    eprintln!("[EXPERTS] {:?}", result.expert_usage);
 }
 
 fn flag_val<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {

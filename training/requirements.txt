@@ -1,0 +1,9 @@
+# S7-LLM-MOE-300M Training Requirements
+# Pin major versions for reproducibility.
+
+torch>=2.2.0
+numpy>=1.26.0
+tokenizers>=0.15.0     # HuggingFace fast tokenizers (BPE vocab)
+
+# Optional: flash-attention for faster training on A100/H100
+# flash-attn>=2.5.0   # uncomment if available

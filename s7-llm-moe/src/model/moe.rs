@@ -1,11 +1,14 @@
-/// S7-LLM-MOE-140M — top-level model.
+/// S7-LLM-MOE-300M — top-level model.
 ///
 /// Execution law (one token):
-///   x = SharedTrunk(token_id, pos)          → ℝ^EXPERT_HIDDEN
-///   expert_id = DeterministicRouter(decoded) → {0,1,2,3}
-///   x = Expert[expert_id](x, pos)           → ℝ^EXPERT_HIDDEN
-///   logits = LM_Head(x)                     → ℝ^VOCAB_SIZE
-///   next_token = argmax(logits)             (greedy, deterministic)
+///   h       = SharedTrunk(token_id, pos)           → ℝ^1024
+///   route   = LearnedRouter(h)                     → expert_id ∈ {0..8}
+///   h'      = Expert[expert_id](h, pos, kv)        → ℝ^1024
+///   logits  = LM_Head(h')                          → ℝ^32768
+///   next    = argmax(logits)                        (greedy, deterministic)
+///
+/// Router selection is deterministic (argmax, no sampling).
+/// Proof record includes: expert_id, SHA-256(router_logits_i8).
 ///
 /// Fold binding: ⟁COMPUTE_FOLD⟁
 /// Lane:         BATCH (SCXQ2 id=5)
@@ -13,69 +16,70 @@
 /// CM-1 gate:    U+0002 STX (@control.body.begin) must precede inference.
 use super::trunk::SharedTrunk;
 use super::expert::Expert;
-use super::router::{DeterministicRouter, ExpertDomain};
+use super::router::{LearnedRouter, RouterOutput};
 use super::linear::Linear;
 use crate::inference::kv_cache::KVCache;
-use crate::model::config::{VOCAB_SIZE, EXPERT_HIDDEN};
+use crate::inference::proof::ProofRecord;
+use crate::model::config::{VOCAB_SIZE, NUM_EXPERTS};
 
 pub struct S7LlmMoe {
     pub trunk:   SharedTrunk,
-    pub experts: Vec<Expert>,     // len = 4; indexed by ExpertDomain
-    pub lm_head: Linear,          // [EXPERT_HIDDEN, VOCAB_SIZE] — weight-tied with embedding
-    pub router:  DeterministicRouter,
+    pub experts: Vec<Expert>,    // len = NUM_EXPERTS = 9
+    pub router:  LearnedRouter,
+    pub lm_head: Linear,         // [EXPERT_HIDDEN, VOCAB_SIZE] — weight-tied
+}
+
+/// Full output from one token forward pass.
+pub struct ForwardOutput {
+    pub logits:     Vec<i8>,
+    pub route:      RouterOutput,
+    pub proof:      ProofRecord,
 }
 
 impl S7LlmMoe {
     /// Single-token forward pass.
-    ///
-    /// token_id:     current input token (integer)
-    /// pos:          position in sequence (0-indexed)
-    /// decoded_so_far: decoded text up to this point (used by router for context)
-    /// kv:           mutable KV cache (trunk + 4 expert slices)
-    ///
-    /// Returns (logits: Vec<i8>, expert_used: ExpertDomain).
-    /// `logits` has length VOCAB_SIZE.
     pub fn forward(
         &self,
         token_id: u32,
         pos: usize,
-        decoded_so_far: &str,
         kv: &mut KVCache,
-    ) -> (Vec<i8>, ExpertDomain) {
-        // 1. Shared trunk (all experts share this computation).
-        let trunk_out = self.trunk.forward(token_id, pos, kv);
+    ) -> ForwardOutput {
+        debug_assert_eq!(self.experts.len(), NUM_EXPERTS);
 
-        // 2. Route to expert — deterministic, no learned gating.
-        let domain = self.router.route_context(decoded_so_far);
+        // 1. Shared trunk — produces universal representation.
+        let h_shared = self.trunk.forward(token_id, pos, kv);
+
+        // 2. Learned router — deterministic expert selection.
+        let route = self.router.forward(&h_shared);
 
         // 3. Expert forward (only one expert active per token).
-        let expert_out = self.experts[domain.index()].forward(&trunk_out, pos, kv);
+        let expert_out = self.experts[route.expert_id]
+            .forward(&h_shared, pos, kv);
 
         // 4. LM head → vocab logits.
         let logits = self.lm_head.forward(&expert_out);
-
         debug_assert_eq!(logits.len(), VOCAB_SIZE);
-        (logits, domain)
+
+        // 5. Build proof record (for replay verification).
+        let proof = ProofRecord::build(
+            token_id,
+            pos,
+            route.expert_id,
+            &route.logits_i8,
+            &self.experts[route.expert_id],
+        );
+
+        ForwardOutput { logits, route, proof }
     }
 
     /// Construct from a parsed .s7l file.
-    /// Wires weight tensors from the FIELD lane into model components.
+    /// Weights are wired from the FIELD lane into each component.
     pub fn from_s7(_file: &crate::s7l::S7File) -> Self {
-        // Full weight wiring requires the s7-pack-moe binary to have sealed
-        // trained weights into the FIELD lane.  Until a real .s7l weight file
-        // exists, constructing from scratch calls unimplemented!() to signal
-        // the correct integration point.
-        //
-        // To wire:
-        //   1. Open FIELD lane (id=2) from the parsed S7File.
-        //   2. Iterate TensorRecords in deterministic name-sorted order.
-        //   3. Match each tensor name to its component in the model.
-        //   4. Replace zero-weight placeholders.
         unimplemented!(
-            "Wire S7LlmMoe from .s7l FIELD lane (id=2). \
+            "Wire S7LlmMoe-300M from .s7l FIELD lane (id=2). \
              Seal weights with: cargo run --bin s7-pack-moe -- \
              --weights-dir model/weights/ --vocab model/vocab.json \
-             --out model/moe.s7l"
+             --out model/moe-300m.s7l"
         )
     }
 }

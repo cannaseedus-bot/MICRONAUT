@@ -333,3 +333,189 @@ phase2_tokens_per_expert  = "~15B"
 total_gpu_hours           = "~14000"
 quantization_method       = "per_row_int8_ptq"
 sealed                    = false
+
+# ============================================================================
+# S7-LLM-MOE-300M: True Learned MoE — 9 Neural Experts (one per micronaut)
+# ============================================================================
+
+[model.s7_llm_moe_300m]
+name = "s7-llm-moe-300m"
+class = "SCXQ7::S7_LLM"
+variant = "LEARNED_MOE"
+format = "s7l"
+version = "2.0.0"
+parameters_total = "~300M"
+parameters_active_per_token = "~104M"
+context_length = 2048
+vocab_size = 32768
+architecture = "learned_mixture_of_experts"
+quantization = "INT8"
+training_dtype = "BF16"
+deterministic = true
+fold_enclosed = true
+ownership = "static"
+
+# File paths
+artifact_path = "s7-llm-moe/model/moe-300m.s7l"
+vocab_path    = "s7-llm-moe/model/vocab.json"
+runtime_bin   = "s7-llm-moe/target/release/s7-llm-moe"
+packer_bin    = "s7-llm-moe/target/release/s7-pack-moe"
+training_dir  = "training/"
+training_spec = "docs/s7-llm-moe-training.md"
+
+# Fold binding
+bound_micronaut = "MM-1"
+bound_fold      = "⟁COMPUTE_FOLD⟁"
+bound_lane      = "BATCH"
+cm1_gate        = "U+0002"
+
+# Inference constraints (deterministic)
+max_tokens         = 512
+temperature        = 0.0
+decode_strategy    = "greedy_argmax"
+router_strategy    = "argmax"           # NOT softmax sampling
+
+# Training hyperparameters
+[model.s7_llm_moe_300m.training]
+optimizer      = "AdamW"
+lr             = 0.0001
+weight_decay   = 0.1
+batch_size     = 512
+seq_len        = 2048
+grad_accum     = 4
+phase1_steps   = 200000
+phase2_steps   = 300000
+total_steps    = 500000
+alpha_balance  = 0.01    # Load-balancing loss weight
+beta_entropy   = 0.001   # Router entropy regularizer weight
+precision      = "bfloat16"
+phase1_routing = "uniform"   # Dense pretrain: all experts contribute equally
+phase2_routing = "top1"      # Sparse MoE: argmax routing, specialization emerges
+
+# Architecture: SharedTrunk
+[model.s7_llm_moe_300m.trunk]
+hidden_dim  = 1024
+num_layers  = 12
+num_heads   = 16
+head_dim    = 64
+ffn_dim     = 4096
+rope        = true
+param_count = "~80M"
+
+# Architecture: LearnedRouter
+[model.s7_llm_moe_300m.router]
+type          = "learned_mlp"
+learned       = true
+hidden_dim    = 2048
+input_dim     = 1024
+output_dim    = 9
+activation    = "gelu"
+inference     = "argmax"    # deterministic at inference
+param_count   = "~2M"
+
+# Architecture: 9 Experts (one per micronaut/fold)
+[model.s7_llm_moe_300m.experts]
+count            = 9
+hidden_dim       = 1024
+num_layers       = 4
+num_heads        = 16
+head_dim         = 64
+ffn_dim          = 4096
+param_count_each = "~24M"
+specialization   = "emergent"   # NOT pre-assigned; emerges from routing
+routing_mode     = "top1_argmax"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 0
+micronaut  = "PM-1"
+fold       = "⟁DATA_FOLD⟁"
+role       = "field_selection"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 1
+micronaut  = "CM-1"
+fold       = "⟁CONTROL_FOLD⟁"
+role       = "phase_geometry"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 2
+micronaut  = "TM-1"
+fold       = "⟁TIME_FOLD⟁"
+role       = "collapse_timing"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 3
+micronaut  = "HM-1"
+fold       = "⟁STATE_FOLD⟁"
+role       = "host_abstraction"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 4
+micronaut  = "MM-1"
+fold       = "⟁COMPUTE_FOLD⟁"
+role       = "token_signal_generator"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 5
+micronaut  = "XM-1"
+fold       = "⟁PATTERN_FOLD⟁"
+role       = "narrative_expansion"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 6
+micronaut  = "SM-1"
+fold       = "⟁STORAGE_FOLD⟁"
+role       = "inert_persistence"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 7
+micronaut  = "VM-2"
+fold       = "⟁META_FOLD⟁"
+role       = "proof_generation"
+
+[[model.s7_llm_moe_300m.experts.micronaut_map]]
+expert_id  = 8
+micronaut  = "VM-1"
+fold       = "⟁UI_FOLD⟁"
+role       = "rendering_projection"
+
+# Memory footprint
+[model.s7_llm_moe_300m.memory]
+fp32_training_bytes         = 1200000000   # 1.2GB (model + gradients + optimizer)
+int8_inference_bytes        = 300000000    # ~300MB
+kv_cache_trunk_bytes        = 50300000     # 2048 × 12L × 2 × 1024
+kv_cache_expert_bytes       = 16800000     # 2048 × 4L × 2 × 1024 (one expert)
+webgpu_total_bytes          = 380000000    # ~380MB total
+
+# SCXQ2 .s7l lane layout
+[model.s7_llm_moe_300m.s7l_lanes]
+lane_1_DICT  = "BPE vocabulary (32768 entries)"
+lane_2_FIELD = "INT8 weight tensors (trunk + router + 9 experts, AVX2-padded)"
+lane_3_LANE  = "Generation stream placeholder"
+lane_4_EDGE  = "Sub-Merkle roots (trunk + router + expert0-8)"
+lane_5_BATCH = "Ephemeral compute placeholder"
+
+# Merkle / proof structure
+[model.s7_llm_moe_300m.proof]
+algorithm      = "SHA-256"
+root_covers    = ["trunk", "router", "expert0", "expert1", "expert2",
+                  "expert3", "expert4", "expert5", "expert6", "expert7", "expert8"]
+partial_verify = true
+proof_chain    = true    # per-token step_hash chained into cumulative chain_hash
+router_hash    = true    # SHA-256(router_logits_i8) included in each step
+
+# Performance estimates
+[model.s7_llm_moe_300m.benchmarks]
+HumanEval  = "18-28%"
+GSM8K      = "15-25%"
+MMLU       = "35-45%"
+ARC_Challenge = "30-40%"
+
+# Provenance
+[model.s7_llm_moe_300m.provenance]
+training_spec        = "docs/s7-llm-moe-training.md"
+phase1_tokens        = "50B"
+phase2_tokens        = "60B"
+total_gpu_hours      = "~16000"
+quantization_method  = "per_row_absmax_int8"
+sealed               = false

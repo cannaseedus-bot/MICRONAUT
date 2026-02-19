@@ -35,17 +35,22 @@ pub fn verify_root(lanes: &[Lane], expected: &[u8; 32]) -> bool {
     compute_merkle_root(&hashes) == *expected
 }
 
-/// Per-component sub-Merkle roots for the MoE model.
-/// Stored in the EDGE lane payload as 5 consecutive 32-byte fields:
-///   [0..32]  trunk_root
-///   [32..64] expert0_root
-///   [64..96] expert1_root
-///   [96..128] expert2_root
-///   [128..160] expert3_root
-/// GlobalRoot = SHA256(trunk_root || e0 || e1 || e2 || e3)
+/// Per-component sub-Merkle roots for the MoE-300M model.
+/// Stored in the EDGE lane payload as 10 consecutive 32-byte fields:
+///   [0..32]    trunk_root
+///   [32..64]   expert0_root  (PM-1)
+///   [64..96]   expert1_root  (CM-1)
+///   [96..128]  expert2_root  (TM-1)
+///   [128..160] expert3_root  (HM-1)
+///   [160..192] expert4_root  (MM-1)
+///   [192..224] expert5_root  (XM-1)
+///   [224..256] expert6_root  (SM-1)
+///   [256..288] expert7_root  (VM-2)
+///   [288..320] expert8_root  (VM-1)
+/// GlobalRoot = SHA256(trunk_root || e0 || e1 || ... || e8)
 pub struct SubRoots {
     pub trunk:   [u8; 32],
-    pub experts: [[u8; 32]; 4],
+    pub experts: [[u8; 32]; 9],
 }
 
 impl SubRoots {
@@ -59,12 +64,13 @@ impl SubRoots {
     }
 
     pub fn from_edge_lane(payload: &[u8]) -> Option<Self> {
-        if payload.len() < 160 {
+        // 1 trunk + 9 experts = 10 × 32 = 320 bytes
+        if payload.len() < 320 {
             return None;
         }
         let mut trunk = [0u8; 32];
         trunk.copy_from_slice(&payload[0..32]);
-        let mut experts = [[0u8; 32]; 4];
+        let mut experts = [[0u8; 32]; 9];
         for (i, e) in experts.iter_mut().enumerate() {
             e.copy_from_slice(&payload[32 + i * 32..32 + (i + 1) * 32]);
         }
@@ -72,7 +78,7 @@ impl SubRoots {
     }
 
     pub fn to_bytes(&self) -> Vec<u8> {
-        let mut out = Vec::with_capacity(160);
+        let mut out = Vec::with_capacity(320);
         out.extend_from_slice(&self.trunk);
         for e in &self.experts {
             out.extend_from_slice(e);
