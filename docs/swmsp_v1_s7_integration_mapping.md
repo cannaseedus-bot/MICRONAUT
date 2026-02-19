@@ -12,27 +12,182 @@ This document binds **SWMSP v1.0.0** (Service Worker Merkle Shard Protocol) to t
 - Client/service-worker side: storage, transport, and proof validation only.
 - Server side: routing, execution, and logit computation.
 
-## 2) Frozen Message Schema Surface
+This is a distributed weight fabric, not distributed inference authority.
 
-SWMSP v1.0.0 message families:
+## 2) Frozen SWMSP JSON Schema (Authoritative)
 
-- `root_announcement`
-- `shard_descriptor`
-- `shard_request`
-- `shard_response`
-- `verification_result`
-- `node_capability`
-
-All objects enforce `additionalProperties: false`; silent extensions are forbidden in v1.0.0.
+```json
+{
+  "$id": "swmsp://schema/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Service Worker Merkle Shard Protocol v1.0.0",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/root_announcement" },
+    { "$ref": "#/$defs/shard_descriptor" },
+    { "$ref": "#/$defs/shard_request" },
+    { "$ref": "#/$defs/shard_response" },
+    { "$ref": "#/$defs/verification_result" },
+    { "$ref": "#/$defs/node_capability" }
+  ],
+  "$defs": {
+    "hash_hex": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dtype_enum": {
+      "type": "string",
+      "enum": ["int8", "int4", "fp16", "fp32"]
+    },
+    "root_announcement": {
+      "type": "object",
+      "required": [
+        "type",
+        "model_id",
+        "protocol_version",
+        "merkle_root",
+        "total_shards",
+        "shard_size_bytes"
+      ],
+      "properties": {
+        "type": { "const": "root_announcement" },
+        "protocol_version": { "const": "1.0.0" },
+        "model_id": { "$ref": "#/$defs/model_id" },
+        "merkle_root": { "$ref": "#/$defs/hash_hex" },
+        "total_shards": { "type": "integer", "minimum": 1 },
+        "shard_size_bytes": { "type": "integer", "minimum": 1 },
+        "created_at": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "shard_descriptor": {
+      "type": "object",
+      "required": [
+        "type",
+        "model_id",
+        "layer_id",
+        "tensor_id",
+        "shard_index",
+        "total_shards",
+        "dtype",
+        "shape",
+        "chunk_hash"
+      ],
+      "properties": {
+        "type": { "const": "shard_descriptor" },
+        "model_id": { "$ref": "#/$defs/model_id" },
+        "layer_id": { "type": "integer", "minimum": 0 },
+        "tensor_id": { "type": "string" },
+        "shard_index": { "type": "integer", "minimum": 0 },
+        "total_shards": { "type": "integer", "minimum": 1 },
+        "dtype": { "$ref": "#/$defs/dtype_enum" },
+        "shape": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "minItems": 1
+        },
+        "chunk_hash": { "$ref": "#/$defs/hash_hex" }
+      },
+      "additionalProperties": false
+    },
+    "shard_request": {
+      "type": "object",
+      "required": ["type", "model_id", "layer_id", "tensor_id", "shard_index"],
+      "properties": {
+        "type": { "const": "shard_request" },
+        "model_id": { "$ref": "#/$defs/model_id" },
+        "layer_id": { "type": "integer", "minimum": 0 },
+        "tensor_id": { "type": "string" },
+        "shard_index": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "merkle_proof": {
+      "type": "object",
+      "required": ["leaf_hash", "proof_path"],
+      "properties": {
+        "leaf_hash": { "$ref": "#/$defs/hash_hex" },
+        "proof_path": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["position", "hash"],
+            "properties": {
+              "position": { "type": "string", "enum": ["left", "right"] },
+              "hash": { "$ref": "#/$defs/hash_hex" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "shard_response": {
+      "type": "object",
+      "required": [
+        "type",
+        "model_id",
+        "layer_id",
+        "tensor_id",
+        "shard_index",
+        "chunk_hash",
+        "shard_bytes_base64",
+        "merkle_proof"
+      ],
+      "properties": {
+        "type": { "const": "shard_response" },
+        "model_id": { "$ref": "#/$defs/model_id" },
+        "layer_id": { "type": "integer", "minimum": 0 },
+        "tensor_id": { "type": "string" },
+        "shard_index": { "type": "integer", "minimum": 0 },
+        "chunk_hash": { "$ref": "#/$defs/hash_hex" },
+        "shard_bytes_base64": { "type": "string", "contentEncoding": "base64" },
+        "merkle_proof": { "$ref": "#/$defs/merkle_proof" }
+      },
+      "additionalProperties": false
+    },
+    "verification_result": {
+      "type": "object",
+      "required": ["type", "model_id", "layer_id", "tensor_id", "shard_index", "verified"],
+      "properties": {
+        "type": { "const": "verification_result" },
+        "model_id": { "$ref": "#/$defs/model_id" },
+        "layer_id": { "type": "integer" },
+        "tensor_id": { "type": "string" },
+        "shard_index": { "type": "integer" },
+        "verified": { "type": "boolean" },
+        "computed_root": { "$ref": "#/$defs/hash_hex" }
+      },
+      "additionalProperties": false
+    },
+    "node_capability": {
+      "type": "object",
+      "required": ["type", "node_id", "storage_bytes", "bandwidth_kbps", "redundancy_factor"],
+      "properties": {
+        "type": { "const": "node_capability" },
+        "node_id": { "type": "string" },
+        "storage_bytes": { "type": "integer", "minimum": 0 },
+        "bandwidth_kbps": { "type": "integer", "minimum": 0 },
+        "redundancy_factor": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}
+```
 
 ## 3) Frozen Invariants (Authoritative)
 
-1. `merkle_root` is immutable for a published `model_id` + `protocol_version` bundle.
+1. `merkle_root` is immutable.
 2. `chunk_hash` MUST equal `SHA-256(shard_bytes)`.
 3. `leaf_hash` MUST equal `chunk_hash`.
 4. Reconstructed proof root MUST equal `root_announcement.merkle_root`.
-5. Structural schema changes require MAJOR protocol bump.
-6. Verification failure means shard rejection (never mapped into inference memory).
+5. `additionalProperties: false` prevents silent extension.
+6. Any structural schema change requires MAJOR protocol bump.
 
 ## 4) Deterministic Verification Rule
 
@@ -227,7 +382,15 @@ Given identical:
 - routing decision
 - inference seed/config
 
-the system must produce identical logits, even when shards are sourced from different peers.
+system output must be identical, even when shards are sourced from different peers.
+
+```text
+Same model_id
+Same merkle_root
+Same routing decision
+Same seed
+→ Identical logits
+```
 
 ## 13) Scaling and Versioned Expansion
 
@@ -239,3 +402,18 @@ To scale parameter count:
 4. Publish new `root_announcement`.
 
 Clients scale by fetching/verifying newly required shards against the new root. No protocol mutation is required for this expansion path.
+
+## 14) What This Enables
+
+- Deterministic distributed weight storage
+- Untrusted client shard hosting
+- Centralized inference authority
+- On-demand expert loading
+- Versioned model lineage via root commitments
+
+## 15) What This Does NOT Permit
+
+- Client logit computation authority
+- Client shard mutation authority
+- Silent protocol extension
+- Root rewriting
