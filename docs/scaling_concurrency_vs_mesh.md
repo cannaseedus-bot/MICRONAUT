@@ -1,6 +1,12 @@
 # Concurrency Scaling vs Mesh Scaling
 
-This project distinguishes two different scaling problems that are often conflated.
+This project distinguishes scaling concerns that are often conflated:
+
+1. **Online user concurrency** (many simultaneous requests)
+2. **Local CPU worker parallelism** (many execution lanes on one workstation/server)
+3. **Optional distributed/volunteer mesh compute** (untrusted remote workers)
+
+These are related, but they are not the same architecture problem.
 
 ## 1) 1000 online users on one machine (concurrency)
 
@@ -34,7 +40,43 @@ Internet users
 
 Many user requests can be merged into one forward pass (`batch_size = N`) when latency budget allows. This is usually the first and highest-leverage optimization for throughput.
 
-## 2) Optional volunteer/distributed mesh compute
+## 2) Local "1000-core" style execution on one workstation
+
+This is **parallel task scheduling** on a shared-memory host, not "1000 brains".
+
+Typical reality:
+
+- 32–128 physical cores are common on high-end machines
+- Hyperthreads increase logical schedulable workers
+- "1000 workers" can be lightweight processes/tasks mapped onto available cores
+- RAM is shared across workers (major advantage)
+
+### Correct local shape
+
+```text
+Shared model backbone (loaded once)
+  -> worker pool (many logical workers)
+  -> deterministic router
+  -> shared memory/state layer
+  -> aggregate output
+```
+
+### Recommended implementation pattern
+
+- `torch.multiprocessing` (or equivalent runtime)
+- Shared-memory model weights (`share_memory()` / fork-friendly process model)
+- Core-count-sized process pool, with larger logical task queue
+- Deterministic routing (e.g., stable hash / modulo expert assignment)
+
+### What to avoid
+
+- Spawning full model replicas per worker
+- Per-worker world model copies
+- Per-worker persistence authority
+
+A local 1000-worker queue should represent **1000 execution lanes over shared components**, not 1000 duplicated model stacks.
+
+## 3) Optional volunteer/distributed mesh compute
 
 This is a separate, optional system for parallel side workloads.
 
@@ -74,7 +116,7 @@ Client-side compute is untrusted by default. Coordinator must include:
 
 1. Async serving + queueing
 2. Dynamic batching
-3. Multiprocess/multithread workers
+3. Shared-memory multiprocess worker pool on single host
 4. Horizontal replication across machines
 5. Optional verified mesh for parallelizable sub-tasks
 

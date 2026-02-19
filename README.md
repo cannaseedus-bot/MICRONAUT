@@ -115,7 +115,7 @@ Binary packing into five lanes (magic `SCX2`, CRC32-terminated):
 
 ### Cluster Node DFA (State Machine)
 
-> **Scaling note:** the 1000-node cluster described here is a **logical runtime grid** used for deterministic routing and fold allocation. It is not 1000 CPU/GPU cores and not 1000 model replicas. For production serving, scale user concurrency with async APIs + batching first, then optionally add verified volunteer mesh compute for parallel side tasks.
+> **Scaling note:** the 1000-node cluster described here is a **logical runtime grid** used for deterministic routing and fold allocation. It is not 1000 CPU/GPU cores and not 1000 model replicas. Treat high user concurrency, local shared-memory worker parallelism, and optional volunteer mesh compute as separate scaling layers.
 
 Each cluster node is a Deterministic Finite Automaton (DFA) with:
 - **6 states**: S0(IDLE) → S1(PARSE) → S2(TRANSFORM) → S3(EXECUTE) → S5(COMPLETE) or S4(ERROR)
