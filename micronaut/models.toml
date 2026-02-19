@@ -519,3 +519,269 @@ phase2_tokens        = "60B"
 total_gpu_hours      = "~16000"
 quantization_method  = "per_row_absmax_int8"
 sealed               = false
+
+# ============================================================================
+# S7-LLM-MOE-5B: Competitive-Scale MoE — 9 Neural Experts, 1.5B Shared Trunk
+# ============================================================================
+# Total parameters ≈ 5.1B
+#   Shared Trunk   ≈ 1.5B  (32L, 2560d, 40 heads)
+#   9 × Expert     ≈ 380M  (16L, 2560d, 40 heads, 4× FFN)
+#   Router         ≈  60M  (2560→4096 GELU→9)
+# Active per token (Top-1 inference): ~1.9B (trunk + 1 expert)
+# Training routing: Top-2 (gradient stability)
+# Inference routing: Top-1 argmax (deterministic)
+# ============================================================================
+
+[model.s7_llm_moe_5b]
+name = "s7-llm-moe-5b"
+class = "SCXQ7::S7_LLM"
+variant = "COMPETITIVE_MOE"
+format = "s7l"
+version = "3.0.0"
+parameters_total = "~5.1B"
+parameters_trunk = "~1.5B"
+parameters_per_expert = "~380M"
+parameters_router = "~60M"
+parameters_active_per_token = "~1.9B"
+expert_count = 9
+context_length = 8192
+vocab_size = 50000
+architecture = "large_scale_mixture_of_experts"
+quantization = "INT8"
+training_dtype = "BF16"
+deterministic = true
+fold_enclosed = true
+ownership = "static"
+
+# File paths (relative to project root)
+artifact_path = "s7-llm-moe/model/moe-5b.s7l"
+vocab_path    = "s7-llm-moe/model/vocab-50k.json"
+runtime_bin   = "s7-llm-moe/target/release/s7-llm-moe"
+packer_bin    = "s7-llm-moe/target/release/s7-pack-moe"
+training_dir  = "training/"
+training_spec = "docs/s7-llm-moe-5b-training.md"
+
+# Fold binding
+bound_micronaut = "MM-1"
+bound_fold      = "⟁COMPUTE_FOLD⟁"
+bound_lane      = "BATCH"
+cm1_gate        = "U+0002"
+
+# Inference constraints (deterministic)
+max_tokens         = 2048
+temperature        = 0.0
+decode_strategy    = "greedy_argmax"
+router_strategy    = "argmax"           # Top-1 argmax at inference (NOT softmax sampling)
+training_router_strategy = "top2"       # Top-2 during training for gradient stability
+
+# Training hyperparameters
+[model.s7_llm_moe_5b.training]
+optimizer         = "AdamW"
+lr                = 0.0001
+lr_schedule       = "cosine_with_warmup"
+warmup_steps      = 2000
+weight_decay      = 0.1
+batch_size        = 512
+seq_len           = 8192
+grad_accum        = 8
+phase1_steps      = 300000
+phase2_steps      = 400000
+total_steps       = 700000
+alpha_balance     = 0.01           # Load-balancing loss weight (L_balance = 9 × Σ(f_i · g_i))
+beta_entropy_init = 0.01           # Initial entropy annealing coefficient
+beta_entropy_decay = "exponential" # β_t = β_initial × exp(-k × t)
+beta_entropy_k    = 0.000005       # Decay rate k
+precision         = "bfloat16"
+phase1_routing    = "top2"         # Dense pretrain: top-2 experts, combined weighted output
+phase2_routing    = "top1"         # Sparse specialization: argmax routing emerges
+min_gpu_count     = 16             # Minimum 16× A100 80GB for training
+recommended_gpu_count = 32
+parallelism       = ["ZeRO-3", "expert_parallel", "tensor_parallel"]
+training_tokens_phase1 = "100B"
+training_tokens_phase2 = "100B"
+total_training_tokens  = "200B"
+
+# Architecture: SharedTrunk (~1.5B)
+# Comparable to GPT-2 XL class — handles syntax, long-range coherence, cross-domain abstraction
+[model.s7_llm_moe_5b.trunk]
+hidden_dim  = 2560
+num_layers  = 32
+num_heads   = 40
+head_dim    = 64
+ffn_dim     = 10240
+rope        = true
+rope_base   = 10000
+param_count = "~1.5B"
+
+# Architecture: LearnedRouter (~60M)
+# Large learned router — powerful enough to distinguish 9 expert domains at 5B scale
+[model.s7_llm_moe_5b.router]
+type          = "learned_mlp"
+learned       = true
+input_dim     = 2560
+hidden_dim    = 4096
+output_dim    = 9
+activation    = "gelu"
+inference     = "argmax"           # Top-1 deterministic at inference
+training      = "top2_softmax"     # Top-2 weighted combine during training
+param_count   = "~60M"
+optional_token_type_embedding = true
+
+# Architecture: 9 Experts (~380M each, ~3.42B total)
+# At 5B scale, experts diverge dramatically: code, math, reasoning, formatting,
+# factual recall, hallucination suppression, narrative, instruction, meta-reasoning.
+# Specialization is emergent from routing — NOT pre-assigned.
+[model.s7_llm_moe_5b.experts]
+count            = 9
+hidden_dim       = 2560
+num_layers       = 16
+num_heads        = 40
+head_dim         = 64
+ffn_multiplier   = 4
+ffn_dim          = 10240
+param_count_each = "~380M"
+param_count_total = "~3.42B"
+specialization   = "emergent"      # Emerges from training; NOT hard-coded
+routing_mode     = "top1_argmax"   # Deterministic at inference
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 0
+micronaut  = "PM-1"
+fold       = "⟁DATA_FOLD⟁"
+role       = "field_selection"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 1
+micronaut  = "CM-1"
+fold       = "⟁CONTROL_FOLD⟁"
+role       = "phase_geometry"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 2
+micronaut  = "TM-1"
+fold       = "⟁TIME_FOLD⟁"
+role       = "collapse_timing"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 3
+micronaut  = "HM-1"
+fold       = "⟁STATE_FOLD⟁"
+role       = "host_abstraction"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 4
+micronaut  = "MM-1"
+fold       = "⟁COMPUTE_FOLD⟁"
+role       = "token_signal_generator"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 5
+micronaut  = "XM-1"
+fold       = "⟁PATTERN_FOLD⟁"
+role       = "narrative_expansion"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 6
+micronaut  = "SM-1"
+fold       = "⟁STORAGE_FOLD⟁"
+role       = "inert_persistence"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 7
+micronaut  = "VM-2"
+fold       = "⟁META_FOLD⟁"
+role       = "proof_generation"
+
+[[model.s7_llm_moe_5b.experts.micronaut_map]]
+expert_id  = 8
+micronaut  = "VM-1"
+fold       = "⟁UI_FOLD⟁"
+role       = "rendering_projection"
+
+# Load balancing objective
+# L_balance = 9 × Σ(f_i × g_i)  where f_i = fraction of tokens routed to expert i,
+# g_i = average routing probability for expert i
+# Entropy annealing: β_t = β_initial × exp(-k × t)
+# Early training → high entropy (exploration); later → low entropy (specialization)
+[model.s7_llm_moe_5b.load_balancing]
+formula             = "n_experts × sum(f_i × g_i)"
+n_experts           = 9
+loss_coefficient    = 0.01
+entropy_annealing   = true
+entropy_schedule    = "exponential_decay"
+entropy_formula     = "beta_initial × exp(-k × t)"
+early_phase         = "exploration"     # High entropy: tokens distributed across all experts
+late_phase          = "specialization"  # Low entropy: clear expert ownership emerges
+
+# Memory footprint
+[model.s7_llm_moe_5b.memory]
+fp32_weights_bytes             = 20400000000   # 5.1B × 4 bytes ≈ 20.4GB
+fp32_adam_states_bytes         = 61200000000   # ≈ 3× weights ≈ 61.2GB
+fp32_gradients_bytes           = 20400000000   # ≈ 1× weights ≈ 20.4GB
+fp32_training_total_bytes      = 160000000000  # ~160GB with activations
+int8_inference_bytes           = 5100000000    # 5.1B × 1 byte ≈ 5.1GB
+int8_scale_buffers_bytes       = 500000000     # ~500MB scale factors
+int8_inference_total_bytes     = 6000000000    # ~6GB comfortable on 24GB GPU
+kv_cache_trunk_int8_bytes      = 1342177280    # 8192 × 32L × 2 × 2560
+kv_cache_expert_int8_bytes     = 671088640     # 8192 × 16L × 2 × 2560 (one expert)
+recommended_inference_vram     = "24GB"
+min_training_gpu_vram          = "80GB"
+
+# SCXQ2 .s7l lane layout
+[model.s7_llm_moe_5b.s7l_lanes]
+lane_1_DICT  = "BPE vocabulary (50000 entries)"
+lane_2_FIELD = "INT8 weight tensors (trunk + router + 9 experts, AVX2-padded)"
+lane_3_LANE  = "Generation stream placeholder"
+lane_4_EDGE  = "Sub-Merkle roots (trunk + router + expert0-8) + routing table"
+lane_5_BATCH = "Ephemeral compute placeholder"
+
+# Merkle / proof structure
+[model.s7_llm_moe_5b.proof]
+algorithm      = "SHA-256"
+root_covers    = ["trunk", "router", "expert0", "expert1", "expert2",
+                  "expert3", "expert4", "expert5", "expert6", "expert7", "expert8"]
+partial_verify = true
+proof_chain    = true    # per-token step_hash chained into cumulative chain_hash
+router_hash    = true    # SHA-256(router_logits_i8) included in each step
+expert_hash    = true    # SHA-256(selected_expert_weights) attested per inference
+
+# Governance / fold-law integration
+# At this scale the governance layer wraps a real large neural cortex:
+# expert activation log, router logits hash, expert weight hash,
+# deterministic inference envelope, replayable proof chain.
+[model.s7_llm_moe_5b.governance]
+expert_activation_log  = true
+router_logits_hash     = true
+expert_weight_hash     = true
+deterministic_envelope = true
+replayable_proof_chain = true
+vm2_attestation_required = true
+cm1_gate_required        = true
+
+# Performance estimates (rivaling LLaMA-1 7B / early Mistral-class on 200B+ tokens)
+[model.s7_llm_moe_5b.benchmarks]
+HumanEval      = "50-65%"
+GSM8K          = "50-65%"
+MMLU           = "60-70%"
+ARC_Challenge  = "55-65%"
+long_context   = "strong"
+multi_hop      = "moderate_to_strong"
+notes          = "Estimates assume 200B+ training tokens; rivals LLaMA-1 7B and early Mistral-class"
+
+# Runtime targets
+[model.s7_llm_moe_5b.runtime_targets]
+cpu_avx2  = false    # Too large for practical CPU inference
+webgpu    = false    # Exceeds WebGPU memory limits
+wasm      = false
+cuda_a100 = true
+cuda_h100 = true
+multi_gpu = true
+
+# Provenance
+[model.s7_llm_moe_5b.provenance]
+training_spec        = "docs/s7-llm-moe-5b-training.md"
+phase1_tokens        = "100B"
+phase2_tokens        = "100B"
+total_gpu_hours      = "~80000"
+quantization_method  = "per_row_absmax_int8"
+sealed               = false
