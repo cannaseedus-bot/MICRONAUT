@@ -66,6 +66,7 @@ MICRONAUT/
 │   └── ...
 ├── docs/
 │   ├── fold_law.md               # Locked fold collapse rules
+│   ├── swmsp_v1_s7_integration_mapping.md  # SWMSP v1.0.0 ↔ S7 shard/memory binding
 │   ├── verifier_rules.md         # V0-V7 determinism rules
 │   ├── control_micronaut_1.md    # CM-1 control alphabet spec
 │   ├── scxq2_binary_packing_example.md

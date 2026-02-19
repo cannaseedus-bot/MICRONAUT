@@ -99,4 +99,7 @@ The 1M mini reference is the base tier. The next serious small-model tier is doc
 
 - [`docs/s7_llm_code_8m_family_spec.md`](../docs/s7_llm_code_8m_family_spec.md)
 
+- [`docs/swmsp_v1_s7_integration_mapping.md`](../docs/swmsp_v1_s7_integration_mapping.md)
+  - Frozen SWMSP v1.0.0 message/invariant contract bound to S7 tensor sharding and MoE expert loading.
+
 This defines the S7 8M family (`CODE`, `MATH`, `GENERAL`, and deterministic `MOE`) with fold-law deterministic training and INT8 inference constraints.
