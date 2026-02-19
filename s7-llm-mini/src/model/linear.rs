@@ -13,7 +13,9 @@ impl Linear {
 
         let mut out = vec![0i32; cols];
 
-        for r in 0..rows {
+        let used_rows = rows.min(input.len());
+
+        for r in 0..used_rows {
             for c in 0..cols {
                 out[c] += (self.weight.data[r * cols + c] as i32) * (input[r] as i32);
             }
