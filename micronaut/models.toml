@@ -225,3 +225,111 @@ fold = "⟁META_FOLD⟁"
 gate_priority = 9
 expert_type = "verification"
 description = "Proof attestation — hash binding, replay determinism"
+
+# ============================================================================
+# S7-LLM-MOE-140M: Native sealed MoE model
+# ============================================================================
+
+[model.s7_llm_moe_140m]
+name = "s7-llm-moe-140m"
+class = "SCXQ7::S7_LLM"
+variant = "MOE"
+format = "s7l"
+version = "1.0.0"
+parameters_total = "~140M"
+parameters_active_per_token = "~50M"
+context_length = 2048
+vocab_size = 24576
+architecture = "mixture_of_experts"
+quantization = "INT8"
+training_dtype = "FP32"
+deterministic = true
+fold_enclosed = true
+ownership = "static"
+
+# File paths (relative to project root)
+artifact_path = "s7-llm-moe/model/moe.s7l"
+vocab_path    = "s7-llm-moe/model/vocab.json"
+runtime_bin   = "s7-llm-moe/target/release/s7-llm-moe"
+packer_bin    = "s7-llm-moe/target/release/s7-pack-moe"
+training_spec = "docs/s7-llm-moe-training.md"
+
+# Fold binding
+bound_micronaut = "MM-1"
+bound_fold      = "⟁COMPUTE_FOLD⟁"
+bound_lane      = "BATCH"
+cm1_gate        = "U+0002"
+
+# Inference constraints
+max_tokens          = 512
+temperature         = 0.0
+top_p               = 1.0
+top_k               = 1
+repetition_penalty  = 1.0
+decode_strategy     = "greedy_argmax"
+
+# MoE architecture
+[model.s7_llm_moe_140m.trunk]
+hidden_dim  = 768
+num_layers  = 6
+num_heads   = 12
+head_dim    = 64
+ffn_dim     = 3072
+rope        = true
+param_count = "~20M"
+
+[model.s7_llm_moe_140m.experts]
+count            = 4
+hidden_dim       = 512
+num_layers       = 8
+num_heads        = 8
+head_dim         = 64
+ffn_dim          = 2048
+param_count_each = "~28M"
+domains          = ["CODE", "MATH", "REASON", "GENERAL"]
+
+[model.s7_llm_moe_140m.router]
+type            = "deterministic_lexical"
+learned         = false
+code_triggers   = ["{", "}", "def ", "fn ", "class ", "::", ";", "import "]
+math_triggers   = ["Answer:", "Therefore", "=", "solve", "equation"]
+reason_triggers = ["why ", "explain ", "because ", "step ", "conclude"]
+fallback        = "GENERAL"
+
+# Memory footprint
+[model.s7_llm_moe_140m.memory]
+fp32_training_bytes          = 560000000
+int8_inference_bytes         = 150000000
+kv_cache_full_context_bytes  = 35700000
+webgpu_total_bytes           = 200000000
+
+# SCXQ2 .s7l lane layout
+[model.s7_llm_moe_140m.s7l_lanes]
+lane_1_DICT  = "BPE vocabulary (24576 entries)"
+lane_2_FIELD = "INT8 weight tensors (trunk + 4 experts, AVX2-padded)"
+lane_3_LANE  = "Generation stream placeholder"
+lane_4_EDGE  = "Sub-Merkle roots (trunk + expert0-3) + routing table"
+lane_5_BATCH = "Ephemeral compute placeholder"
+
+# Merkle structure
+[model.s7_llm_moe_140m.merkle]
+algorithm      = "SHA-256"
+root_covers    = ["trunk", "expert0", "expert1", "expert2", "expert3"]
+partial_verify = true
+header_offset  = 8
+
+# Runtime targets
+[model.s7_llm_moe_140m.runtime_targets]
+cpu_avx2 = true
+webgpu   = true
+wasm     = false
+cuda     = false
+
+# Training provenance (to be filled after training)
+[model.s7_llm_moe_140m.provenance]
+training_spec             = "docs/s7-llm-moe-training.md"
+phase1_tokens             = "50B"
+phase2_tokens_per_expert  = "~15B"
+total_gpu_hours           = "~14000"
+quantization_method       = "per_row_int8_ptq"
+sealed                    = false
