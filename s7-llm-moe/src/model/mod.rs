@@ -10,5 +10,5 @@ pub mod expert;
 pub mod router;
 pub mod moe;
 
-pub use moe::S7LlmMoe;
-pub use router::{DeterministicRouter, ExpertDomain};
+pub use moe::{S7LlmMoe, ForwardOutput};
+pub use router::{LearnedRouter, RouterOutput};

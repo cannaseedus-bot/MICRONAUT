@@ -23,11 +23,12 @@ impl FFN {
     }
 }
 
-/// Integer GELU approximation.
-/// Input and output are in the i8 domain.
-fn gelu_int8(v: &[i8]) -> Vec<i8> {
+/// Integer GELU approximation — public alias used by the router.
+pub fn gelu_i8(v: &[i8]) -> Vec<i8> {
     v.iter().map(|&x| gelu_scalar(x)).collect()
 }
+
+fn gelu_int8(v: &[i8]) -> Vec<i8> { gelu_i8(v) }
 
 /// Scalar GELU for a single i8 value.
 /// Uses a piecewise linear approximation that is deterministic and bit-exact.

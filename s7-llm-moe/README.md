@@ -1,8 +1,20 @@
-# S7-LLM-MOE-140M
+# S7-LLM-MOE-300M *(evolved from 140M)*
 
 **Class**: `SCXQ7::S7_LLM`
-**Variant**: `MOE` (Mixture-of-Experts)
-**Total Parameters**: ≈ 140M
+**Variant**: `LEARNED_MOE` (True neural MoE — 9 experts, learned router)
+**Total Parameters**: ≈ 300M
+**Active Parameters per Token**: ≈ 104M (trunk 80M + one expert 24M)
+**Router**: Learned MLP, trained end-to-end, argmax at inference
+**Experts**: 9 (one per micronaut/fold — specialization emerges from training)
+**Training**: Two-phase (Phase 1: dense uniform, Phase 2: top-1 sparse routing)
+**Training code**: `training/` (PyTorch — `model.py`, `losses.py`, `train.py`, `quantize.py`)
+
+> **Breaking change from 140M**: The `DeterministicRouter` (lexical pattern match)
+> has been replaced by `LearnedRouter` (MLP, weights in FIELD lane).
+> Expert count increased from 4 to 9 (one per micronaut).
+> Trunk depth 6→12 layers, vocab 24k→32k.
+
+---
 **Active Parameters per Token**: ≈ 50M
 **Routing**: Deterministic (no learned gating, no softmax)
 **Quantization**: INT8 inference / FP32 training

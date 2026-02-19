@@ -1,39 +1,36 @@
-/// Domain Expert — one of four 30M-parameter transformers.
+/// Learned Expert — S7-LLM-MOE-300M
 ///
-/// Configuration per expert (from config.rs):
-///   hidden   = 512
-///   layers   = 8
-///   heads    = 8
-///   head_dim = 64
-///   ffn_dim  = 2048  (4× expansion)
+/// Each expert is a 4-layer transformer subnetwork, hidden=1024.
+/// There are 9 experts, one per micronaut/fold domain.
 ///
-/// Experts are domain-specialized:
-///   Expert 0: Code
-///   Expert 1: Math
-///   Expert 2: Reasoning
-///   Expert 3: General instruction
+/// Experts share the same architecture; specialization emerges from
+/// training via the load-balanced routing objective.
 ///
-/// Input: EXPERT_HIDDEN-dim vector from SharedTrunk projection.
-/// Output: EXPERT_HIDDEN-dim vector → LM head.
+/// Expert IDs → Micronaut mapping (from config.rs):
+///   0=PM-1  1=CM-1  2=TM-1  3=HM-1  4=MM-1
+///   5=XM-1  6=SM-1  7=VM-2  8=VM-1
 use super::layer::TransformerLayer;
 use super::rope::{expert_rope, RopeTable};
 use crate::inference::kv_cache::KVCache;
-use crate::model::config::{EXPERT_LAYERS, EXPERT_HIDDEN, EXPERT_HEAD_DIM};
+use crate::model::config::{
+    EXPERT_LAYERS, EXPERT_HIDDEN, EXPERT_HEAD_DIM, EXPERT_HEADS, EXPERT_FFN_DIM,
+    EXPERT_NAMES, EXPERT_FOLDS, NUM_EXPERTS,
+};
 
 pub struct Expert {
-    pub domain_id: usize,             // 0=Code, 1=Math, 2=Reason, 3=General
-    pub layers:    Vec<TransformerLayer>,
-    pub rope:      RopeTable,
+    pub expert_id:   usize,
+    pub micronaut:   &'static str,
+    pub fold:        &'static str,
+    pub layers:      Vec<TransformerLayer>,
+    pub rope:        RopeTable,
 }
 
 impl Expert {
     /// Forward pass for one expert.
     ///
-    /// trunk_out: i8 vec of length EXPERT_HIDDEN (output of trunk projection)
+    /// trunk_out: i8 vec of length EXPERT_HIDDEN (trunk output, same dim)
     /// pos:       current sequence position
-    /// kv:        mutable KV cache (only this expert's cache slice is used)
-    ///
-    /// Returns i8 vec of length EXPERT_HIDDEN (input to LM head).
+    /// kv:        mutable KV cache (only this expert's slice is touched)
     pub fn forward(
         &self,
         trunk_out: &[i8],
@@ -41,55 +38,65 @@ impl Expert {
         kv: &mut KVCache,
     ) -> Vec<i8> {
         debug_assert_eq!(self.layers.len(), EXPERT_LAYERS);
-        debug_assert_eq!(trunk_out.len(), EXPERT_HIDDEN);
+        debug_assert_eq!(trunk_out.len(), EXPERT_HIDDEN,
+            "expert {} received wrong input dim", self.expert_id);
 
         let mut hidden = trunk_out.to_vec();
         for (layer_idx, layer) in self.layers.iter().enumerate() {
-            let kv_layer = &mut kv.experts[self.domain_id][layer_idx];
+            let kv_layer = &mut kv.experts[self.expert_id][layer_idx];
             hidden = layer.forward(&hidden, pos, kv_layer, &self.rope);
         }
         hidden
     }
 }
 
-/// Build a zero-weight Expert with given domain_id (used during weight loading).
-/// Actual weights are wired in by the S7 file deserialiser.
-pub fn build_expert_placeholder(domain_id: usize) -> Expert {
+/// Build a zero-weight Expert placeholder for the given expert_id.
+/// Real weights are wired in by the .s7l FIELD lane deserialiser.
+pub fn build_expert_placeholder(expert_id: usize) -> Expert {
     use super::linear::Linear;
     use super::attention::MultiHeadAttention;
     use super::ffn::FFN;
     use super::layer::TransformerLayer;
     use crate::tensor::Int8Tensor;
-    use crate::model::config::{EXPERT_HEADS, EXPERT_FFN_DIM};
 
-    let head_dim = EXPERT_HEAD_DIM;
     let hidden   = EXPERT_HIDDEN;
     let ffn_dim  = EXPERT_FFN_DIM;
+    let head_dim = EXPERT_HEAD_DIM;
 
     let make_linear = |name: &str, rows: usize, cols: usize| Linear {
         weight: Int8Tensor::zeros(name, vec![rows, cols], 1.0 / 127.0),
     };
 
     let layers = (0..EXPERT_LAYERS)
-        .map(|l| TransformerLayer {
-            attn: MultiHeadAttention {
-                q_proj: make_linear(&format!("expert{}.layer{}.attn.q_proj.weight", domain_id, l), hidden, hidden),
-                k_proj: make_linear(&format!("expert{}.layer{}.attn.k_proj.weight", domain_id, l), hidden, hidden),
-                v_proj: make_linear(&format!("expert{}.layer{}.attn.v_proj.weight", domain_id, l), hidden, hidden),
-                o_proj: make_linear(&format!("expert{}.layer{}.attn.o_proj.weight", domain_id, l), hidden, hidden),
-                n_heads:  EXPERT_HEADS,
-                head_dim,
-            },
-            ffn: FFN {
-                fc1: make_linear(&format!("expert{}.layer{}.ffn.fc1.weight", domain_id, l), hidden, ffn_dim),
-                fc2: make_linear(&format!("expert{}.layer{}.ffn.fc2.weight", domain_id, l), ffn_dim, hidden),
-            },
+        .map(|l| {
+            let pfx = format!("expert{}.layer{}", expert_id, l);
+            TransformerLayer {
+                attn: MultiHeadAttention {
+                    q_proj: make_linear(&format!("{}.attn.q_proj.weight", pfx), hidden, hidden),
+                    k_proj: make_linear(&format!("{}.attn.k_proj.weight", pfx), hidden, hidden),
+                    v_proj: make_linear(&format!("{}.attn.v_proj.weight", pfx), hidden, hidden),
+                    o_proj: make_linear(&format!("{}.attn.o_proj.weight", pfx), hidden, hidden),
+                    n_heads:  EXPERT_HEADS,
+                    head_dim,
+                },
+                ffn: FFN {
+                    fc1: make_linear(&format!("{}.ffn.fc1.weight", pfx), hidden, ffn_dim),
+                    fc2: make_linear(&format!("{}.ffn.fc2.weight", pfx), ffn_dim, hidden),
+                },
+            }
         })
         .collect();
 
     Expert {
-        domain_id,
+        expert_id,
+        micronaut: EXPERT_NAMES[expert_id],
+        fold:      EXPERT_FOLDS[expert_id],
         layers,
         rope: expert_rope(head_dim),
     }
+}
+
+/// Build all 9 expert placeholders.
+pub fn build_all_experts() -> Vec<Expert> {
+    (0..NUM_EXPERTS).map(build_expert_placeholder).collect()
 }

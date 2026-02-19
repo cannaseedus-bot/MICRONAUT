@@ -1,69 +1,67 @@
-/// Greedy (argmax) decoder for S7-LLM-MOE-140M.
+/// Greedy (argmax) decoder for S7-LLM-MOE-300M.
 ///
-/// Properties guaranteed by this implementation:
-///   - No randomness (no temperature, top-p, top-k).
-///   - Identical output for identical input on any platform.
-///   - V6 compliant: same tokens + same model → same output hash.
-///   - CM-1 gate: U+0002 STX must be asserted by the caller before invoking.
+/// Properties:
+///   - No randomness: no temperature, top-p, top-k.
+///   - Deterministic: same model + same prompt → same token sequence.
+///   - V6 compliant: same inputs → same proof chain hash.
+///   - Proof chain: SHA-256 chain over all step hashes (replayable).
 ///
 /// Fold binding: ⟁COMPUTE_FOLD⟁ → BATCH lane.
+/// CM-1 gate: U+0002 STX must be asserted by the caller (see main.rs).
 use crate::model::S7LlmMoe;
 use crate::inference::kv_cache::KVCache;
+use crate::inference::proof::ProofChain;
 use crate::tokenizer::bpe::Tokenizer;
+use crate::model::router::argmax_i8;
+
+/// Decoded output with proof chain.
+pub struct DecodeResult {
+    pub tokens:      Vec<u32>,
+    pub proof_chain: ProofChain,
+    /// Expert activation histogram over the full generation.
+    pub expert_usage: [usize; 9],
+}
 
 /// Decode output token ids from a prompt, up to `max_new_tokens` steps.
 ///
-/// Returns the full token sequence (prompt tokens + generated tokens).
+/// Returns a DecodeResult with the full token sequence and proof chain.
 pub fn decode(
     model:          &S7LlmMoe,
     tokenizer:      &Tokenizer,
     prompt_tokens:  Vec<u32>,
     max_new_tokens: usize,
-) -> Vec<u32> {
+) -> DecodeResult {
     let mut kv    = KVCache::new();
     let mut tokens = prompt_tokens.clone();
-    let mut decoded_text = String::new();
+    let mut chain  = ProofChain::new();
 
-    // Prefill: feed all prompt tokens through the model to populate KV cache.
+    // Prefill: feed all prompt tokens through trunk + router + expert
+    // to populate KV cache.
     for (pos, &tok) in prompt_tokens.iter().enumerate() {
-        let tok_str = tokenizer.decode_single(tok);
-        decoded_text.push_str(&tok_str);
-        let (_logits, _domain) = model.forward(tok, pos, &decoded_text, &mut kv);
-        // During prefill we discard logits (only need the final step for next token).
+        let out = model.forward(tok, pos, &mut kv);
+        chain.push(out.proof);
+        // Discard logits during prefill (only the last one matters).
     }
 
-    // Generation: autoregressively produce new tokens.
-    for step in 0..max_new_tokens {
-        let pos       = tokens.len() - 1;
-        let last_tok  = *tokens.last().unwrap();
+    // Generation: autoregressive argmax decode.
+    for _step in 0..max_new_tokens {
+        let pos      = tokens.len() - 1;
+        let last_tok = *tokens.last().unwrap();
 
-        let (logits, _domain) = model.forward(last_tok, pos, &decoded_text, &mut kv);
+        let out      = model.forward(last_tok, pos, &mut kv);
+        let next_tok = argmax_i8(&out.logits) as u32;
 
-        // Greedy argmax: no randomness, fully deterministic.
-        let next_tok = argmax_u32(&logits) as u32;
+        chain.push(out.proof);
 
-        // EOS check (token 1 is conventional EOS for 24k BPE).
+        // EOS: token 1 is conventional EOS for 32k BPE.
         if next_tok == 1 {
             break;
         }
 
         tokens.push(next_tok);
-        let tok_str = tokenizer.decode_single(next_tok);
-        decoded_text.push_str(&tok_str);
-
-        let _ = step; // suppress lint
+        let _ = tokenizer; // tokenizer available for streaming decode if needed
     }
 
-    tokens
-}
-
-/// Return the index of the maximum i8 value (greedy argmax).
-/// Ties broken by lowest index (deterministic).
-fn argmax_u32(logits: &[i8]) -> usize {
-    logits
-        .iter()
-        .enumerate()
-        .max_by_key(|(_, &v)| v)
-        .map(|(i, _)| i)
-        .unwrap_or(0)
+    let expert_usage = chain.expert_usage();
+    DecodeResult { tokens, proof_chain: chain, expert_usage }
 }
